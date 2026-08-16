@@ -1,0 +1,264 @@
+{
+  "mapper": {
+    "graph_id": "g_e087",
+    "round": 1,
+    "status": "ok",
+    "error": null,
+    "coverage": {
+      "depth": "standard",
+      "found": 98,
+      "read": 19,
+      "used": 19,
+      "truncated": true,
+      "stop_reason": "queries_exhausted",
+      "limits": {
+        "max_papers": 25,
+        "max_queries": 4
+      }
+    },
+    "things": [],
+    "papers": [
+      {
+        "id": "p1",
+        "doi": "10.3390/antiox10020241",
+        "pmid": "33557356",
+        "study_type": "animal",
+        "is_preprint": false
+      }
+    ],
+    "findings": [
+      {
+        "id": "f1",
+        "from": "t1",
+        "how": "increases",
+        "to": "t2",
+        "says": "yes",
+        "paper": "p1",
+        "quote": "A directly quoted positive finding.",
+        "confidence": 0.85,
+        "is_own_result": true,
+        "hedged": false
+      },
+      {
+        "id": "f2",
+        "from": "t1",
+        "how": "changes",
+        "to": "t3",
+        "says": "no_effect",
+        "paper": "p1",
+        "quote": "No effect was observed.",
+        "confidence": 0.7,
+        "is_own_result": true,
+        "hedged": false
+      }
+    ],
+    "links": [],
+    "gaps": []
+  },
+  "hypothesis_generator": {
+    "graph_id": "g_1a4f",
+    "round": 2,
+    "question": "Can IRAK4 inhibition suppress rheumatoid arthritis inflammation?",
+    "generated_at": "2026-08-15T17:30:00Z",
+    "params": {
+      "selection": {
+        "top_k": 8
+      }
+    },
+    "coverage": {
+      "depth": "deep",
+      "found": 49,
+      "read": 6,
+      "used": 2,
+      "truncated": true,
+      "stop_reason": "queries_exhausted"
+    },
+    "counts": {
+      "shortlisted": 1,
+      "blocked": 0
+    },
+    "hypotheses": [
+      {
+        "id": "H-g2",
+        "motif": "gap_closure",
+        "subject": "t2",
+        "object": "t5",
+        "subject_name": "myeloid inflammatory signalling",
+        "object_name": "TLR/MyD88/NF-kB signalling axis",
+        "hops": 2,
+        "tags": [
+          "unsearched"
+        ],
+        "path": [
+          {
+            "link": "L2",
+            "from": "t2",
+            "how": "suppresses",
+            "to": "t1",
+            "reversed": true,
+            "support": 0.512
+          }
+        ],
+        "scores": {
+          "support": 0.512,
+          "novelty": 0.245,
+          "testability": 0.7,
+          "contradiction_risk": 0.0,
+          "structure": 0.436,
+          "absence_reliability": 0.48
+        },
+        "rank_score": 0.4704,
+        "evidence": {
+          "links": {
+            "L2": {
+              "yes": [
+                "f1",
+                "f2"
+              ],
+              "no": [],
+              "no_effect": []
+            }
+          },
+          "findings": {},
+          "papers": {}
+        },
+        "caveats": [
+          "The search is a sample, not the literature."
+        ],
+        "articulation": null,
+        "critiques": [],
+        "verdict": null,
+        "verification": {
+          "verdict": "qualified",
+          "gates": [
+            {
+              "name": "independence",
+              "status": "warn",
+              "summary": "all primary evidence is from one group",
+              "issues": [],
+              "halting": true
+            }
+          ],
+          "halted_at": null
+        },
+        "issues": [
+          {
+            "code": "single_group",
+            "detail": "all primary evidence is from one group",
+            "severity": "warning"
+          }
+        ],
+        "asks": [],
+        "provenance": "gap_closure over g_1a4f@round2 via L2"
+      }
+    ],
+    "asks": []
+  },
+  "recruitment": {
+    "asOf": "2026-08-15",
+    "counterfactual": {
+      "achieves": "none",
+      "change": "No biomarker relaxation reaches feasibility.",
+      "simulatedMonthsAfter": 282
+    },
+    "eligibility": {
+      "citedTrials": [
+        "NCT01061736",
+        "NCT00810836"
+      ],
+      "drivers": [
+        "active disease thresholds",
+        "stable background therapy requirements"
+      ],
+      "multiplier": 0.35,
+      "reasoning": "Recurring filters reduce the eligible population."
+    },
+    "evidence": {
+      "competingTrials": 189,
+      "precedentTrials": [
+        "NCT01061736",
+        "NCT00810836"
+      ]
+    },
+    "failedPrecedents": [
+      {
+        "nctId": "NCT02390700",
+        "whyStopped": "Business decision based on lack of enrollment"
+      }
+    ],
+    "phase3MedianN": 269,
+    "poweringBasis": "effect size d=0.35",
+    "precedentMedianN": 98.5,
+    "requiredN": 340,
+    "sites": 85,
+    "sitesBasis": "precedent",
+    "score": 0.0,
+    "screensPerEnrollee": 5.0,
+    "simulatedMonthsToEnroll": 470.0,
+    "simulatedMonthsRange": [
+      96.0,
+      1211.0
+    ],
+    "waterfallDelta": -12.0,
+    "why": "340 patients at 85 sites under the cited simulated assumptions."
+  },
+  "tractability": {
+    "input": {
+      "uniprot_accession": "P23458",
+      "as_of_date": null,
+      "disease_context": null,
+      "interaction_to_disrupt": null,
+      "mechanism_hypothesis": null
+    },
+    "target": {
+      "uniprot_accession": "P23458",
+      "gene_symbol": "JAK1",
+      "protein_name": "Tyrosine-protein kinase JAK1",
+      "organism": "Homo sapiens",
+      "sequence_length": 1154,
+      "sources": [
+        "UniProt P23458"
+      ]
+    },
+    "as_of_date": null,
+    "verdict": "small_molecule_tractable",
+    "verdict_basis": "retrieved_precedent",
+    "axis_conflict": null,
+    "target_precedent": {
+      "approved_small_molecules_count": 9,
+      "sources": [
+        "CHEMBL2835"
+      ]
+    },
+    "tractability": {
+      "pocket_volume_a3": {
+        "primary_d1_6_a3": null
+      },
+      "pocket_druggability": {
+        "min": 0.02,
+        "max": 0.437,
+        "load_bearing": false
+      },
+      "cryptic_pocket_risk": "low",
+      "caveat": "The computed axis is preserved but does not carry the verdict."
+    },
+    "falsification": {
+      "checks_run": [
+        "single-assay dominance"
+      ],
+      "findings": [],
+      "survived": true
+    },
+    "next_experiment": {
+      "description": "Add an apo JAK1 entry and rerun.",
+      "rationale": "This would activate the cryptic stage.",
+      "resolves": "Whether the cryptic call can be confirmed geometrically."
+    },
+    "not_found": [
+      {
+        "field": "tractability.disorder_fraction",
+        "reason": "The available sequence was not the full protein."
+      }
+    ]
+  }
+}

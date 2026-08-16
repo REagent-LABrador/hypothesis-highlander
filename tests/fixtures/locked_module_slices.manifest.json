@@ -1,0 +1,62 @@
+{
+  "sourceRepository": "https://github.com/Abhishekjani2509/LABrador",
+  "sourceCommit": "5131cd109bef1f9eebe0b109a04a0fcb98908454",
+  "note": "Exact full native fixtures are copied for Hypothesis Generator, both economics input branches, and tractability; mapper and recruitment cases use consumer-owned runtime slices. Raw source files remain authoritative.",
+  "lockedRuntimeSlices": {
+    "path": "tests/fixtures/locked_module_slices.json",
+    "sha256": "b9039b1652010584611514e43d1281b4adca39fee1329a42a8310884b6cbfd6b"
+  },
+  "sources": {
+    "mapper": {
+      "path": "managed/research-evidence-mapper/runs/g_e087.json",
+      "sha256": "c641c7a0d31e524d1865e3b4564e64d9ac64cce126e1cb1bc447b76daa9fbe4d"
+    },
+    "hypothesis_generator": {
+      "path": "managed/pipeline-observatory/fixtures/hypgen-irak4-ra.slate.json",
+      "localFixture": "tests/fixtures/hypgen-irak4-ra.slate.json",
+      "sha256": "0f46bb711b7605c5be905796a763e304d3e467cf0bcdf59267822b888c3ff870",
+      "copy": "exact full native fixture"
+    },
+    "recruitment": {
+      "path": "managed/pipeline-observatory/fixtures/recruitability-H-g1.json",
+      "sha256": "5100c9414292092b261847b2c48bb7a12338d0ee33894dea14d92747199f7597"
+    },
+    "economics": {
+      "paths": [
+        "managed/therapeutic-program-economics/fixtures/demo_program.json",
+        "managed/therapeutic-program-economics/fixtures/demo_comparables.json"
+      ],
+      "sha256": [
+        "2b65aefe3fe5b9b443d700536c5ff14126d72276872df0750777129000b648bd",
+        "4e849212d1d45fbe1bc5c271ceb65ecc870c57433ed54043a089c48e378b2e8a"
+      ],
+      "localFixtures": [
+        {
+          "mode": "program_and_comparables",
+          "path": "tests/fixtures/economics-analysis-result-standard.json",
+          "sha256": "2ad42421322118c6c0f9fc025b5260286a0eafde291bf4c4da9a72247fbe4672",
+          "decisionGrade": "NOT_DECISION_GRADE"
+        },
+        {
+          "mode": "cashflow_inputs",
+          "path": "tests/fixtures/economics-analysis-result-cashflow-inputs.json",
+          "sha256": "453c20bb729683b93b32b1d045cc63007d818e56be1fcc56e3916c91adb5e840",
+          "decisionGrade": "DECISION_GRADE"
+        }
+      ],
+      "generation": "Exact AnalysisResult 1.3.0 outputs from engine 0.4.0 at source commit, seed 42, 2 simulations; both passed native model validation and strict replay. Two draws are contract-test coverage, not decision-quality uncertainty estimation."
+    },
+    "tractability": {
+      "path": "managed/small-molecule-tractability-review/.claude/skills/assemble-dossier/examples/jak1_P23458.json",
+      "localFixture": "tests/fixtures/jak1_P23458.json",
+      "sha256": "b99cd7eefbb4848799d8ba040664ca43524572c293f6877c3285276e1b415ca1",
+      "copy": "exact full native fixture",
+      "validator": {
+        "path": "managed/small-molecule-tractability-review/.claude/skills/assemble-dossier/validate_dossier.py",
+        "localPath": "highlander/vendor/tractability_validator.py",
+        "sha256": "fc84771646932cc9d570ea82fda912686d05579da5d576c288b007e5430d7490",
+        "copy": "exact vendored source"
+      }
+    }
+  }
+}

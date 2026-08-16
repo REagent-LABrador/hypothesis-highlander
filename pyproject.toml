@@ -4,13 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hypothesis-highlander"
-version = "0.1.0"
-description = "Quality-diversity meta-search that sits on top of the LABrador nodes and learns across their outputs to converge on novel program hypotheses for one indication (RA example)."
+version = "0.2.0"
+description = "Fail-closed Pareto comparison of immutable LABrador hypothesis evidence packets."
 requires-python = ">=3.11"
-# Core loop is stdlib-only. numpy/plotly/streamlit are for the viz + dashboard; anthropic is optional (LLM generator).
+# rfc8785 provides cross-language JCS hashing. The remaining packages support
+# the optional legacy visualization/demo; anthropic is an optional demo generator.
 dependencies = [
     "numpy>=1.24",
     "plotly>=5.0",
+    "rfc8785==0.1.4",
     "streamlit>=1.30",
 ]
 

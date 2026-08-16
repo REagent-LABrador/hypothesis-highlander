@@ -1,0 +1,1552 @@
+{
+  "graph_id": "g_1a4f",
+  "round": 2,
+  "question": "can a small-molecule IRAK4 inhibitor suppress synovial fibroblast-driven inflammation in rheumatoid arthritis, or is its effect confined to the myeloid compartment?",
+  "generated_at": "2026-08-15T17:30:00Z",
+  "params": {
+    "stance": {
+      "profile": "default",
+      "craziness": null
+    },
+    "framing": {
+      "mode": "open",
+      "anchors": [],
+      "targets": [],
+      "exclude": []
+    },
+    "traversal": {
+      "max_hops": 3,
+      "min_link_confidence": 0.2,
+      "allow_no_effect_edges": false,
+      "allow_negative_edges": false,
+      "allow_edge_reversal": true,
+      "reversal_penalty": 0.7,
+      "max_paths_per_pair": 2,
+      "max_branch_per_node": 12,
+      "seed_kinds": [],
+      "target_kinds": [],
+      "intermediate_kinds": [],
+      "metapaths": [],
+      "predicates_allow": [],
+      "predicates_deny": ["correlates_with", "co_occurs_with"],
+      "hub_damping": 0.4,
+      "max_node_degree": 0,
+      "min_mentions": 0,
+      "min_dwpc": 0.0,
+      "max_candidates": 400
+    },
+    "motifs": {
+      "enabled": [
+        "gap_closure",
+        "transitive_chain",
+        "analogical_transfer",
+        "condition_split"
+      ],
+      "weights": {
+        "gap_closure": 1.0,
+        "transitive_chain": 0.9,
+        "analogical_transfer": 0.7,
+        "condition_split": 0.85
+      },
+      "analogy_min_shared": 2,
+      "analogy_min_jaccard": 0.15,
+      "analogy_same_kind_only": true,
+      "condition_split_requires_where": true,
+      "require_unstated": true
+    },
+    "evidence": {
+      "study_weights": {
+        "meta_analysis": 1.0,
+        "clinical_trial": 0.95,
+        "human_cohort": 0.8,
+        "animal": 0.6,
+        "test_tube": 0.45,
+        "computational": 0.3,
+        "review": 0.25
+      },
+      "hedged_penalty": 0.75,
+      "secondhand_penalty": 0.6,
+      "preprint_penalty": 0.85,
+      "basis_penalty": {
+        "primary": 1.0,
+        "mixed": 0.9,
+        "hedged_only": 0.7,
+        "background_only": 0.5
+      },
+      "recency_half_life": 0.0,
+      "min_independent_groups": 1,
+      "single_group_cap": 0.6,
+      "support_weights": {
+        "evidence_quality": 0.4,
+        "agreement": 0.35,
+        "independence": 0.25
+      },
+      "chain_aggregation": "weakest",
+      "contradiction_weight": 1.0
+    },
+    "novelty": {
+      "hop_novelty": 0.22,
+      "gap_novelty_bonus": 0.25,
+      "searched_gap_bonus": 0.2,
+      "gap_confidence_cap": 0.6,
+      "popularity_penalty": 0.15,
+      "respect_absence_reliability": true
+    },
+    "selection": {
+      "top_k": 8,
+      "diversity_lambda": 0.7,
+      "similarity": "jaccard_nodes",
+      "max_per_subject": 2,
+      "max_per_object": 2,
+      "max_per_motif": 0,
+      "min_support": 0.0,
+      "min_novelty": 0.0,
+      "max_contradiction_risk": 1.0,
+      "require_pareto": false,
+      "rank_weights": {
+        "support": 0.35,
+        "novelty": 0.35,
+        "testability": 0.2,
+        "contradiction_risk": -0.1
+      },
+      "testable_kinds": ["method", "small_molecule", "gene", "protein"]
+    },
+    "ranking": {
+      "articulate": true,
+      "critique": true,
+      "max_claims_per_hypothesis": 6,
+      "critic_lenses": ["mechanism", "evidence", "testability"],
+      "critics_per_hypothesis": 2,
+      "refute_threshold": 0.5,
+      "tournament": false,
+      "elo_initial": 1200.0,
+      "elo_k": 32.0,
+      "tournament_matches_per_hypothesis": 4,
+      "debate_turns": 2,
+      "evolution_rounds": 0,
+      "evolve_top_n": 3,
+      "evolve_operators": ["specialise", "combine", "invert_condition"],
+      "effort_articulate": "high",
+      "effort_critique": "high"
+    },
+    "verification": {
+      "enabled": true,
+      "gates": [
+        "structure",
+        "citations",
+        "consistency",
+        "independence",
+        "falsifiability",
+        "adversarial"
+      ],
+      "halt_on": ["structure", "citations", "independence"],
+      "require_primary_evidence": true,
+      "max_claim_overlap": 0.9,
+      "min_falsifier_chars": 25
+    },
+    "loop": {
+      "enabled": false,
+      "max_requests": 3,
+      "depth": "standard",
+      "test_gap_when_ranked_above": 3,
+      "resolve_link_below_confidence": 0.35,
+      "expand_node_min_mentions": 8,
+      "expand_node_max_degree": 2,
+      "stop_when_no_score_change": 0.02
+    },
+    "budget": {
+      "max_model_calls": 40,
+      "max_enumeration_seconds": 30.0,
+      "max_output_hypotheses": 12
+    }
+  },
+  "coverage": {
+    "depth": "deep",
+    "found": 49,
+    "read": 6,
+    "used": 2,
+    "truncated": true,
+    "no_quote_discarded": 0,
+    "limits": {
+      "max_papers": 50,
+      "max_queries": 6,
+      "hit_limit": null
+    },
+    "figures_read": false,
+    "figures_skipped_reason": "text was decisive; Figure 2B would only confirm the stimulus split already stated in the Results text",
+    "queries_run": 6,
+    "stop_reason": "queries_exhausted"
+  },
+  "counts": {
+    "things": 5,
+    "links": 6,
+    "findings": 12,
+    "gaps": 3,
+    "shortlisted": 5,
+    "blocked": 0,
+    "model_calls": 0,
+    "verification_verified": 0,
+    "verification_qualified": 5,
+    "verification_unverified": 0,
+    "verification_rejected": 0
+  },
+  "hypotheses": [
+    {
+      "id": "H-g2",
+      "motif": "gap_closure",
+      "subject": "t2",
+      "object": "t5",
+      "subject_name": "myeloid inflammatory signalling",
+      "object_name": "TLR/MyD88/NF-kB signalling axis",
+      "hops": 2,
+      "tags": ["unsearched"],
+      "path": [
+        {
+          "link": "L2",
+          "from": "t2",
+          "from_name": "myeloid inflammatory signalling",
+          "how": "suppresses",
+          "to": "t1",
+          "to_name": "IRAK4 inhibition",
+          "reversed": true,
+          "state": "agreed",
+          "support": 0.512
+        },
+        {
+          "link": "L1",
+          "from": "t1",
+          "from_name": "IRAK4 inhibition",
+          "how": "blocks",
+          "to": "t5",
+          "to_name": "TLR/MyD88/NF-kB signalling axis",
+          "reversed": false,
+          "state": "single_source",
+          "support": 0.512
+        }
+      ],
+      "scores": {
+        "support": 0.512,
+        "novelty": 0.245,
+        "testability": 0.7,
+        "contradiction_risk": 0.0,
+        "structure": 0.436,
+        "absence_reliability": 0.48
+      },
+      "rank_score": 0.4704,
+      "evidence": {
+        "links": {
+          "L2": {
+            "from": "t1",
+            "to": "t2",
+            "from_name": "IRAK4 inhibition",
+            "to_name": "myeloid inflammatory signalling",
+            "how": "suppresses",
+            "state": "agreed",
+            "basis": "primary",
+            "why": null,
+            "yes": ["f1", "f2"],
+            "no": [],
+            "no_effect": [],
+            "stated_confidence": 0.6,
+            "recomputed_support": 0.512,
+            "conditions": [
+              "THP1-Lucia NF-kB reporter cells, LPS 100 ng/mL, 24 h",
+              "THP1 cells and human PBMCs, LPS-induced IL-6 and TNF-alpha"
+            ]
+          },
+          "L1": {
+            "from": "t1",
+            "to": "t5",
+            "from_name": "IRAK4 inhibition",
+            "to_name": "TLR/MyD88/NF-kB signalling axis",
+            "how": "blocks",
+            "state": "single_source",
+            "basis": "primary",
+            "why": null,
+            "yes": ["f5"],
+            "no": [],
+            "no_effect": [],
+            "stated_confidence": 0.4,
+            "recomputed_support": 0.512,
+            "conditions": ["THP1-Lucia NF-kB reporter cells, dose-response"]
+          }
+        },
+        "findings": {
+          "f1": {
+            "from": "t1",
+            "to": "t2",
+            "how": "suppresses",
+            "says": "yes",
+            "quote": "NF- κ B promoter activity was analyzed using the THP1-Lucia NF- κ B cell line (InvivoGen, CA, USA) and luciferase assay.",
+            "paper": "p1",
+            "where": "THP1-Lucia NF-kB reporter cells, LPS 100 ng/mL, 24 h",
+            "is_own_result": true,
+            "hedged": false,
+            "confidence": 0.9
+          },
+          "f2": {
+            "from": "t1",
+            "to": "t2",
+            "how": "suppresses",
+            "says": "yes",
+            "quote": "(B, C) Effects of KIC-compounds on LPS-induced IL-6 secretion in THP1 cells and TNF α  secretion in PBMCs.",
+            "paper": "p1",
+            "where": "THP1 cells and human PBMCs, LPS-induced IL-6 and TNF-alpha",
+            "is_own_result": true,
+            "hedged": false,
+            "confidence": 0.9
+          },
+          "f5": {
+            "from": "t1",
+            "to": "t5",
+            "how": "blocks",
+            "says": "yes",
+            "quote": "We confirmed that KIC-compounds suppressed luciferase expression in a dose-dependent manner in reporter cells",
+            "paper": "p1",
+            "where": "THP1-Lucia NF-kB reporter cells, dose-response",
+            "is_own_result": true,
+            "hedged": false,
+            "confidence": 0.9
+          }
+        },
+        "papers": {
+          "p1": {
+            "title": "A novel IRAK4/PIM1 inhibitor ameliorates rheumatoid arthritis and lymphoid malignancy by blocking the TLR/MYD88-mediated NF-kB pathway",
+            "year": 2022,
+            "journal": "Acta Pharmaceutica Sinica B",
+            "doi": "10.1016/j.apsb.2022.11.023",
+            "first_author": "Yoon",
+            "study_type": "test_tube",
+            "is_preprint": false
+          }
+        },
+        "things": {
+          "t2": {
+            "name": "myeloid inflammatory signalling",
+            "kind": "process",
+            "aliases": ["THP1 NF-kB", "monocyte cytokine release"],
+            "mentions": 1
+          },
+          "t1": {
+            "name": "IRAK4 inhibition",
+            "kind": "small_molecule",
+            "aliases": ["IRAK4 inhibitor", "KIC-0101", "PF-06650833"],
+            "mentions": 1
+          },
+          "t5": {
+            "name": "TLR/MyD88/NF-kB signalling axis",
+            "kind": "process",
+            "aliases": ["TLR MYD88 mediated NF-kB pathway", "myddosome"],
+            "mentions": 1
+          }
+        },
+        "gap": {
+          "id": "g2",
+          "missing": ["t2", "t5"],
+          "implied_by": ["L1", "L2"],
+          "note": "both connect to t1; no direct link reported",
+          "confidence": 0.1838,
+          "searched_in_round": null
+        },
+        "per_link_support": [
+          {
+            "link_id": "L2",
+            "evidence_quality": 0.405,
+            "agreement": 1.0,
+            "independence": 0.0,
+            "support": 0.512,
+            "stated_overall": 0.6,
+            "yes_count": 2,
+            "no_count": 0,
+            "groups": 1,
+            "capped": false,
+            "paper_ids": ["p1"],
+            "conditions": [
+              "THP1-Lucia NF-kB reporter cells, LPS 100 ng/mL, 24 h",
+              "THP1 cells and human PBMCs, LPS-induced IL-6 and TNF-alpha"
+            ]
+          },
+          {
+            "link_id": "L1",
+            "evidence_quality": 0.405,
+            "agreement": 1.0,
+            "independence": 0.0,
+            "support": 0.512,
+            "stated_overall": 0.4,
+            "yes_count": 1,
+            "no_count": 0,
+            "groups": 1,
+            "capped": false,
+            "paper_ids": ["p1"],
+            "conditions": ["THP1-Lucia NF-kB reporter cells, dose-response"]
+          }
+        ],
+        "scoring_notes": []
+      },
+      "caveats": [
+        "The search is a sample, not the literature: 6 of 49 results were read. Absence of a link is weak evidence of absence.",
+        "This chain traverses at least one link against its stated direction. Do not assert the reverse relation as established.",
+        "Novelty here rests on a gap, but this graph is not entitled to strong absence claims. Treat 'nobody has shown X' as 'this search did not surface X'."
+      ],
+      "articulation": null,
+      "critiques": [],
+      "verdict": null,
+      "verification": {
+        "verdict": "qualified",
+        "gates": [
+          {
+            "name": "structure",
+            "status": "pass",
+            "summary": "2 hop(s), path intact, not already stated",
+            "issues": [],
+            "halting": true
+          },
+          {
+            "name": "citations",
+            "status": "skip",
+            "summary": "not articulated",
+            "issues": [],
+            "halting": true
+          },
+          {
+            "name": "consistency",
+            "status": "skip",
+            "summary": "not articulated",
+            "issues": [],
+            "halting": false
+          },
+          {
+            "name": "independence",
+            "status": "warn",
+            "summary": "all primary evidence here is from Yoon; nothing replicates it",
+            "issues": [
+              {
+                "code": "single_group",
+                "detail": "all primary evidence here is from Yoon; nothing replicates it",
+                "severity": "warning"
+              }
+            ],
+            "halting": true
+          },
+          {
+            "name": "falsifiability",
+            "status": "skip",
+            "summary": "not articulated",
+            "issues": [],
+            "halting": false
+          },
+          {
+            "name": "adversarial",
+            "status": "skip",
+            "summary": "not articulated",
+            "issues": [],
+            "halting": false
+          }
+        ],
+        "halted_at": null
+      },
+      "elo": null,
+      "evolved_from": null,
+      "evolution_operator": null,
+      "issues": [
+        {
+          "code": "single_group",
+          "detail": "all primary evidence here is from Yoon; nothing replicates it",
+          "severity": "warning"
+        }
+      ],
+      "asks": [],
+      "provenance": "gap_closure over g_1a4f@round2 via L2, L1"
+    },
+    {
+      "id": "H-g1",
+      "motif": "gap_closure",
+      "subject": "t1",
+      "object": "t4",
+      "subject_name": "IRAK4 inhibition",
+      "object_name": "MyD88 dimerization inhibition",
+      "hops": 2,
+      "tags": ["unsearched"],
+      "path": [
+        {
+          "link": "L3",
+          "from": "t1",
+          "from_name": "IRAK4 inhibition",
+          "how": "suppresses",
+          "to": "t3",
+          "to_name": "synovial fibroblast driven inflammation",
+          "reversed": false,
+          "state": "disagreed",
+          "support": 0.423
+        },
+        {
+          "link": "L5",
+          "from": "t3",
+          "from_name": "synovial fibroblast driven inflammation",
+          "how": "suppresses",
+          "to": "t4",
+          "to_name": "MyD88 dimerization inhibition",
+          "reversed": true,
+          "state": "agreed",
+          "support": 0.503
+        }
+      ],
+      "scores": {
+        "support": 0.423,
+        "novelty": 0.228,
+        "testability": 0.7,
+        "contradiction_risk": 0.5,
+        "structure": 0.33,
+        "absence_reliability": 0.48
+      },
+      "rank_score": 0.3674,
+      "evidence": {
+        "links": {
+          "L3": {
+            "from": "t1",
+            "to": "t3",
+            "from_name": "IRAK4 inhibition",
+            "to_name": "synovial fibroblast driven inflammation",
+            "how": "suppresses",
+            "state": "disagreed",
+            "basis": "primary",
+            "why": "conditions differ: {RA FLS, IL-1beta stimulation, MMP readout, RA FLS, TLR ligands Pam3Cys TLR1/2, LPS TLR4, flagellin TLR5, 100 nM, RA FLS, inhibitor plus stimulatory ligands, Meso Scale readout} vs {RA FLS, IL-1beta stimulation, cytokine readout}",
+            "yes": ["n_f1", "n_f2", "n_f4"],
+            "no": ["n_f3"],
+            "no_effect": [],
+            "stated_confidence": 0.5,
+            "recomputed_support": 0.423,
+            "conditions": [
+              "RA FLS, inhibitor plus stimulatory ligands, Meso Scale readout",
+              "RA FLS, TLR ligands Pam3Cys TLR1/2, LPS TLR4, flagellin TLR5, 100 nM",
+              "RA FLS, IL-1beta stimulation, MMP readout",
+              "RA FLS, IL-1beta stimulation, cytokine readout"
+            ]
+          },
+          "L5": {
+            "from": "t4",
+            "to": "t3",
+            "from_name": "MyD88 dimerization inhibition",
+            "to_name": "synovial fibroblast driven inflammation",
+            "how": "suppresses",
+            "state": "agreed",
+            "basis": "primary",
+            "why": null,
+            "yes": ["f3", "f4"],
+            "no": [],
+            "no_effect": [],
+            "stated_confidence": 0.6,
+            "recomputed_support": 0.503,
+            "conditions": [
+              "synovial fibroblasts from RA patients, LPS-activated TLR signalling",
+              "RA SF, Matrigel organoid invasion, OA SF and dermal fibroblast controls"
+            ]
+          }
+        },
+        "findings": {
+          "n_f1": {
+            "from": "t1",
+            "to": "t3",
+            "how": "suppresses",
+            "says": "yes",
+            "quote": "Human RA fibroblast‐like synoviocytes (FLS) were incubated with inhibitors, and stimulatory ligands added. Supernatants were analyzed with a Meso Scale Discovery assay kit.",
+            "paper": "p3",
+            "where": "RA FLS, inhibitor plus stimulatory ligands, Meso Scale readout",
+            "is_own_result": true,
+            "hedged": false,
+            "confidence": 0.9
+          },
+          "n_f2": {
+            "from": "t1",
+            "to": "t3",
+            "how": "suppresses",
+            "says": "yes",
+            "quote": "As depicted in Figure  2B , PF‐06650833 substantially reduced cytokine and matrix metalloproteinase (MMP) release in response to all ligands profiled.",
+            "paper": "p3",
+            "where": "RA FLS, TLR ligands Pam3Cys TLR1/2, LPS TLR4, flagellin TLR5, 100 nM",
+            "is_own_result": true,
+            "hedged": false,
+            "confidence": 0.9
+          },
+          "n_f4": {
+            "from": "t1",
+            "to": "t3",
+            "how": "suppresses",
+            "says": "yes",
+            "quote": "Intriguingly, PF‐06650833 was able to block MMP induction by IL‐1β: the first response to IL‐1β in nonhematopoietic cells we have found to be IRAK4 kinase dependent.",
+            "paper": "p3",
+            "where": "RA FLS, IL-1beta stimulation, MMP readout",
+            "is_own_result": true,
+            "hedged": false,
+            "confidence": 0.85
+          },
+          "n_f3": {
+            "from": "t1",
+            "to": "t3",
+            "how": "suppresses",
+            "says": "no",
+            "quote": "However, it did not inhibit IL‐1–induced cytokines in RA FLS.",
+            "paper": "p3",
+            "where": "RA FLS, IL-1beta stimulation, cytokine readout",
+            "is_own_result": true,
+            "hedged": false,
+            "confidence": 0.9
+          },
+          "f3": {
+            "from": "t4",
+            "to": "t3",
+            "how": "suppresses",
+            "says": "yes",
+            "quote": "we elucidated the effect of disrupting MyD88 dimerization by ST2825 on the pathological properties of synovial fibroblasts from RA patients (RA SFs).",
+            "paper": "p2",
+            "where": "synovial fibroblasts from RA patients, LPS-activated TLR signalling",
+            "is_own_result": true,
+            "hedged": false,
+            "confidence": 0.85
+          },
+          "f4": {
+            "from": "t4",
+            "to": "t3",
+            "how": "suppresses",
+            "says": "yes",
+            "quote": "The invasiveness of RA SFs in Matrigel matrices was measured in organoid cultures.",
+            "paper": "p2",
+            "where": "RA SF, Matrigel organoid invasion, OA SF and dermal fibroblast controls",
+            "is_own_result": true,
+            "hedged": false,
+            "confidence": 0.85
+          }
+        },
+        "papers": {
+          "p3": {
+            "title": "The Interleukin-1 Receptor-Associated Kinase 4 Inhibitor PF-06650833 Blocks Inflammation in Preclinical Models of Rheumatic Disease and in Humans Enrolled in a Randomized Clinical Trial",
+            "year": 2021,
+            "journal": "Arthritis & Rheumatology",
+            "doi": "10.1002/art.41953",
+            "first_author": "Winkler",
+            "study_type": "test_tube",
+            "is_preprint": false
+          },
+          "p2": {
+            "title": "MyD88 dimerization inhibitor ST2825 targets the aggressiveness of synovial fibroblasts in rheumatoid arthritis patients",
+            "year": 2023,
+            "journal": "Arthritis Research & Therapy",
+            "doi": "10.1186/s13075-023-03145-0",
+            "first_author": "Ramirez-Perez",
+            "study_type": "test_tube",
+            "is_preprint": false
+          }
+        },
+        "things": {
+          "t1": {
+            "name": "IRAK4 inhibition",
+            "kind": "small_molecule",
+            "aliases": ["IRAK4 inhibitor", "KIC-0101", "PF-06650833"],
+            "mentions": 1
+          },
+          "t3": {
+            "name": "synovial fibroblast driven inflammation",
+            "kind": "process",
+            "aliases": ["FLS", "RA SF", "fibroblast-like synoviocytes"],
+            "mentions": 1
+          },
+          "t4": {
+            "name": "MyD88 dimerization inhibition",
+            "kind": "small_molecule",
+            "aliases": ["ST2825"],
+            "mentions": 1
+          }
+        },
+        "gap": {
+          "id": "g1",
+          "missing": ["t1", "t4"],
+          "implied_by": ["L3", "L5"],
+          "note": "both connect to t3; no direct link reported (implied via 2 intermediates)",
+          "confidence": 0.56,
+          "searched_in_round": null
+        },
+        "per_link_support": [
+          {
+            "link_id": "L3",
+            "evidence_quality": 0.405,
+            "agreement": 0.746,
+            "independence": 0.0,
+            "support": 0.423,
+            "stated_overall": 0.5,
+            "yes_count": 3,
+            "no_count": 1,
+            "groups": 1,
+            "capped": false,
+            "paper_ids": ["p3"],
+            "conditions": [
+              "RA FLS, inhibitor plus stimulatory ligands, Meso Scale readout",
+              "RA FLS, TLR ligands Pam3Cys TLR1/2, LPS TLR4, flagellin TLR5, 100 nM",
+              "RA FLS, IL-1beta stimulation, MMP readout",
+              "RA FLS, IL-1beta stimulation, cytokine readout"
+            ]
+          },
+          {
+            "link_id": "L5",
+            "evidence_quality": 0.383,
+            "agreement": 1.0,
+            "independence": 0.0,
+            "support": 0.503,
+            "stated_overall": 0.6,
+            "yes_count": 2,
+            "no_count": 0,
+            "groups": 1,
+            "capped": false,
+            "paper_ids": ["p2"],
+            "conditions": [
+              "synovial fibroblasts from RA patients, LPS-activated TLR signalling",
+              "RA SF, Matrigel organoid invasion, OA SF and dermal fibroblast controls"
+            ]
+          }
+        ],
+        "scoring_notes": []
+      },
+      "caveats": [
+        "The search is a sample, not the literature: 6 of 49 results were read. Absence of a link is weak evidence of absence.",
+        "This chain traverses at least one link against its stated direction. Do not assert the reverse relation as established.",
+        "Novelty here rests on a gap, but this graph is not entitled to strong absence claims. Treat 'nobody has shown X' as 'this search did not surface X'."
+      ],
+      "articulation": null,
+      "critiques": [],
+      "verdict": null,
+      "verification": {
+        "verdict": "qualified",
+        "gates": [
+          {
+            "name": "structure",
+            "status": "pass",
+            "summary": "2 hop(s), path intact, not already stated",
+            "issues": [],
+            "halting": true
+          },
+          {
+            "name": "citations",
+            "status": "skip",
+            "summary": "not articulated",
+            "issues": [],
+            "halting": true
+          },
+          {
+            "name": "consistency",
+            "status": "skip",
+            "summary": "not articulated",
+            "issues": [],
+            "halting": false
+          },
+          {
+            "name": "independence",
+            "status": "pass",
+            "summary": "2 independent group(s), 6 primary findings",
+            "issues": [],
+            "halting": true
+          },
+          {
+            "name": "falsifiability",
+            "status": "skip",
+            "summary": "not articulated",
+            "issues": [],
+            "halting": false
+          },
+          {
+            "name": "adversarial",
+            "status": "skip",
+            "summary": "not articulated",
+            "issues": [],
+            "halting": false
+          }
+        ],
+        "halted_at": null
+      },
+      "elo": null,
+      "evolved_from": null,
+      "evolution_operator": null,
+      "issues": [],
+      "asks": [],
+      "provenance": "gap_closure over g_1a4f@round2 via L3, L5"
+    },
+    {
+      "id": "H-g4",
+      "motif": "gap_closure",
+      "subject": "t2",
+      "object": "t3",
+      "subject_name": "myeloid inflammatory signalling",
+      "object_name": "synovial fibroblast driven inflammation",
+      "hops": 2,
+      "tags": ["unsearched"],
+      "path": [
+        {
+          "link": "L2",
+          "from": "t2",
+          "from_name": "myeloid inflammatory signalling",
+          "how": "suppresses",
+          "to": "t1",
+          "to_name": "IRAK4 inhibition",
+          "reversed": true,
+          "state": "agreed",
+          "support": 0.512
+        },
+        {
+          "link": "L3",
+          "from": "t1",
+          "from_name": "IRAK4 inhibition",
+          "how": "suppresses",
+          "to": "t3",
+          "to_name": "synovial fibroblast driven inflammation",
+          "reversed": false,
+          "state": "disagreed",
+          "support": 0.423
+        }
+      ],
+      "scores": {
+        "support": 0.423,
+        "novelty": 0.245,
+        "testability": 0.7,
+        "contradiction_risk": 0.5,
+        "structure": 0.436,
+        "absence_reliability": 0.48
+      },
+      "rank_score": 0.3892,
+      "evidence": {
+        "links": {
+          "L2": {
+            "from": "t1",
+            "to": "t2",
+            "from_name": "IRAK4 inhibition",
+            "to_name": "myeloid inflammatory signalling",
+            "how": "suppresses",
+            "state": "agreed",
+            "basis": "primary",
+            "why": null,
+            "yes": ["f1", "f2"],
+            "no": [],
+            "no_effect": [],
+            "stated_confidence": 0.6,
+            "recomputed_support": 0.512,
+            "conditions": [
+              "THP1-Lucia NF-kB reporter cells, LPS 100 ng/mL, 24 h",
+              "THP1 cells and human PBMCs, LPS-induced IL-6 and TNF-alpha"
+            ]
+          },
+          "L3": {
+            "from": "t1",
+            "to": "t3",
+            "from_name": "IRAK4 inhibition",
+            "to_name": "synovial fibroblast driven inflammation",
+            "how": "suppresses",
+            "state": "disagreed",
+            "basis": "primary",
+            "why": "conditions differ: {RA FLS, IL-1beta stimulation, MMP readout, RA FLS, TLR ligands Pam3Cys TLR1/2, LPS TLR4, flagellin TLR5, 100 nM, RA FLS, inhibitor plus stimulatory ligands, Meso Scale readout} vs {RA FLS, IL-1beta stimulation, cytokine readout}",
+            "yes": ["n_f1", "n_f2", "n_f4"],
+            "no": ["n_f3"],
+            "no_effect": [],
+            "stated_confidence": 0.5,
+            "recomputed_support": 0.423,
+            "conditions": [
+              "RA FLS, inhibitor plus stimulatory ligands, Meso Scale readout",
+              "RA FLS, TLR ligands Pam3Cys TLR1/2, LPS TLR4, flagellin TLR5, 100 nM",
+              "RA FLS, IL-1beta stimulation, MMP readout",
+              "RA FLS, IL-1beta stimulation, cytokine readout"
+            ]
+          }
+        },
+        "findings": {
+          "f1": {
+            "from": "t1",
+            "to": "t2",
+            "how": "suppresses",
+            "says": "yes",
+            "quote": "NF- κ B promoter activity was analyzed using the THP1-Lucia NF- κ B cell line (InvivoGen, CA, USA) and luciferase assay.",
+            "paper": "p1",
+            "where": "THP1-Lucia NF-kB reporter cells, LPS 100 ng/mL, 24 h",
+            "is_own_result": true,
+            "hedged": false,
+            "confidence": 0.9
+          },
+          "f2": {
+            "from": "t1",
+            "to": "t2",
+            "how": "suppresses",
+            "says": "yes",
+            "quote": "(B, C) Effects of KIC-compounds on LPS-induced IL-6 secretion in THP1 cells and TNF α  secretion in PBMCs.",
+            "paper": "p1",
+            "where": "THP1 cells and human PBMCs, LPS-induced IL-6 and TNF-alpha",
+            "is_own_result": true,
+            "hedged": false,
+            "confidence": 0.9
+          },
+          "n_f1": {
+            "from": "t1",
+            "to": "t3",
+            "how": "suppresses",
+            "says": "yes",
+            "quote": "Human RA fibroblast‐like synoviocytes (FLS) were incubated with inhibitors, and stimulatory ligands added. Supernatants were analyzed with a Meso Scale Discovery assay kit.",
+            "paper": "p3",
+            "where": "RA FLS, inhibitor plus stimulatory ligands, Meso Scale readout",
+            "is_own_result": true,
+            "hedged": false,
+            "confidence": 0.9
+          },
+          "n_f2": {
+            "from": "t1",
+            "to": "t3",
+            "how": "suppresses",
+            "says": "yes",
+            "quote": "As depicted in Figure  2B , PF‐06650833 substantially reduced cytokine and matrix metalloproteinase (MMP) release in response to all ligands profiled.",
+            "paper": "p3",
+            "where": "RA FLS, TLR ligands Pam3Cys TLR1/2, LPS TLR4, flagellin TLR5, 100 nM",
+            "is_own_result": true,
+            "hedged": false,
+            "confidence": 0.9
+          },
+          "n_f4": {
+            "from": "t1",
+            "to": "t3",
+            "how": "suppresses",
+            "says": "yes",
+            "quote": "Intriguingly, PF‐06650833 was able to block MMP induction by IL‐1β: the first response to IL‐1β in nonhematopoietic cells we have found to be IRAK4 kinase dependent.",
+            "paper": "p3",
+            "where": "RA FLS, IL-1beta stimulation, MMP readout",
+            "is_own_result": true,
+            "hedged": false,
+            "confidence": 0.85
+          },
+          "n_f3": {
+            "from": "t1",
+            "to": "t3",
+            "how": "suppresses",
+            "says": "no",
+            "quote": "However, it did not inhibit IL‐1–induced cytokines in RA FLS.",
+            "paper": "p3",
+            "where": "RA FLS, IL-1beta stimulation, cytokine readout",
+            "is_own_result": true,
+            "hedged": false,
+            "confidence": 0.9
+          }
+        },
+        "papers": {
+          "p1": {
+            "title": "A novel IRAK4/PIM1 inhibitor ameliorates rheumatoid arthritis and lymphoid malignancy by blocking the TLR/MYD88-mediated NF-kB pathway",
+            "year": 2022,
+            "journal": "Acta Pharmaceutica Sinica B",
+            "doi": "10.1016/j.apsb.2022.11.023",
+            "first_author": "Yoon",
+            "study_type": "test_tube",
+            "is_preprint": false
+          },
+          "p3": {
+            "title": "The Interleukin-1 Receptor-Associated Kinase 4 Inhibitor PF-06650833 Blocks Inflammation in Preclinical Models of Rheumatic Disease and in Humans Enrolled in a Randomized Clinical Trial",
+            "year": 2021,
+            "journal": "Arthritis & Rheumatology",
+            "doi": "10.1002/art.41953",
+            "first_author": "Winkler",
+            "study_type": "test_tube",
+            "is_preprint": false
+          }
+        },
+        "things": {
+          "t2": {
+            "name": "myeloid inflammatory signalling",
+            "kind": "process",
+            "aliases": ["THP1 NF-kB", "monocyte cytokine release"],
+            "mentions": 1
+          },
+          "t1": {
+            "name": "IRAK4 inhibition",
+            "kind": "small_molecule",
+            "aliases": ["IRAK4 inhibitor", "KIC-0101", "PF-06650833"],
+            "mentions": 1
+          },
+          "t3": {
+            "name": "synovial fibroblast driven inflammation",
+            "kind": "process",
+            "aliases": ["FLS", "RA SF", "fibroblast-like synoviocytes"],
+            "mentions": 1
+          }
+        },
+        "gap": {
+          "id": "g4",
+          "missing": ["t2", "t3"],
+          "implied_by": ["L2", "L3"],
+          "note": "both connect to t1; no direct link reported",
+          "confidence": 0.3536,
+          "searched_in_round": null
+        },
+        "per_link_support": [
+          {
+            "link_id": "L2",
+            "evidence_quality": 0.405,
+            "agreement": 1.0,
+            "independence": 0.0,
+            "support": 0.512,
+            "stated_overall": 0.6,
+            "yes_count": 2,
+            "no_count": 0,
+            "groups": 1,
+            "capped": false,
+            "paper_ids": ["p1"],
+            "conditions": [
+              "THP1-Lucia NF-kB reporter cells, LPS 100 ng/mL, 24 h",
+              "THP1 cells and human PBMCs, LPS-induced IL-6 and TNF-alpha"
+            ]
+          },
+          {
+            "link_id": "L3",
+            "evidence_quality": 0.405,
+            "agreement": 0.746,
+            "independence": 0.0,
+            "support": 0.423,
+            "stated_overall": 0.5,
+            "yes_count": 3,
+            "no_count": 1,
+            "groups": 1,
+            "capped": false,
+            "paper_ids": ["p3"],
+            "conditions": [
+              "RA FLS, inhibitor plus stimulatory ligands, Meso Scale readout",
+              "RA FLS, TLR ligands Pam3Cys TLR1/2, LPS TLR4, flagellin TLR5, 100 nM",
+              "RA FLS, IL-1beta stimulation, MMP readout",
+              "RA FLS, IL-1beta stimulation, cytokine readout"
+            ]
+          }
+        ],
+        "scoring_notes": []
+      },
+      "caveats": [
+        "The search is a sample, not the literature: 6 of 49 results were read. Absence of a link is weak evidence of absence.",
+        "This chain traverses at least one link against its stated direction. Do not assert the reverse relation as established.",
+        "Novelty here rests on a gap, but this graph is not entitled to strong absence claims. Treat 'nobody has shown X' as 'this search did not surface X'."
+      ],
+      "articulation": null,
+      "critiques": [],
+      "verdict": null,
+      "verification": {
+        "verdict": "qualified",
+        "gates": [
+          {
+            "name": "structure",
+            "status": "pass",
+            "summary": "2 hop(s), path intact, not already stated",
+            "issues": [],
+            "halting": true
+          },
+          {
+            "name": "citations",
+            "status": "skip",
+            "summary": "not articulated",
+            "issues": [],
+            "halting": true
+          },
+          {
+            "name": "consistency",
+            "status": "skip",
+            "summary": "not articulated",
+            "issues": [],
+            "halting": false
+          },
+          {
+            "name": "independence",
+            "status": "pass",
+            "summary": "2 independent group(s), 6 primary findings",
+            "issues": [],
+            "halting": true
+          },
+          {
+            "name": "falsifiability",
+            "status": "skip",
+            "summary": "not articulated",
+            "issues": [],
+            "halting": false
+          },
+          {
+            "name": "adversarial",
+            "status": "skip",
+            "summary": "not articulated",
+            "issues": [],
+            "halting": false
+          }
+        ],
+        "halted_at": null
+      },
+      "elo": null,
+      "evolved_from": null,
+      "evolution_operator": null,
+      "issues": [],
+      "asks": [],
+      "provenance": "gap_closure over g_1a4f@round2 via L2, L3"
+    },
+    {
+      "id": "H-chain-t1-t4-2",
+      "motif": "transitive_chain",
+      "subject": "t1",
+      "object": "t4",
+      "subject_name": "IRAK4 inhibition",
+      "object_name": "MyD88 dimerization inhibition",
+      "hops": 2,
+      "tags": ["reversed_edge"],
+      "path": [
+        {
+          "link": "L1",
+          "from": "t1",
+          "from_name": "IRAK4 inhibition",
+          "how": "blocks",
+          "to": "t5",
+          "to_name": "TLR/MyD88/NF-kB signalling axis",
+          "reversed": false,
+          "state": "single_source",
+          "support": 0.512
+        },
+        {
+          "link": "L4",
+          "from": "t5",
+          "from_name": "TLR/MyD88/NF-kB signalling axis",
+          "how": "blocks",
+          "to": "t4",
+          "to_name": "MyD88 dimerization inhibition",
+          "reversed": true,
+          "state": "single_source",
+          "support": 0.503
+        }
+      ],
+      "scores": {
+        "support": 0.503,
+        "novelty": 0.228,
+        "testability": 0.7,
+        "contradiction_risk": 0.2,
+        "structure": 0.33,
+        "absence_reliability": 0.48
+      },
+      "rank_score": 0.3828,
+      "evidence": {
+        "links": {
+          "L1": {
+            "from": "t1",
+            "to": "t5",
+            "from_name": "IRAK4 inhibition",
+            "to_name": "TLR/MyD88/NF-kB signalling axis",
+            "how": "blocks",
+            "state": "single_source",
+            "basis": "primary",
+            "why": null,
+            "yes": ["f5"],
+            "no": [],
+            "no_effect": [],
+            "stated_confidence": 0.4,
+            "recomputed_support": 0.512,
+            "conditions": ["THP1-Lucia NF-kB reporter cells, dose-response"]
+          },
+          "L4": {
+            "from": "t4",
+            "to": "t5",
+            "from_name": "MyD88 dimerization inhibition",
+            "to_name": "TLR/MyD88/NF-kB signalling axis",
+            "how": "blocks",
+            "state": "single_source",
+            "basis": "primary",
+            "why": null,
+            "yes": ["f7"],
+            "no": [],
+            "no_effect": [],
+            "stated_confidence": 0.4,
+            "recomputed_support": 0.503,
+            "conditions": [
+              "RA synovial fibroblasts, LPS-activated TLR signalling"
+            ]
+          }
+        },
+        "findings": {
+          "f5": {
+            "from": "t1",
+            "to": "t5",
+            "how": "blocks",
+            "says": "yes",
+            "quote": "We confirmed that KIC-compounds suppressed luciferase expression in a dose-dependent manner in reporter cells",
+            "paper": "p1",
+            "where": "THP1-Lucia NF-kB reporter cells, dose-response",
+            "is_own_result": true,
+            "hedged": false,
+            "confidence": 0.9
+          },
+          "f7": {
+            "from": "t4",
+            "to": "t5",
+            "how": "blocks",
+            "says": "yes",
+            "quote": "Dimerization of the myeloid differentiation primary response 88 protein (MyD88) plays a pivotal role in the exacerbated response to innate immunity-dependent signaling in rheumatoid arthritis (RA).",
+            "paper": "p2",
+            "where": "RA synovial fibroblasts, LPS-activated TLR signalling",
+            "is_own_result": true,
+            "hedged": false,
+            "confidence": 0.85
+          }
+        },
+        "papers": {
+          "p1": {
+            "title": "A novel IRAK4/PIM1 inhibitor ameliorates rheumatoid arthritis and lymphoid malignancy by blocking the TLR/MYD88-mediated NF-kB pathway",
+            "year": 2022,
+            "journal": "Acta Pharmaceutica Sinica B",
+            "doi": "10.1016/j.apsb.2022.11.023",
+            "first_author": "Yoon",
+            "study_type": "test_tube",
+            "is_preprint": false
+          },
+          "p2": {
+            "title": "MyD88 dimerization inhibitor ST2825 targets the aggressiveness of synovial fibroblasts in rheumatoid arthritis patients",
+            "year": 2023,
+            "journal": "Arthritis Research & Therapy",
+            "doi": "10.1186/s13075-023-03145-0",
+            "first_author": "Ramirez-Perez",
+            "study_type": "test_tube",
+            "is_preprint": false
+          }
+        },
+        "things": {
+          "t1": {
+            "name": "IRAK4 inhibition",
+            "kind": "small_molecule",
+            "aliases": ["IRAK4 inhibitor", "KIC-0101", "PF-06650833"],
+            "mentions": 1
+          },
+          "t5": {
+            "name": "TLR/MyD88/NF-kB signalling axis",
+            "kind": "process",
+            "aliases": ["TLR MYD88 mediated NF-kB pathway", "myddosome"],
+            "mentions": 1
+          },
+          "t4": {
+            "name": "MyD88 dimerization inhibition",
+            "kind": "small_molecule",
+            "aliases": ["ST2825"],
+            "mentions": 1
+          }
+        },
+        "gap": {
+          "id": "g1",
+          "missing": ["t1", "t4"],
+          "implied_by": ["L3", "L5"],
+          "note": "both connect to t3; no direct link reported (implied via 2 intermediates)",
+          "confidence": 0.56,
+          "searched_in_round": null
+        },
+        "per_link_support": [
+          {
+            "link_id": "L1",
+            "evidence_quality": 0.405,
+            "agreement": 1.0,
+            "independence": 0.0,
+            "support": 0.512,
+            "stated_overall": 0.4,
+            "yes_count": 1,
+            "no_count": 0,
+            "groups": 1,
+            "capped": false,
+            "paper_ids": ["p1"],
+            "conditions": ["THP1-Lucia NF-kB reporter cells, dose-response"]
+          },
+          {
+            "link_id": "L4",
+            "evidence_quality": 0.383,
+            "agreement": 1.0,
+            "independence": 0.0,
+            "support": 0.503,
+            "stated_overall": 0.4,
+            "yes_count": 1,
+            "no_count": 0,
+            "groups": 1,
+            "capped": false,
+            "paper_ids": ["p2"],
+            "conditions": [
+              "RA synovial fibroblasts, LPS-activated TLR signalling"
+            ]
+          }
+        ],
+        "scoring_notes": [
+          "chain crosses at least one link against its stated direction"
+        ]
+      },
+      "caveats": [
+        "The search is a sample, not the literature: 6 of 49 results were read. Absence of a link is weak evidence of absence.",
+        "This chain traverses at least one link against its stated direction. Do not assert the reverse relation as established.",
+        "Novelty here rests on a gap, but this graph is not entitled to strong absence claims. Treat 'nobody has shown X' as 'this search did not surface X'."
+      ],
+      "articulation": null,
+      "critiques": [],
+      "verdict": null,
+      "verification": {
+        "verdict": "qualified",
+        "gates": [
+          {
+            "name": "structure",
+            "status": "pass",
+            "summary": "2 hop(s), path intact, not already stated",
+            "issues": [],
+            "halting": true
+          },
+          {
+            "name": "citations",
+            "status": "skip",
+            "summary": "not articulated",
+            "issues": [],
+            "halting": true
+          },
+          {
+            "name": "consistency",
+            "status": "skip",
+            "summary": "not articulated",
+            "issues": [],
+            "halting": false
+          },
+          {
+            "name": "independence",
+            "status": "pass",
+            "summary": "2 independent group(s), 2 primary findings",
+            "issues": [],
+            "halting": true
+          },
+          {
+            "name": "falsifiability",
+            "status": "skip",
+            "summary": "not articulated",
+            "issues": [],
+            "halting": false
+          },
+          {
+            "name": "adversarial",
+            "status": "skip",
+            "summary": "not articulated",
+            "issues": [],
+            "halting": false
+          }
+        ],
+        "halted_at": null
+      },
+      "elo": null,
+      "evolved_from": null,
+      "evolution_operator": null,
+      "issues": [],
+      "asks": [],
+      "provenance": "transitive_chain over g_1a4f@round2 via L1, L4"
+    },
+    {
+      "id": "H-analog-t4-t2-via-t1",
+      "motif": "analogical_transfer",
+      "subject": "t4",
+      "object": "t2",
+      "subject_name": "MyD88 dimerization inhibition",
+      "object_name": "myeloid inflammatory signalling",
+      "hops": 1,
+      "tags": [],
+      "path": [
+        {
+          "link": "L2",
+          "from": "t1",
+          "from_name": "IRAK4 inhibition",
+          "how": "suppresses",
+          "to": "t2",
+          "to_name": "myeloid inflammatory signalling",
+          "reversed": false,
+          "state": "agreed",
+          "support": 0.512
+        }
+      ],
+      "scores": {
+        "support": 0.512,
+        "novelty": 0.05,
+        "testability": 0.7,
+        "contradiction_risk": 0.0,
+        "structure": 1.0,
+        "absence_reliability": 0.48
+      },
+      "rank_score": 0.3407,
+      "evidence": {
+        "links": {
+          "L2": {
+            "from": "t1",
+            "to": "t2",
+            "from_name": "IRAK4 inhibition",
+            "to_name": "myeloid inflammatory signalling",
+            "how": "suppresses",
+            "state": "agreed",
+            "basis": "primary",
+            "why": null,
+            "yes": ["f1", "f2"],
+            "no": [],
+            "no_effect": [],
+            "stated_confidence": 0.6,
+            "recomputed_support": 0.512,
+            "conditions": [
+              "THP1-Lucia NF-kB reporter cells, LPS 100 ng/mL, 24 h",
+              "THP1 cells and human PBMCs, LPS-induced IL-6 and TNF-alpha"
+            ]
+          }
+        },
+        "findings": {
+          "f1": {
+            "from": "t1",
+            "to": "t2",
+            "how": "suppresses",
+            "says": "yes",
+            "quote": "NF- κ B promoter activity was analyzed using the THP1-Lucia NF- κ B cell line (InvivoGen, CA, USA) and luciferase assay.",
+            "paper": "p1",
+            "where": "THP1-Lucia NF-kB reporter cells, LPS 100 ng/mL, 24 h",
+            "is_own_result": true,
+            "hedged": false,
+            "confidence": 0.9
+          },
+          "f2": {
+            "from": "t1",
+            "to": "t2",
+            "how": "suppresses",
+            "says": "yes",
+            "quote": "(B, C) Effects of KIC-compounds on LPS-induced IL-6 secretion in THP1 cells and TNF α  secretion in PBMCs.",
+            "paper": "p1",
+            "where": "THP1 cells and human PBMCs, LPS-induced IL-6 and TNF-alpha",
+            "is_own_result": true,
+            "hedged": false,
+            "confidence": 0.9
+          }
+        },
+        "papers": {
+          "p1": {
+            "title": "A novel IRAK4/PIM1 inhibitor ameliorates rheumatoid arthritis and lymphoid malignancy by blocking the TLR/MYD88-mediated NF-kB pathway",
+            "year": 2022,
+            "journal": "Acta Pharmaceutica Sinica B",
+            "doi": "10.1016/j.apsb.2022.11.023",
+            "first_author": "Yoon",
+            "study_type": "test_tube",
+            "is_preprint": false
+          }
+        },
+        "things": {
+          "t4": {
+            "name": "MyD88 dimerization inhibition",
+            "kind": "small_molecule",
+            "aliases": ["ST2825"],
+            "mentions": 1
+          },
+          "t2": {
+            "name": "myeloid inflammatory signalling",
+            "kind": "process",
+            "aliases": ["THP1 NF-kB", "monocyte cytokine release"],
+            "mentions": 1
+          },
+          "t1": {
+            "name": "IRAK4 inhibition",
+            "kind": "small_molecule",
+            "aliases": ["IRAK4 inhibitor", "KIC-0101", "PF-06650833"],
+            "mentions": 1
+          },
+          "t3": {
+            "name": "synovial fibroblast driven inflammation",
+            "kind": "process",
+            "aliases": ["FLS", "RA SF", "fibroblast-like synoviocytes"],
+            "mentions": 1
+          },
+          "t5": {
+            "name": "TLR/MyD88/NF-kB signalling axis",
+            "kind": "process",
+            "aliases": ["TLR MYD88 mediated NF-kB pathway", "myddosome"],
+            "mentions": 1
+          }
+        },
+        "gap": null,
+        "per_link_support": [
+          {
+            "link_id": "L2",
+            "evidence_quality": 0.405,
+            "agreement": 1.0,
+            "independence": 0.0,
+            "support": 0.512,
+            "stated_overall": 0.6,
+            "yes_count": 2,
+            "no_count": 0,
+            "groups": 1,
+            "capped": false,
+            "paper_ids": ["p1"],
+            "conditions": [
+              "THP1-Lucia NF-kB reporter cells, LPS 100 ng/mL, 24 h",
+              "THP1 cells and human PBMCs, LPS-induced IL-6 and TNF-alpha"
+            ]
+          }
+        ],
+        "scoring_notes": []
+      },
+      "caveats": [
+        "The search is a sample, not the literature: 6 of 49 results were read. Absence of a link is weak evidence of absence."
+      ],
+      "articulation": null,
+      "critiques": [],
+      "verdict": null,
+      "verification": {
+        "verdict": "qualified",
+        "gates": [
+          {
+            "name": "structure",
+            "status": "pass",
+            "summary": "1 hop(s), path intact, not already stated",
+            "issues": [],
+            "halting": true
+          },
+          {
+            "name": "citations",
+            "status": "skip",
+            "summary": "not articulated",
+            "issues": [],
+            "halting": true
+          },
+          {
+            "name": "consistency",
+            "status": "skip",
+            "summary": "not articulated",
+            "issues": [],
+            "halting": false
+          },
+          {
+            "name": "independence",
+            "status": "warn",
+            "summary": "all primary evidence here is from Yoon; nothing replicates it",
+            "issues": [
+              {
+                "code": "single_group",
+                "detail": "all primary evidence here is from Yoon; nothing replicates it",
+                "severity": "warning"
+              }
+            ],
+            "halting": true
+          },
+          {
+            "name": "falsifiability",
+            "status": "skip",
+            "summary": "not articulated",
+            "issues": [],
+            "halting": false
+          },
+          {
+            "name": "adversarial",
+            "status": "skip",
+            "summary": "not articulated",
+            "issues": [],
+            "halting": false
+          }
+        ],
+        "halted_at": null
+      },
+      "elo": null,
+      "evolved_from": null,
+      "evolution_operator": null,
+      "issues": [
+        {
+          "code": "single_group",
+          "detail": "all primary evidence here is from Yoon; nothing replicates it",
+          "severity": "warning"
+        }
+      ],
+      "asks": [],
+      "provenance": "analogical_transfer over g_1a4f@round2 via L2"
+    }
+  ],
+  "asks": []
+}

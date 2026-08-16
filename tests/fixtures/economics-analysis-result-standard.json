@@ -1,0 +1,3007 @@
+{
+  "schema_version": "1.3.0",
+  "run_id": "run_78e07490230193c69731",
+  "generated_at": "2026-08-16T07:57:41.559484Z",
+  "engine_version": "0.4.0",
+  "input_digest": "sha256:78e07490230193c69731416548fe2a30349e3f8963d9701975b331294ffbe0ff",
+  "seed": 42,
+  "simulations": 2,
+  "simulation_assumptions": {
+    "price_multiplier": {
+      "low": 0.75,
+      "mode": 1.0,
+      "high": 1.25
+    },
+    "patient_multiplier": {
+      "low": 0.7,
+      "mode": 1.0,
+      "high": 1.3
+    },
+    "gross_to_net_shift": {
+      "low": -0.05,
+      "mode": 0.0,
+      "high": 0.1
+    },
+    "persistence_multiplier": {
+      "low": 0.85,
+      "mode": 1.0,
+      "high": 1.05
+    },
+    "development_cost_multiplier": {
+      "low": 0.85,
+      "mode": 1.0,
+      "high": 1.25
+    },
+    "launch_delay_years": {
+      "low": 0.0,
+      "mode": 0.0,
+      "high": 2.0
+    },
+    "loe_retention_multiplier": {
+      "low": 0.75,
+      "mode": 1.0,
+      "high": 1.25
+    }
+  },
+  "input_snapshot": {
+    "program": {
+      "program_id": "SYNTHETIC-LAB-001",
+      "program_name": "LAB-001 synthetic peptide program",
+      "target": "SYNTHETIC_TARGET_A",
+      "modality": "PEPTIDE",
+      "molecule_identifier": "SYNTHETIC_SEQUENCE_NOT_FOR_USE",
+      "route": "SUBCUTANEOUS_SELF",
+      "base_year": 2026,
+      "valuation_year": 2026,
+      "currency": "USD",
+      "initial_indication": {
+        "indication_id": "syn-indication-a",
+        "name": "Synthetic biomarker-positive chronic syndrome",
+        "therapeutic_area": "Synthetic immunology",
+        "target_population": "Adults with severe biomarker-positive synthetic syndrome",
+        "line_of_therapy": "Third line",
+        "geography": "United States",
+        "currency": "USD",
+        "launch_year": 2031,
+        "severity": "Severe",
+        "biomarker": "SYN-BIO-A positive",
+        "route": "SUBCUTANEOUS_SELF",
+        "comparator_ids": [
+          "syn-comp-primary",
+          "syn-comp-net-anchor",
+          "syn-comp-secondary",
+          "syn-comp-context"
+        ],
+        "population": {
+          "eligible_patients": 18500.0,
+          "prevalent_backlog_patients": 7200.0,
+          "annual_incident_patients": 2600.0,
+          "diagnosed_fraction": 0.72,
+          "clinically_eligible_fraction": 0.64,
+          "overlap_with_initial_fraction": 0.0,
+          "cannibalization_fraction": 0.0,
+          "evidence": {
+            "eligible_patients": {
+              "source_id": "SYNTHETIC-DEMO-POP-A",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": "Fictitious interface fixture; not epidemiologic evidence."
+            }
+          },
+          "assumptions": {
+            "note": "All population values are synthetic."
+          }
+        },
+        "access": {
+          "payer_type": "MIXED",
+          "universal_or_public_coverage": false,
+          "coverage_fraction": 0.74,
+          "prior_authorization_pass_fraction": 0.68,
+          "initiation_fraction": 0.82,
+          "provider_capacity_fraction": 0.87,
+          "patient_cost_share_fraction": 0.08,
+          "annual_patient_oop": null,
+          "adoption_by_year": {
+            "0": 0.12,
+            "1": 0.28,
+            "2": 0.45,
+            "3": 0.58,
+            "4": 0.65
+          },
+          "restrictions": [
+            "Synthetic biomarker confirmation",
+            "Synthetic step-therapy requirement"
+          ],
+          "evidence": {
+            "access_curve": {
+              "source_id": "SYNTHETIC-DEMO-ACCESS-A",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": "Fictitious access fixture."
+            },
+            "coverage_fraction": {
+              "source_id": "SYNTHETIC-DEMO-ACCESS-A",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": null
+            },
+            "prior_authorization_pass_fraction": {
+              "source_id": "SYNTHETIC-DEMO-ACCESS-A",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": null
+            },
+            "initiation_fraction": {
+              "source_id": "SYNTHETIC-DEMO-ACCESS-A",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": null
+            },
+            "provider_capacity_fraction": {
+              "source_id": "SYNTHETIC-DEMO-ACCESS-A",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": null
+            },
+            "patient_cost_share_fraction": {
+              "source_id": "SYNTHETIC-DEMO-ACCESS-A",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": null
+            }
+          },
+          "assumptions": {
+            "note": "Coverage and access gates are independent demo assumptions."
+          }
+        },
+        "income_bands": [
+          {
+            "name": "Synthetic lower-income band",
+            "population_share": 0.35,
+            "annual_income": 38000.0,
+            "maximum_oop_share": 0.02,
+            "evidence": {
+              "source_id": "SYNTHETIC-DEMO-INCOME-LOW",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": "Fictitious affordability input; never a clinical-value multiplier."
+            }
+          },
+          {
+            "name": "Synthetic middle-income band",
+            "population_share": 0.45,
+            "annual_income": 82000.0,
+            "maximum_oop_share": 0.03,
+            "evidence": {
+              "source_id": "SYNTHETIC-DEMO-INCOME-MID",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": "Fictitious affordability input; never a clinical-value multiplier."
+            }
+          },
+          {
+            "name": "Synthetic upper-income band",
+            "population_share": 0.2,
+            "annual_income": 175000.0,
+            "maximum_oop_share": 0.04,
+            "evidence": {
+              "source_id": "SYNTHETIC-DEMO-INCOME-HIGH",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": "Fictitious affordability input; never a clinical-value multiplier."
+            }
+          }
+        ],
+        "evidence": {
+          "indication_definition": {
+            "source_id": "SYNTHETIC-DEMO-INDICATION-A",
+            "source_url": null,
+            "citation": null,
+            "source_date": null,
+            "accessed_at": null,
+            "evidence_type": "SYNTHETIC",
+            "grade": "SYNTHETIC",
+            "synthetic": true,
+            "notes": "The disease, biomarker, and treatment line are fictitious."
+          },
+          "incremental_qalys": {
+            "source_id": "SYNTHETIC-DEMO-HEOR-A",
+            "source_url": null,
+            "citation": null,
+            "source_date": null,
+            "accessed_at": null,
+            "evidence_type": "SYNTHETIC",
+            "grade": "SYNTHETIC",
+            "synthetic": true,
+            "notes": null
+          },
+          "willingness_to_pay_per_qaly": {
+            "source_id": "SYNTHETIC-DEMO-HEOR-A",
+            "source_url": null,
+            "citation": null,
+            "source_date": null,
+            "accessed_at": null,
+            "evidence_type": "SYNTHETIC",
+            "grade": "SYNTHETIC",
+            "synthetic": true,
+            "notes": null
+          },
+          "comparator_total_cost": {
+            "source_id": "SYNTHETIC-DEMO-HEOR-A",
+            "source_url": null,
+            "citation": null,
+            "source_date": null,
+            "accessed_at": null,
+            "evidence_type": "SYNTHETIC",
+            "grade": "SYNTHETIC",
+            "synthetic": true,
+            "notes": null
+          },
+          "new_non_drug_total_cost": {
+            "source_id": "SYNTHETIC-DEMO-HEOR-A",
+            "source_url": null,
+            "citation": null,
+            "source_date": null,
+            "accessed_at": null,
+            "evidence_type": "SYNTHETIC",
+            "grade": "SYNTHETIC",
+            "synthetic": true,
+            "notes": null
+          },
+          "expected_treatment_years": {
+            "source_id": "SYNTHETIC-DEMO-HEOR-A",
+            "source_url": null,
+            "citation": null,
+            "source_date": null,
+            "accessed_at": null,
+            "evidence_type": "SYNTHETIC",
+            "grade": "SYNTHETIC",
+            "synthetic": true,
+            "notes": null
+          },
+          "annual_comparator_drug_cost": {
+            "source_id": "SYNTHETIC-DEMO-HEOR-A",
+            "source_url": null,
+            "citation": null,
+            "source_date": null,
+            "accessed_at": null,
+            "evidence_type": "SYNTHETIC",
+            "grade": "SYNTHETIC",
+            "synthetic": true,
+            "notes": null
+          },
+          "annual_non_drug_cost_offsets": {
+            "source_id": "SYNTHETIC-DEMO-HEOR-A",
+            "source_url": null,
+            "citation": null,
+            "source_date": null,
+            "accessed_at": null,
+            "evidence_type": "SYNTHETIC",
+            "grade": "SYNTHETIC",
+            "synthetic": true,
+            "notes": null
+          },
+          "annual_payer_budget_limit": {
+            "source_id": "SYNTHETIC-DEMO-HEOR-A",
+            "source_url": null,
+            "citation": null,
+            "source_date": null,
+            "accessed_at": null,
+            "evidence_type": "SYNTHETIC",
+            "grade": "SYNTHETIC",
+            "synthetic": true,
+            "notes": null
+          },
+          "annual_manufacturer_cost": {
+            "source_id": "SYNTHETIC-DEMO-HEOR-A",
+            "source_url": null,
+            "citation": null,
+            "source_date": null,
+            "accessed_at": null,
+            "evidence_type": "SYNTHETIC",
+            "grade": "SYNTHETIC",
+            "synthetic": true,
+            "notes": null
+          },
+          "required_gross_margin_fraction": {
+            "source_id": "SYNTHETIC-DEMO-HEOR-A",
+            "source_url": null,
+            "citation": null,
+            "source_date": null,
+            "accessed_at": null,
+            "evidence_type": "SYNTHETIC",
+            "grade": "SYNTHETIC",
+            "synthetic": true,
+            "notes": null
+          }
+        },
+        "assumptions": {
+          "annual_gross_price": 132000,
+          "gross_to_net_rate": 0.22,
+          "annual_persistence_rate": 0.78,
+          "dose_intensity": 0.94,
+          "cogs_per_full_dose_patient": 7200,
+          "variable_commercial_cost_per_patient": 1800,
+          "fixed_commercial_cost_per_year": 18000000,
+          "backlog_release_years": 3,
+          "incidence_growth_rate": 0.012,
+          "peak_adoption_rate": 0.65,
+          "adoption_ramp_years": 4,
+          "incremental_qalys": 0.82,
+          "willingness_to_pay_per_qaly": 150000,
+          "comparator_total_cost": 240000,
+          "new_non_drug_total_cost": 215000,
+          "expected_treatment_years": 2,
+          "annual_comparator_drug_cost": 95000,
+          "annual_non_drug_cost_offsets": 12000,
+          "annual_payer_budget_limit": 350000000,
+          "annual_manufacturer_cost": 7200,
+          "required_gross_margin_fraction": 0.75,
+          "candidate_list_price": 132000,
+          "paid_units_per_patient": 1,
+          "covered_lives": 48000000,
+          "note": "Every value is synthetic and must remain NOT_DECISION_GRADE."
+        }
+      },
+      "expansion_indications": [
+        {
+          "indication_id": "syn-indication-b",
+          "name": "Synthetic refractory inflammatory syndrome",
+          "therapeutic_area": "Synthetic immunology",
+          "target_population": "Adults with refractory synthetic inflammatory syndrome",
+          "line_of_therapy": "Second line",
+          "geography": "United States",
+          "currency": "USD",
+          "launch_year": 2034,
+          "severity": "Moderate to severe",
+          "biomarker": null,
+          "route": "SUBCUTANEOUS_SELF",
+          "comparator_ids": [
+            "syn-comp-expansion-net",
+            "syn-comp-net-anchor",
+            "syn-comp-secondary"
+          ],
+          "population": {
+            "eligible_patients": 31000.0,
+            "prevalent_backlog_patients": 11000.0,
+            "annual_incident_patients": 4100.0,
+            "diagnosed_fraction": 0.76,
+            "clinically_eligible_fraction": 0.58,
+            "overlap_with_initial_fraction": 0.09,
+            "cannibalization_fraction": 0.04,
+            "evidence": {
+              "eligible_patients": {
+                "source_id": "SYNTHETIC-DEMO-POP-B",
+                "source_url": null,
+                "citation": null,
+                "source_date": null,
+                "accessed_at": null,
+                "evidence_type": "SYNTHETIC",
+                "grade": "SYNTHETIC",
+                "synthetic": true,
+                "notes": "Fictitious expansion fixture."
+              }
+            },
+            "assumptions": {}
+          },
+          "access": {
+            "payer_type": "MIXED",
+            "universal_or_public_coverage": false,
+            "coverage_fraction": 0.71,
+            "prior_authorization_pass_fraction": 0.62,
+            "initiation_fraction": 0.8,
+            "provider_capacity_fraction": 0.84,
+            "patient_cost_share_fraction": 0.08,
+            "annual_patient_oop": null,
+            "adoption_by_year": {
+              "0": 0.1,
+              "1": 0.25,
+              "2": 0.4,
+              "3": 0.54,
+              "4": 0.6
+            },
+            "restrictions": [
+              "Synthetic prior therapy requirement"
+            ],
+            "evidence": {
+              "access_curve": {
+                "source_id": "SYNTHETIC-DEMO-ACCESS-B",
+                "source_url": null,
+                "citation": null,
+                "source_date": null,
+                "accessed_at": null,
+                "evidence_type": "SYNTHETIC",
+                "grade": "SYNTHETIC",
+                "synthetic": true,
+                "notes": "Fictitious expansion access fixture."
+              },
+              "coverage_fraction": {
+                "source_id": "SYNTHETIC-DEMO-ACCESS-B",
+                "source_url": null,
+                "citation": null,
+                "source_date": null,
+                "accessed_at": null,
+                "evidence_type": "SYNTHETIC",
+                "grade": "SYNTHETIC",
+                "synthetic": true,
+                "notes": null
+              },
+              "prior_authorization_pass_fraction": {
+                "source_id": "SYNTHETIC-DEMO-ACCESS-B",
+                "source_url": null,
+                "citation": null,
+                "source_date": null,
+                "accessed_at": null,
+                "evidence_type": "SYNTHETIC",
+                "grade": "SYNTHETIC",
+                "synthetic": true,
+                "notes": null
+              },
+              "initiation_fraction": {
+                "source_id": "SYNTHETIC-DEMO-ACCESS-B",
+                "source_url": null,
+                "citation": null,
+                "source_date": null,
+                "accessed_at": null,
+                "evidence_type": "SYNTHETIC",
+                "grade": "SYNTHETIC",
+                "synthetic": true,
+                "notes": null
+              },
+              "provider_capacity_fraction": {
+                "source_id": "SYNTHETIC-DEMO-ACCESS-B",
+                "source_url": null,
+                "citation": null,
+                "source_date": null,
+                "accessed_at": null,
+                "evidence_type": "SYNTHETIC",
+                "grade": "SYNTHETIC",
+                "synthetic": true,
+                "notes": null
+              },
+              "patient_cost_share_fraction": {
+                "source_id": "SYNTHETIC-DEMO-ACCESS-B",
+                "source_url": null,
+                "citation": null,
+                "source_date": null,
+                "accessed_at": null,
+                "evidence_type": "SYNTHETIC",
+                "grade": "SYNTHETIC",
+                "synthetic": true,
+                "notes": null
+              }
+            },
+            "assumptions": {}
+          },
+          "income_bands": [],
+          "evidence": {
+            "indication_definition": {
+              "source_id": "SYNTHETIC-DEMO-INDICATION-B",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": "The expansion indication is fictitious."
+            },
+            "incremental_qalys": {
+              "source_id": "SYNTHETIC-DEMO-HEOR-B",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": null
+            },
+            "willingness_to_pay_per_qaly": {
+              "source_id": "SYNTHETIC-DEMO-HEOR-B",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": null
+            },
+            "comparator_total_cost": {
+              "source_id": "SYNTHETIC-DEMO-HEOR-B",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": null
+            },
+            "new_non_drug_total_cost": {
+              "source_id": "SYNTHETIC-DEMO-HEOR-B",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": null
+            },
+            "expected_treatment_years": {
+              "source_id": "SYNTHETIC-DEMO-HEOR-B",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": null
+            },
+            "annual_comparator_drug_cost": {
+              "source_id": "SYNTHETIC-DEMO-HEOR-B",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": null
+            },
+            "annual_non_drug_cost_offsets": {
+              "source_id": "SYNTHETIC-DEMO-HEOR-B",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": null
+            },
+            "annual_payer_budget_limit": {
+              "source_id": "SYNTHETIC-DEMO-HEOR-B",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": null
+            },
+            "annual_manufacturer_cost": {
+              "source_id": "SYNTHETIC-DEMO-HEOR-B",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": null
+            },
+            "required_gross_margin_fraction": {
+              "source_id": "SYNTHETIC-DEMO-HEOR-B",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": null
+            },
+            "patient_affordability_rate": {
+              "source_id": "SYNTHETIC-DEMO-AFFORDABILITY-B",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": "Explicit fallback scenario, not observed affordability evidence."
+            }
+          },
+          "assumptions": {
+            "annual_gross_price": 108000,
+            "gross_to_net_rate": 0.25,
+            "annual_persistence_rate": 0.72,
+            "dose_intensity": 0.92,
+            "cogs_per_full_dose_patient": 6900,
+            "variable_commercial_cost_per_patient": 1500,
+            "fixed_commercial_cost_per_year": 9000000,
+            "backlog_release_years": 3,
+            "incidence_growth_rate": 0.01,
+            "peak_adoption_rate": 0.6,
+            "adoption_ramp_years": 4,
+            "incremental_qalys": 0.55,
+            "willingness_to_pay_per_qaly": 150000,
+            "comparator_total_cost": 165000,
+            "new_non_drug_total_cost": 145000,
+            "expected_treatment_years": 2,
+            "annual_comparator_drug_cost": 70000,
+            "annual_non_drug_cost_offsets": 8500,
+            "annual_payer_budget_limit": 300000000,
+            "annual_manufacturer_cost": 6900,
+            "required_gross_margin_fraction": 0.75,
+            "candidate_list_price": 108000,
+            "patient_affordability_rate": 0.7,
+            "paid_units_per_patient": 1,
+            "note": "Synthetic expansion and affordability fallback; shares the original patent clock."
+          }
+        }
+      ],
+      "patent": {
+        "filing_year": 2024,
+        "base_term_years": 20,
+        "extension_years": 1.5,
+        "regulatory_exclusivity_end_year": null,
+        "evidence": {
+          "filing_year": {
+            "source_id": "SYNTHETIC-DEMO-PATENT",
+            "source_url": null,
+            "citation": null,
+            "source_date": null,
+            "accessed_at": null,
+            "evidence_type": "SYNTHETIC",
+            "grade": "SYNTHETIC",
+            "synthetic": true,
+            "notes": "Fictitious filing date and extension; not legal analysis."
+          }
+        },
+        "assumptions": {
+          "note": "Base patent term starts at filing and the expansion does not reset it."
+        }
+      },
+      "development": {
+        "current_stage": "Preclinical",
+        "stage_costs": {
+          "preclinical": 9000000.0,
+          "phase_1": 18000000.0,
+          "phase_2": 42000000.0,
+          "phase_3": 115000000.0,
+          "filing": 18000000.0
+        },
+        "stage_durations_years": {
+          "preclinical": 1.0,
+          "phase_1": 1.0,
+          "phase_2": 2.0,
+          "phase_3": 2.0,
+          "filing": 1.0
+        },
+        "stage_success_probabilities": {
+          "preclinical": 0.7,
+          "phase_1": 0.62,
+          "phase_2": 0.42,
+          "phase_3": 0.68,
+          "filing": 0.86
+        },
+        "stage_order": [],
+        "program_probability_of_approval": 0.106597344,
+        "evidence": {
+          "development_inputs": {
+            "source_id": "SYNTHETIC-DEMO-DEVELOPMENT",
+            "source_url": null,
+            "citation": null,
+            "source_date": null,
+            "accessed_at": null,
+            "evidence_type": "SYNTHETIC",
+            "grade": "SYNTHETIC",
+            "synthetic": true,
+            "notes": "Fictitious development path and probabilities."
+          }
+        },
+        "assumptions": {
+          "expansion_stage_costs": {
+            "phase_2": 35000000,
+            "phase_3": 85000000,
+            "filing": 12000000
+          },
+          "expansion_stage_durations_years": {
+            "phase_2": 2,
+            "phase_3": 2,
+            "filing": 1
+          },
+          "expansion_stage_success_probabilities": {
+            "phase_2": 0.45,
+            "phase_3": 0.7,
+            "filing": 0.88
+          }
+        }
+      },
+      "evidence": {
+        "program": {
+          "source_id": "SYNTHETIC-DEMO-PROGRAM",
+          "source_url": null,
+          "citation": null,
+          "source_date": null,
+          "accessed_at": null,
+          "evidence_type": "SYNTHETIC",
+          "grade": "SYNTHETIC",
+          "synthetic": true,
+          "notes": "All program data are fictitious and only demonstrate software behavior."
+        }
+      },
+      "assumptions": {
+        "forecast_end_year": 2050,
+        "discount_rate": 0.1,
+        "tax_rate": 0.21,
+        "loe_price_retention": [
+          0.55,
+          0.35,
+          0.25,
+          0.18,
+          0.12
+        ],
+        "loe_volume_retention": [
+          0.75,
+          0.55,
+          0.4,
+          0.3,
+          0.2
+        ],
+        "expansion_price_spillover_rate": 0.03,
+        "shared_commercial_cost_savings_rate": 0.2,
+        "synthetic": true,
+        "decision_grade": "NOT_DECISION_GRADE",
+        "note": "Synthetic fixture for demonstration and testing only."
+      }
+    },
+    "comparables": {
+      "comparables": [
+        {
+          "comparable_id": "syn-comp-primary",
+          "name": "SYNTHETIC AlphaPeptide",
+          "therapeutic_area": "Synthetic immunology",
+          "indication": "Synthetic biomarker-positive chronic syndrome",
+          "target_population": "Adults with severe biomarker-positive synthetic syndrome",
+          "line_of_therapy": "Third line",
+          "geography": "United States",
+          "route": "SUBCUTANEOUS_SELF",
+          "price": {
+            "amount": 148000.0,
+            "currency": "USD",
+            "basis": "LIST",
+            "period": "ANNUAL",
+            "price_year": 2026,
+            "units_per_year": null,
+            "evidence": {
+              "source_id": "SYNTHETIC-DEMO-COMP-A-PRICE",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": "Fictitious list-price fixture; not an observed product price."
+            }
+          },
+          "target_or_mechanism": "SYNTHETIC_TARGET_A",
+          "payer_type": "MIXED",
+          "access_restrictions": [
+            "Synthetic biomarker confirmation"
+          ],
+          "evidence": {},
+          "notes": "Primary-match interface fixture; entirely synthetic."
+        },
+        {
+          "comparable_id": "syn-comp-net-anchor",
+          "name": "SYNTHETIC AlphaPeptide modeled-net scenario",
+          "therapeutic_area": "Synthetic immunology",
+          "indication": "Synthetic biomarker-positive chronic syndrome",
+          "target_population": "Adults with severe biomarker-positive synthetic syndrome",
+          "line_of_therapy": "Third line",
+          "geography": "United States",
+          "route": "SUBCUTANEOUS_SELF",
+          "price": {
+            "amount": 115000.0,
+            "currency": "USD",
+            "basis": "ESTIMATED_NET",
+            "period": "ANNUAL",
+            "price_year": 2026,
+            "units_per_year": null,
+            "evidence": {
+              "source_id": "SYNTHETIC-DEMO-COMP-A-NET-SCENARIO",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": "Fictitious modeled-net scenario; not an observed manufacturer net price."
+            }
+          },
+          "target_or_mechanism": "SYNTHETIC_TARGET_A",
+          "payer_type": "MIXED",
+          "access_restrictions": [
+            "Synthetic biomarker confirmation"
+          ],
+          "evidence": {},
+          "notes": "Synthetic same-context net scenario kept separate from the synthetic list price."
+        },
+        {
+          "comparable_id": "syn-comp-expansion-net",
+          "name": "SYNTHETIC EpsilonPeptide modeled-net scenario",
+          "therapeutic_area": "Synthetic immunology",
+          "indication": "Synthetic refractory inflammatory syndrome",
+          "target_population": "Adults with refractory synthetic inflammatory syndrome",
+          "line_of_therapy": "Second line",
+          "geography": "United States",
+          "route": "SUBCUTANEOUS_SELF",
+          "price": {
+            "amount": 48000.0,
+            "currency": "USD",
+            "basis": "ESTIMATED_NET",
+            "period": "ANNUAL",
+            "price_year": 2026,
+            "units_per_year": null,
+            "evidence": {
+              "source_id": "SYNTHETIC-DEMO-COMP-EXPANSION-NET",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": "Fictitious expansion modeled-net scenario; not observed manufacturer net."
+            }
+          },
+          "target_or_mechanism": "SYNTHETIC_TARGET_E",
+          "payer_type": "MIXED",
+          "access_restrictions": [
+            "Synthetic prior therapy requirement"
+          ],
+          "evidence": {},
+          "notes": "Synthetic expansion match kept separate from all list-price observations."
+        },
+        {
+          "comparable_id": "syn-comp-secondary",
+          "name": "SYNTHETIC BetaPeptide",
+          "therapeutic_area": "Synthetic immunology",
+          "indication": "Synthetic biomarker-positive chronic syndrome",
+          "target_population": "Adults with biomarker-positive synthetic syndrome",
+          "line_of_therapy": "Second line",
+          "geography": "United States",
+          "route": "SUBCUTANEOUS_SELF",
+          "price": {
+            "amount": 121500.0,
+            "currency": "USD",
+            "basis": "PUBLIC_REIMBURSEMENT",
+            "period": "ANNUAL",
+            "price_year": 2026,
+            "units_per_year": null,
+            "evidence": {
+              "source_id": "SYNTHETIC-DEMO-COMP-B-PRICE",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": "Fictitious public-reimbursement fixture; not manufacturer net."
+            }
+          },
+          "target_or_mechanism": "SYNTHETIC_TARGET_B",
+          "payer_type": "PUBLIC_MULTIPAYER",
+          "access_restrictions": [
+            "Synthetic step therapy"
+          ],
+          "evidence": {},
+          "notes": "Secondary-match interface fixture; entirely synthetic."
+        },
+        {
+          "comparable_id": "syn-comp-context",
+          "name": "SYNTHETIC GammaSmallMolecule",
+          "therapeutic_area": "Synthetic immunology",
+          "indication": "Synthetic inflammatory syndrome",
+          "target_population": "Adults with moderate synthetic inflammatory syndrome",
+          "line_of_therapy": "First line",
+          "geography": "United States",
+          "route": "ORAL",
+          "price": {
+            "amount": 76000.0,
+            "currency": "USD",
+            "basis": "ESTIMATED_NET",
+            "period": "ANNUAL",
+            "price_year": 2026,
+            "units_per_year": null,
+            "evidence": {
+              "source_id": "SYNTHETIC-DEMO-COMP-C-PRICE",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": "Fictitious analyst-estimated-net scenario, not an observed net price."
+            }
+          },
+          "target_or_mechanism": "SYNTHETIC_TARGET_C",
+          "payer_type": "COMMERCIAL_INSURANCE",
+          "access_restrictions": [],
+          "evidence": {},
+          "notes": "Context-only interface fixture; entirely synthetic."
+        },
+        {
+          "comparable_id": "syn-comp-excluded",
+          "name": "SYNTHETIC DeltaInfusion",
+          "therapeutic_area": "Synthetic oncology",
+          "indication": "Synthetic solid tumor",
+          "target_population": "Adults with metastatic synthetic solid tumor",
+          "line_of_therapy": "First line",
+          "geography": "United Kingdom",
+          "route": "INTRAVENOUS",
+          "price": {
+            "amount": 92000.0,
+            "currency": "GBP",
+            "basis": "LIST",
+            "period": "COURSE",
+            "price_year": 2026,
+            "units_per_year": 1.0,
+            "evidence": {
+              "source_id": "SYNTHETIC-DEMO-COMP-D-PRICE",
+              "source_url": null,
+              "citation": null,
+              "source_date": null,
+              "accessed_at": null,
+              "evidence_type": "SYNTHETIC",
+              "grade": "SYNTHETIC",
+              "synthetic": true,
+              "notes": "Fictitious cross-currency excluded-comparable fixture."
+            }
+          },
+          "target_or_mechanism": "SYNTHETIC_TARGET_D",
+          "payer_type": "PUBLIC_SINGLE_PAYER",
+          "access_restrictions": [
+            "Synthetic HTA restriction"
+          ],
+          "evidence": {},
+          "notes": "Expected to remain excluded; no implicit FX conversion is allowed."
+        }
+      ]
+    }
+  },
+  "summary": {
+    "program_id": "SYNTHETIC-LAB-001",
+    "recommendation": "NOT_DECISION_GRADE",
+    "deterministic_rnpv": -22890317.423568252,
+    "simulated_mean_rnpv": -69133586.52361934,
+    "p10_rnpv": -118384792.68566507,
+    "p50_rnpv": -69133586.52361934,
+    "p90_rnpv": -19882380.361573614,
+    "probability_positive_rnpv": 0.0,
+    "peak_annual_net_revenue": 26219631.40965059,
+    "peak_annual_net_revenue_year": 2044,
+    "peak_annual_net_revenue_p50": 0.0,
+    "peak_cash_at_risk_p50": 101801455.01415524,
+    "effective_protected_years": 14.5,
+    "value_lost_per_launch_delay_year": 5062695.912050709
+  },
+  "decision_grade": "NOT_DECISION_GRADE",
+  "recommendation": "NOT_DECISION_GRADE",
+  "pricing": [
+    {
+      "indication_id": "syn-indication-a",
+      "decision_grade": "NOT_DECISION_GRADE",
+      "annual_net_price_corridor": {
+        "basis": "ESTIMATED_NET",
+        "currency": "USD",
+        "feasible_lower": 28800.0,
+        "feasible_upper": 74000.0,
+        "likely_lower": 74000.0,
+        "likely_midpoint": 74000.0,
+        "likely_upper": 74000.0,
+        "selected_annual_net_price": 74000.0,
+        "value_based_ceiling": 74000.0,
+        "payer_affordability_ceiling": 1152259.6909442,
+        "commercial_floor": 28800.0,
+        "comparable_anchor_lower": 115000.0,
+        "comparable_anchor_median": 115000.0,
+        "comparable_anchor_upper": 115000.0,
+        "candidate_list_price": 132000.0,
+        "estimated_gross_to_net_fraction": 0.43939393939393945
+      },
+      "comparable_ids_by_tier": {
+        "PRIMARY": [
+          "syn-comp-primary",
+          "syn-comp-net-anchor"
+        ],
+        "SECONDARY": [
+          "syn-comp-secondary"
+        ],
+        "CONTEXT": [
+          "syn-comp-context"
+        ],
+        "EXCLUDED": [
+          "syn-comp-expansion-net",
+          "syn-comp-excluded"
+        ]
+      },
+      "access_estimates": [
+        {
+          "annual_net_price": 28800.0,
+          "expected_patient_oop": 2304.0,
+          "patient_oop_basis": "MANUFACTURER_NET_PROXY",
+          "income_affordable_share": 0.65,
+          "known_affordable_lower_bound": 0.65,
+          "unknown_income_share": 0.0,
+          "system_access_fraction": 0.043077945599999994,
+          "total_access_fraction": 0.028000664639999995,
+          "accessible_patients": 238.70006592307195,
+          "payer_paid_per_patient": 26496.0,
+          "warnings": [
+            {
+              "code": "PATIENT_OOP_NET_PRICE_PROXY",
+              "message": "Annual patient OOP was not supplied; the displayed fallback applies cost share to manufacturer net price and is not decision-grade.",
+              "severity": "ERROR",
+              "field": "annual_patient_oop"
+            }
+          ]
+        },
+        {
+          "annual_net_price": 74000.0,
+          "expected_patient_oop": 5920.0,
+          "patient_oop_basis": "MANUFACTURER_NET_PROXY",
+          "income_affordable_share": 0.2,
+          "known_affordable_lower_bound": 0.2,
+          "unknown_income_share": 0.0,
+          "system_access_fraction": 0.043077945599999994,
+          "total_access_fraction": 0.00861558912,
+          "accessible_patients": 73.44617413017599,
+          "payer_paid_per_patient": 68080.0,
+          "warnings": [
+            {
+              "code": "PATIENT_OOP_NET_PRICE_PROXY",
+              "message": "Annual patient OOP was not supplied; the displayed fallback applies cost share to manufacturer net price and is not decision-grade.",
+              "severity": "ERROR",
+              "field": "annual_patient_oop"
+            }
+          ]
+        },
+        {
+          "annual_net_price": 1152259.6909442,
+          "expected_patient_oop": 92180.775275536,
+          "patient_oop_basis": "MANUFACTURER_NET_PROXY",
+          "income_affordable_share": 0.0,
+          "known_affordable_lower_bound": 0.0,
+          "unknown_income_share": 0.0,
+          "system_access_fraction": 0.043077945599999994,
+          "total_access_fraction": 0.0,
+          "accessible_patients": 0.0,
+          "payer_paid_per_patient": 1060078.915668664,
+          "warnings": [
+            {
+              "code": "PATIENT_OOP_NET_PRICE_PROXY",
+              "message": "Annual patient OOP was not supplied; the displayed fallback applies cost share to manufacturer net price and is not decision-grade.",
+              "severity": "ERROR",
+              "field": "annual_patient_oop"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "indication_id": "syn-indication-b",
+      "decision_grade": "NOT_DECISION_GRADE",
+      "annual_net_price_corridor": {
+        "basis": "ESTIMATED_NET",
+        "currency": "USD",
+        "feasible_lower": 27600.0,
+        "feasible_upper": 51250.0,
+        "likely_lower": 48000.0,
+        "likely_midpoint": 48000.0,
+        "likely_upper": 48000.0,
+        "selected_annual_net_price": 48000.0,
+        "value_based_ceiling": 51250.0,
+        "payer_affordability_ceiling": 892023.81985312,
+        "commercial_floor": 27600.0,
+        "comparable_anchor_lower": 48000.0,
+        "comparable_anchor_median": 48000.0,
+        "comparable_anchor_upper": 48000.0,
+        "candidate_list_price": 108000.0,
+        "estimated_gross_to_net_fraction": 0.5555555555555556
+      },
+      "comparable_ids_by_tier": {
+        "PRIMARY": [
+          "syn-comp-expansion-net"
+        ],
+        "SECONDARY": [],
+        "CONTEXT": [
+          "syn-comp-secondary",
+          "syn-comp-net-anchor"
+        ],
+        "EXCLUDED": [
+          "syn-comp-context",
+          "syn-comp-primary",
+          "syn-comp-excluded"
+        ]
+      },
+      "access_estimates": [
+        {
+          "annual_net_price": 27600.0,
+          "expected_patient_oop": 2208.0,
+          "patient_oop_basis": "MANUFACTURER_NET_PROXY",
+          "income_affordable_share": null,
+          "known_affordable_lower_bound": 0.0,
+          "unknown_income_share": 1.0,
+          "system_access_fraction": 0.029581440000000004,
+          "total_access_fraction": null,
+          "accessible_patients": null,
+          "payer_paid_per_patient": 25392.0,
+          "warnings": [
+            {
+              "code": "PATIENT_OOP_NET_PRICE_PROXY",
+              "message": "Annual patient OOP was not supplied; the displayed fallback applies cost share to manufacturer net price and is not decision-grade.",
+              "severity": "ERROR",
+              "field": "annual_patient_oop"
+            },
+            {
+              "code": "MISSING_INCOME_BANDS",
+              "message": "Income-mediated access is unknown; no wealth default was applied.",
+              "severity": "WARNING",
+              "field": "income_bands"
+            }
+          ]
+        },
+        {
+          "annual_net_price": 48000.0,
+          "expected_patient_oop": 3840.0,
+          "patient_oop_basis": "MANUFACTURER_NET_PROXY",
+          "income_affordable_share": null,
+          "known_affordable_lower_bound": 0.0,
+          "unknown_income_share": 1.0,
+          "system_access_fraction": 0.029581440000000004,
+          "total_access_fraction": null,
+          "accessible_patients": null,
+          "payer_paid_per_patient": 44160.0,
+          "warnings": [
+            {
+              "code": "PATIENT_OOP_NET_PRICE_PROXY",
+              "message": "Annual patient OOP was not supplied; the displayed fallback applies cost share to manufacturer net price and is not decision-grade.",
+              "severity": "ERROR",
+              "field": "annual_patient_oop"
+            },
+            {
+              "code": "MISSING_INCOME_BANDS",
+              "message": "Income-mediated access is unknown; no wealth default was applied.",
+              "severity": "WARNING",
+              "field": "income_bands"
+            }
+          ]
+        },
+        {
+          "annual_net_price": 51250.0,
+          "expected_patient_oop": 4100.0,
+          "patient_oop_basis": "MANUFACTURER_NET_PROXY",
+          "income_affordable_share": null,
+          "known_affordable_lower_bound": 0.0,
+          "unknown_income_share": 1.0,
+          "system_access_fraction": 0.029581440000000004,
+          "total_access_fraction": null,
+          "accessible_patients": null,
+          "payer_paid_per_patient": 47150.0,
+          "warnings": [
+            {
+              "code": "PATIENT_OOP_NET_PRICE_PROXY",
+              "message": "Annual patient OOP was not supplied; the displayed fallback applies cost share to manufacturer net price and is not decision-grade.",
+              "severity": "ERROR",
+              "field": "annual_patient_oop"
+            },
+            {
+              "code": "MISSING_INCOME_BANDS",
+              "message": "Income-mediated access is unknown; no wealth default was applied.",
+              "severity": "WARNING",
+              "field": "income_bands"
+            }
+          ]
+        },
+        {
+          "annual_net_price": 892023.81985312,
+          "expected_patient_oop": 71361.9055882496,
+          "patient_oop_basis": "MANUFACTURER_NET_PROXY",
+          "income_affordable_share": null,
+          "known_affordable_lower_bound": 0.0,
+          "unknown_income_share": 1.0,
+          "system_access_fraction": 0.029581440000000004,
+          "total_access_fraction": null,
+          "accessible_patients": null,
+          "payer_paid_per_patient": 820661.9142648705,
+          "warnings": [
+            {
+              "code": "PATIENT_OOP_NET_PRICE_PROXY",
+              "message": "Annual patient OOP was not supplied; the displayed fallback applies cost share to manufacturer net price and is not decision-grade.",
+              "severity": "ERROR",
+              "field": "annual_patient_oop"
+            },
+            {
+              "code": "MISSING_INCOME_BANDS",
+              "message": "Income-mediated access is unknown; no wealth default was applied.",
+              "severity": "WARNING",
+              "field": "income_bands"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "access": [
+    {
+      "indication_id": "syn-indication-a",
+      "coverage_rate": 0.74,
+      "authorization_rate": 0.68,
+      "patient_affordability_rate": 0.2,
+      "initiation_rate": 0.82,
+      "provider_capacity_rate": 0.87,
+      "peak_adoption_rate": 0.65,
+      "annual_persistence_rate": 0.78,
+      "dose_intensity": 0.94
+    },
+    {
+      "indication_id": "syn-indication-b",
+      "coverage_rate": 0.71,
+      "authorization_rate": 0.62,
+      "patient_affordability_rate": 0.7,
+      "initiation_rate": 0.8,
+      "provider_capacity_rate": 0.84,
+      "peak_adoption_rate": 0.6,
+      "annual_persistence_rate": 0.72,
+      "dose_intensity": 0.92
+    }
+  ],
+  "cash_flow": {
+    "patent_expiry_year": 2045.5,
+    "effective_exclusivity_end_year": 2045.5,
+    "effective_protected_years": 14.5,
+    "expansion_effective_protected_years": 11.5,
+    "initial_approval_probability": 0.106597344,
+    "expansion_approval_probability": 0.029548783756799996,
+    "annual_cash_flows": [
+      {
+        "year": 2026,
+        "protected": true,
+        "protected_fraction": 1.0,
+        "initial_new_starts": 0.0,
+        "expansion_new_starts": 0.0,
+        "initial_active_patients": 0.0,
+        "expansion_active_patients": 0.0,
+        "gross_revenue": 0.0,
+        "gross_to_net_deductions": 0.0,
+        "net_revenue": 0.0,
+        "protected_net_revenue": 0.0,
+        "post_loe_net_revenue": 0.0,
+        "cogs": 0.0,
+        "commercial_costs": 0.0,
+        "development_costs": 0.0,
+        "taxes": 0.0,
+        "free_cash_flow": 0.0,
+        "discounted_free_cash_flow": 0.0
+      },
+      {
+        "year": 2027,
+        "protected": true,
+        "protected_fraction": 1.0,
+        "initial_new_starts": 0.0,
+        "expansion_new_starts": 0.0,
+        "initial_active_patients": 0.0,
+        "expansion_active_patients": 0.0,
+        "gross_revenue": 0.0,
+        "gross_to_net_deductions": 0.0,
+        "net_revenue": 0.0,
+        "protected_net_revenue": 0.0,
+        "post_loe_net_revenue": 0.0,
+        "cogs": 0.0,
+        "commercial_costs": 0.0,
+        "development_costs": 9000000.0,
+        "taxes": 0.0,
+        "free_cash_flow": -9000000.0,
+        "discounted_free_cash_flow": -8181818.181818181
+      },
+      {
+        "year": 2028,
+        "protected": true,
+        "protected_fraction": 1.0,
+        "initial_new_starts": 0.0,
+        "expansion_new_starts": 0.0,
+        "initial_active_patients": 0.0,
+        "expansion_active_patients": 0.0,
+        "gross_revenue": 0.0,
+        "gross_to_net_deductions": 0.0,
+        "net_revenue": 0.0,
+        "protected_net_revenue": 0.0,
+        "post_loe_net_revenue": 0.0,
+        "cogs": 0.0,
+        "commercial_costs": 0.0,
+        "development_costs": 12600000.0,
+        "taxes": 0.0,
+        "free_cash_flow": -12600000.0,
+        "discounted_free_cash_flow": -10413223.140495867
+      },
+      {
+        "year": 2029,
+        "protected": true,
+        "protected_fraction": 1.0,
+        "initial_new_starts": 0.0,
+        "expansion_new_starts": 0.0,
+        "initial_active_patients": 0.0,
+        "expansion_active_patients": 0.0,
+        "gross_revenue": 0.0,
+        "gross_to_net_deductions": 0.0,
+        "net_revenue": 0.0,
+        "protected_net_revenue": 0.0,
+        "post_loe_net_revenue": 0.0,
+        "cogs": 0.0,
+        "commercial_costs": 0.0,
+        "development_costs": 0.0,
+        "taxes": 0.0,
+        "free_cash_flow": 0.0,
+        "discounted_free_cash_flow": 0.0
+      },
+      {
+        "year": 2030,
+        "protected": true,
+        "protected_fraction": 1.0,
+        "initial_new_starts": 0.0,
+        "expansion_new_starts": 0.0,
+        "initial_active_patients": 0.0,
+        "expansion_active_patients": 0.0,
+        "gross_revenue": 0.0,
+        "gross_to_net_deductions": 0.0,
+        "net_revenue": 0.0,
+        "protected_net_revenue": 0.0,
+        "post_loe_net_revenue": 0.0,
+        "cogs": 0.0,
+        "commercial_costs": 0.0,
+        "development_costs": 18228000.0,
+        "taxes": 0.0,
+        "free_cash_flow": -18228000.0,
+        "discounted_free_cash_flow": -12449969.264394505
+      },
+      {
+        "year": 2031,
+        "protected": true,
+        "protected_fraction": 1.0,
+        "initial_new_starts": 2.115991105199533,
+        "expansion_new_starts": 0.0,
+        "initial_active_patients": 2.115991105199533,
+        "expansion_active_patients": 0.0,
+        "gross_revenue": 262552.176333158,
+        "gross_to_net_deductions": 115363.83505547853,
+        "net_revenue": 147188.34127767946,
+        "protected_net_revenue": 147188.34127767946,
+        "post_loe_net_revenue": 0.0,
+        "cogs": 14321.027799990437,
+        "commercial_costs": 1922560.9759893592,
+        "development_costs": 23193307.2,
+        "taxes": 0.0,
+        "free_cash_flow": -24983000.86251167,
+        "discounted_free_cash_flow": -15512477.949538754
+      },
+      {
+        "year": 2032,
+        "protected": true,
+        "protected_fraction": 1.0,
+        "initial_new_starts": 9.862896131553585,
+        "expansion_new_starts": 0.0,
+        "initial_active_patients": 11.513369193609222,
+        "expansion_active_patients": 0.0,
+        "gross_revenue": 1428578.8495430322,
+        "gross_to_net_deductions": 627708.8884355748,
+        "net_revenue": 800869.9611074574,
+        "protected_net_revenue": 800869.9611074574,
+        "post_loe_net_revenue": 0.0,
+        "cogs": 77922.48270234722,
+        "commercial_costs": 1939476.2565484967,
+        "development_costs": 0.0,
+        "taxes": 0.0,
+        "free_cash_flow": -1216528.7781433864,
+        "discounted_free_cash_flow": -686698.7804221169
+      },
+      {
+        "year": 2033,
+        "protected": true,
+        "protected_fraction": 1.0,
+        "initial_new_starts": 23.56701728983205,
+        "expansion_new_starts": 0.0,
+        "initial_active_patients": 32.54744526084725,
+        "expansion_active_patients": 0.0,
+        "gross_revenue": 4038487.0079659265,
+        "gross_to_net_deductions": 1774486.7156213922,
+        "net_revenue": 2264000.2923445343,
+        "protected_net_revenue": 2264000.2923445343,
+        "post_loe_net_revenue": 0.0,
+        "cogs": 220281.10952541415,
+        "commercial_costs": 1977337.593469525,
+        "development_costs": 3730907.04,
+        "taxes": 13940.133763414977,
+        "free_cash_flow": -3678465.58441382,
+        "discounted_free_cash_flow": -1887634.4772742116
+      },
+      {
+        "year": 2034,
+        "protected": true,
+        "protected_fraction": 1.0,
+        "initial_new_starts": 34.90584116457975,
+        "expansion_new_starts": 1.906226951320739,
+        "initial_active_patients": 59.62432136422698,
+        "expansion_active_patients": 1.906226951320739,
+        "gross_revenue": 7522181.816470354,
+        "gross_to_net_deductions": 3326542.386315231,
+        "net_revenue": 4195639.430155123,
+        "protected_net_revenue": 4195639.430155123,
+        "post_loe_net_revenue": 0.0,
+        "cogs": 415638.13568007224,
+        "commercial_costs": 2241686.5539315497,
+        "development_costs": 4480286.368319999,
+        "taxes": 323046.0955141352,
+        "free_cash_flow": -3265017.7232906334,
+        "discounted_free_cash_flow": -1523154.8644306606
+      },
+      {
+        "year": 2035,
+        "protected": true,
+        "protected_fraction": 1.0,
+        "initial_new_starts": 43.74095158327542,
+        "expansion_new_starts": 9.457611401795162,
+        "initial_active_patients": 89.7629225762171,
+        "expansion_active_patients": 10.830094806746095,
+        "gross_revenue": 12091665.406581616,
+        "gross_to_net_deductions": 5434253.512428095,
+        "net_revenue": 6657411.894153521,
+        "protected_net_revenue": 6657411.894153521,
+        "post_loe_net_revenue": 0.0,
+        "cogs": 676264.9018290616,
+        "commercial_costs": 2309321.83789627,
+        "development_costs": 0.0,
+        "taxes": 771083.2824299199,
+        "free_cash_flow": 2900741.87199827,
+        "discounted_free_cash_flow": 1230197.719427809
+      },
+      {
+        "year": 2036,
+        "protected": true,
+        "protected_fraction": 1.0,
+        "initial_new_starts": 48.025988901365125,
+        "expansion_new_starts": 22.05463654337527,
+        "initial_active_patients": 117.50855634587612,
+        "expansion_active_patients": 29.852304804232457,
+        "gross_revenue": 17339896.725740474,
+        "gross_to_net_deductions": 7953258.909135086,
+        "net_revenue": 9386637.816605387,
+        "protected_net_revenue": 9386637.816605385,
+        "post_loe_net_revenue": 0.0,
+        "cogs": 984800.3402461571,
+        "commercial_costs": 2387797.293677886,
+        "development_costs": 0.0,
+        "taxes": 1262948.438363082,
+        "free_cash_flow": 4751091.744318262,
+        "discounted_free_cash_flow": 1831751.5394859528
+      },
+      {
+        "year": 2037,
+        "protected": true,
+        "protected_fraction": 1.0,
+        "initial_new_starts": 52.18696902674208,
+        "expansion_new_starts": 32.906286284765905,
+        "initial_active_patients": 143.26499386395693,
+        "expansion_active_patients": 54.39994574381328,
+        "gross_revenue": 22875837.729854647,
+        "gross_to_net_deductions": 10660542.511446938,
+        "net_revenue": 12215295.21840771,
+        "protected_net_revenue": 12215295.21840771,
+        "post_loe_net_revenue": 0.0,
+        "cogs": 1314948.3340529872,
+        "commercial_costs": 2470980.3426198023,
+        "development_costs": 0.0,
+        "taxes": 1770166.973764333,
+        "free_cash_flow": 6659199.567970586,
+        "discounted_free_cash_flow": 2334008.824002813
+      },
+      {
+        "year": 2038,
+        "protected": true,
+        "protected_fraction": 1.0,
+        "initial_new_starts": 56.23059242403421,
+        "expansion_new_starts": 38.75710161683506,
+        "initial_active_patients": 167.3538028291229,
+        "expansion_active_patients": 77.9250625523806,
+        "gross_revenue": 28107979.758830067,
+        "gross_to_net_deductions": 13222890.951310247,
+        "net_revenue": 14885088.80751982,
+        "protected_net_revenue": 14885088.807519818,
+        "post_loe_net_revenue": 0.0,
+        "cogs": 1627318.8346300158,
+        "commercial_costs": 2549627.873969952,
+        "development_costs": 0.0,
+        "taxes": 2248709.840773169,
+        "free_cash_flow": 8459432.258146683,
+        "discounted_free_cash_flow": 2695435.817778645
+      },
+      {
+        "year": 2039,
+        "protected": true,
+        "protected_fraction": 1.0,
+        "initial_new_starts": 60.163257793996365,
+        "expansion_new_starts": 40.2875746949427,
+        "initial_active_patients": 190.03213379829245,
+        "expansion_active_patients": 96.39361973265673,
+        "gross_revenue": 32679175.35669649,
+        "gross_to_net_deductions": 15438212.499980614,
+        "net_revenue": 17240962.856715877,
+        "protected_net_revenue": 17240962.856715877,
+        "post_loe_net_revenue": 0.0,
+        "cogs": 1898044.179609748,
+        "commercial_costs": 2618151.7054848718,
+        "development_costs": 0.0,
+        "taxes": 2672201.064040464,
+        "free_cash_flow": 10052565.907580793,
+        "discounted_free_cash_flow": 2911870.2683815635
+      },
+      {
+        "year": 2040,
+        "protected": true,
+        "protected_fraction": 1.0,
+        "initial_new_starts": 63.991076287341464,
+        "expansion_new_starts": 41.691356010992656,
+        "initial_active_patients": 211.50660759613552,
+        "expansion_active_patients": 111.0947622185055,
+        "gross_revenue": 36739101.82443652,
+        "gross_to_net_deductions": 17386707.1605182,
+        "net_revenue": 19352394.663918324,
+        "protected_net_revenue": 19352394.663918328,
+        "post_loe_net_revenue": 0.0,
+        "cogs": 2136706.270773718,
+        "commercial_costs": 2678857.472049762,
+        "development_costs": 0.0,
+        "taxes": 3052734.4934299174,
+        "free_cash_flow": 11484096.427664928,
+        "discounted_free_cash_flow": 3024121.5168689745
+      },
+      {
+        "year": 2041,
+        "protected": true,
+        "protected_fraction": 1.0,
+        "initial_new_starts": 67.71988505681792,
+        "expansion_new_starts": 42.98482058244346,
+        "initial_active_patients": 231.94416089629365,
+        "expansion_active_patients": 122.97304937976743,
+        "gross_revenue": 40399341.323479176,
+        "gross_to_net_deductions": 19127978.332932755,
+        "net_revenue": 21271362.99054642,
+        "protected_net_revenue": 21271362.990546416,
+        "post_loe_net_revenue": 0.0,
+        "cogs": 2350430.998408879,
+        "commercial_costs": 2733462.49873194,
+        "development_costs": 0.0,
+        "taxes": 3399368.5936151757,
+        "free_cash_flow": 12788100.899790423,
+        "discounted_free_cash_flow": 3061369.6819404713
+      },
+      {
+        "year": 2042,
+        "protected": true,
+        "protected_fraction": 1.0,
+        "initial_new_starts": 71.3552601784349,
+        "expansion_new_starts": 44.1823153067833,
+        "initial_active_patients": 251.48051855268548,
+        "expansion_active_patients": 132.72291086021585,
+        "gross_revenue": 43743527.214084335,
+        "gross_to_net_deductions": 20706548.54012148,
+        "net_revenue": 23036978.673962854,
+        "protected_net_revenue": 23036978.673962858,
+        "post_loe_net_revenue": 0.0,
+        "cogs": 2544545.1877052253,
+        "commercial_costs": 2783252.7347341175,
+        "development_costs": 0.0,
+        "taxes": 3718927.957819937,
+        "free_cash_flow": 13990252.793703573,
+        "discounted_free_cash_flow": 3044686.624979419
+      },
+      {
+        "year": 2043,
+        "protected": true,
+        "protected_fraction": 1.0,
+        "initial_new_starts": 74.90252897129501,
+        "expansion_new_starts": 45.29641100276612,
+        "initial_active_patients": 270.22681420115595,
+        "expansion_active_patients": 140.85690682212152,
+        "gross_revenue": 46834737.775621206,
+        "gross_to_net_deductions": 22155872.395660754,
+        "net_revenue": 24678865.37996045,
+        "protected_net_revenue": 24678865.379960448,
+        "post_loe_net_revenue": 0.0,
+        "cogs": 2723054.723020251,
+        "commercial_costs": 2829197.0608442225,
+        "development_costs": 0.0,
+        "taxes": 4016588.8551801546,
+        "free_cash_flow": 15110024.74091582,
+        "discounted_free_cash_flow": 2989437.841939338
+      },
+      {
+        "year": 2044,
+        "protected": true,
+        "protected_fraction": 1.0,
+        "initial_new_starts": 78.36678174411922,
+        "expansion_new_starts": 46.33812313816285,
+        "initial_active_patients": 288.2747659450421,
+        "expansion_active_patients": 147.75509605009034,
+        "gross_revenue": 49720891.27959574,
+        "gross_to_net_deductions": 23501259.86994515,
+        "net_revenue": 26219631.40965059,
+        "protected_net_revenue": 26219631.40965059,
+        "post_loe_net_revenue": 0.0,
+        "cogs": 2888992.9656420182,
+        "commercial_costs": 2872030.6578251715,
+        "development_costs": 0.0,
+        "taxes": 4296307.635098514,
+        "free_cash_flow": 16162300.151084889,
+        "discounted_free_cash_flow": 2906931.747323628
+      },
+      {
+        "year": 2045,
+        "protected": false,
+        "protected_fraction": 0.5,
+        "initial_new_starts": 81.75288299523885,
+        "expansion_new_starts": 47.31710513448573,
+        "initial_active_patients": 267.4881339075054,
+        "expansion_active_patients": 134.48817750423194,
+        "gross_revenue": 37034823.863905475,
+        "gross_to_net_deductions": 17488168.704488914,
+        "net_revenue": 19546655.15941656,
+        "protected_net_revenue": 13838339.935870133,
+        "post_loe_net_revenue": 5708315.2235464305,
+        "cogs": 2664090.641082861,
+        "commercial_costs": 2814714.342338817,
+        "development_costs": 0.0,
+        "taxes": 2954248.536958925,
+        "free_cash_flow": 11113601.639035957,
+        "discounted_free_cash_flow": 1817162.674845509
+      },
+      {
+        "year": 2046,
+        "protected": false,
+        "protected_fraction": 0.0,
+        "initial_new_starts": 85.06548209157974,
+        "expansion_new_starts": 48.24181765578517,
+        "initial_active_patients": 209.6697467211167,
+        "expansion_active_patients": 103.28914384423813,
+        "gross_revenue": 16642491.167648103,
+        "gross_to_net_deductions": 7850771.302117497,
+        "net_revenue": 8791719.865530606,
+        "protected_net_revenue": 0.0,
+        "post_loe_net_revenue": 8791719.865530606,
+        "cogs": 2074724.3309317415,
+        "commercial_costs": 2663842.694913327,
+        "development_costs": 0.0,
+        "taxes": 851162.0963339629,
+        "free_cash_flow": 3201990.7433515745,
+        "discounted_free_cash_flow": 475955.52099150204
+      },
+      {
+        "year": 2047,
+        "protected": false,
+        "protected_fraction": 0.0,
+        "initial_new_starts": 88.30902345097313,
+        "expansion_new_starts": 49.11967686531353,
+        "initial_active_patients": 160.99343580553716,
+        "expansion_active_patients": 77.67782681060768,
+        "gross_revenue": 8405935.230923748,
+        "gross_to_net_deductions": 3961276.7459941353,
+        "net_revenue": 4444658.484929612,
+        "protected_net_revenue": 0.0,
+        "post_loe_net_revenue": 4444658.484929613,
+        "cogs": 1582702.4181256131,
+        "commercial_costs": 2537808.359714838,
+        "development_costs": 0.0,
+        "taxes": 68071.01848872371,
+        "free_cash_flow": 256076.68860043684,
+        "discounted_free_cash_flow": 34603.78913270704
+      },
+      {
+        "year": 2048,
+        "protected": false,
+        "protected_fraction": 0.0,
+        "initial_new_starts": 91.48775625099171,
+        "expansion_new_starts": 49.95718426313768,
+        "initial_active_patients": 124.1945278979391,
+        "expansion_active_patients": 58.695145768462666,
+        "gross_revenue": 4607381.855274531,
+        "gross_to_net_deductions": 2169023.2163924556,
+        "net_revenue": 2438358.6388820754,
+        "protected_net_revenue": 0.0,
+        "post_loe_net_revenue": 2438358.6388820754,
+        "cogs": 1213145.350151453,
+        "commercial_costs": 2443096.3039179444,
+        "development_costs": 0.0,
+        "taxes": 0.0,
+        "free_cash_flow": -1217883.015187322,
+        "discounted_free_cash_flow": -149612.02469952602
+      },
+      {
+        "year": 2049,
+        "protected": false,
+        "protected_fraction": 0.0,
+        "initial_new_starts": 94.6057436864281,
+        "expansion_new_starts": 50.76004039312768,
+        "initial_active_patients": 92.58328291467431,
+        "expansion_active_patients": 42.87608506491987,
+        "gross_revenue": 2422267.772745737,
+        "gross_to_net_deductions": 1139213.2013900355,
+        "net_revenue": 1283054.5713557014,
+        "protected_net_revenue": 0.0,
+        "post_loe_net_revenue": 1283054.5713557017,
+        "cogs": 898781.046758627,
+        "commercial_costs": 2362467.4718927536,
+        "development_costs": 0.0,
+        "taxes": 0.0,
+        "free_cash_flow": -1978193.9472956792,
+        "discounted_free_cash_flow": -220921.05579371218
+      },
+      {
+        "year": 2050,
+        "protected": false,
+        "protected_fraction": 0.0,
+        "initial_new_starts": 97.66687179649975,
+        "expansion_new_starts": 51.533244423429934,
+        "initial_active_patients": 38.54437842158041,
+        "expansion_active_patients": 17.501636941039916,
+        "gross_revenue": 771692.5239788035,
+        "gross_to_net_deductions": 362589.900925572,
+        "net_revenue": 409102.62305323157,
+        "protected_net_revenue": 0.0,
+        "post_loe_net_revenue": 409102.62305323157,
+        "cogs": 371968.7444589776,
+        "commercial_costs": 2227135.7716193646,
+        "development_costs": 0.0,
+        "taxes": 0.0,
+        "free_cash_flow": -2190001.8930251105,
+        "discounted_free_cash_flow": -222341.25179905363
+      }
+    ],
+    "npv": -22890317.423568252,
+    "peak_annual_net_revenue": 26219631.40965059,
+    "peak_annual_net_revenue_year": 2044,
+    "peak_cash_at_risk": 72971012.9483595,
+    "value_lost_per_launch_delay_year": 5062695.912050709,
+    "value_decomposition": {
+      "gross_revenue": 413668546.65970916,
+      "gross_to_net_deductions": 194402669.58021557,
+      "protected_net_revenue": 196190667.6721959,
+      "post_loe_net_revenue": 23075209.407297656,
+      "cogs": 28678682.023135163,
+      "commercial_costs": 49362805.80216997,
+      "development_costs": 71232500.60832,
+      "taxes": 31419505.01557383,
+      "initial_indication_discounted_fcf": -25215095.669779718,
+      "expansion_increment_discounted_fcf": 2324778.2462114627
+    },
+    "warnings": [
+      "Critical inputs are not fully evidence-supported; result is screening-only."
+    ]
+  },
+  "uncertainty": {
+    "seed": 42,
+    "simulations": 2,
+    "rng_bit_generator": "PCG64",
+    "numpy_version": "2.4.4",
+    "draw_order_contract_version": "1.0.0",
+    "commercial_driver_correlation": "one shared draw per driver across indications",
+    "rnpv": {
+      "mean": -69133586.52361934,
+      "p10": -118384792.68566507,
+      "p50": -69133586.52361934,
+      "p90": -19882380.361573614,
+      "probability_positive": 0.0
+    },
+    "protected_net_revenue": {
+      "mean": 0.0,
+      "p10": 0.0,
+      "p50": 0.0,
+      "p90": 0.0,
+      "probability_positive": null
+    },
+    "post_loe_net_revenue": {
+      "mean": 0.0,
+      "p10": 0.0,
+      "p50": 0.0,
+      "p90": 0.0,
+      "probability_positive": null
+    },
+    "peak_annual_net_revenue": {
+      "mean": 0.0,
+      "p10": 0.0,
+      "p50": 0.0,
+      "p90": 0.0,
+      "probability_positive": null
+    },
+    "peak_cash_at_risk": {
+      "mean": 101801455.01415524,
+      "p10": 27021520.365365777,
+      "p50": 101801455.01415524,
+      "p90": 176581389.66294473,
+      "probability_positive": null
+    },
+    "effective_protected_years": {
+      "mean": 13.0,
+      "p10": 12.6,
+      "p50": 13.0,
+      "p90": 13.4,
+      "probability_positive": null
+    }
+  },
+  "calculation_steps": [
+    {
+      "step_id": "pricing:syn-indication-a:value_ceiling",
+      "label": "syn-indication-a: Value-based annual net-price ceiling",
+      "formula": "max(0, (WTP * incremental QALYs + comparator total cost - new non-drug total cost) / treatment years)",
+      "inputs": {
+        "incremental_qalys": 0.82,
+        "wtp_per_qaly": 150000.0,
+        "comparator_total_cost": 240000.0,
+        "new_non_drug_total_cost": 215000.0,
+        "expected_treatment_years": 2.0
+      },
+      "result": 74000.0,
+      "unit": "USD/patient-year",
+      "evidence_keys": [
+        "incremental_qalys",
+        "willingness_to_pay_per_qaly",
+        "comparator_total_cost",
+        "new_non_drug_total_cost",
+        "expected_treatment_years"
+      ],
+      "notes": [
+        "Patient income is deliberately absent from this formula."
+      ]
+    },
+    {
+      "step_id": "pricing:syn-indication-a:payer_affordability",
+      "label": "syn-indication-a: Payer affordability ceiling",
+      "formula": "payer budget per patient + explicit annual patient OOP; when OOP is missing, the non-decision-grade fallback divides payer budget by (1 - cost share)",
+      "inputs": {
+        "annual_comparator_drug_cost": 95000.0,
+        "annual_non_drug_cost_offsets": 12000.0,
+        "annual_payer_budget_limit": 350000000.0,
+        "eligible_patients": 8524.8,
+        "system_access_fraction": 0.043077945599999994,
+        "patient_cost_share_fraction": 0.08,
+        "annual_patient_oop": null
+      },
+      "result": 1152259.6909442,
+      "unit": "USD/patient-year",
+      "evidence_keys": [
+        "annual_comparator_drug_cost",
+        "annual_non_drug_cost_offsets",
+        "annual_payer_budget_limit",
+        "eligible_patients"
+      ],
+      "notes": [
+        "Income-mediated non-initiation is reported separately, not used to raise price."
+      ]
+    },
+    {
+      "step_id": "pricing:syn-indication-a:commercial_floor",
+      "label": "syn-indication-a: Commercial viability floor",
+      "formula": "annual manufacturer cost / (1 - required gross margin)",
+      "inputs": {
+        "annual_manufacturer_cost": 7200.0,
+        "required_gross_margin_fraction": 0.75
+      },
+      "result": 28800.0,
+      "unit": "USD/patient-year",
+      "evidence_keys": [
+        "annual_manufacturer_cost",
+        "required_gross_margin_fraction"
+      ],
+      "notes": [
+        "This is a manufacturer constraint, not payer willingness to pay."
+      ]
+    },
+    {
+      "step_id": "pricing:syn-indication-b:value_ceiling",
+      "label": "syn-indication-b: Value-based annual net-price ceiling",
+      "formula": "max(0, (WTP * incremental QALYs + comparator total cost - new non-drug total cost) / treatment years)",
+      "inputs": {
+        "incremental_qalys": 0.55,
+        "wtp_per_qaly": 150000.0,
+        "comparator_total_cost": 165000.0,
+        "new_non_drug_total_cost": 145000.0,
+        "expected_treatment_years": 2.0
+      },
+      "result": 51250.0,
+      "unit": "USD/patient-year",
+      "evidence_keys": [
+        "incremental_qalys",
+        "willingness_to_pay_per_qaly",
+        "comparator_total_cost",
+        "new_non_drug_total_cost",
+        "expected_treatment_years"
+      ],
+      "notes": [
+        "Patient income is deliberately absent from this formula."
+      ]
+    },
+    {
+      "step_id": "pricing:syn-indication-b:payer_affordability",
+      "label": "syn-indication-b: Payer affordability ceiling",
+      "formula": "payer budget per patient + explicit annual patient OOP; when OOP is missing, the non-decision-grade fallback divides payer budget by (1 - cost share)",
+      "inputs": {
+        "annual_comparator_drug_cost": 70000.0,
+        "annual_non_drug_cost_offsets": 8500.0,
+        "annual_payer_budget_limit": 300000000.0,
+        "eligible_patients": 13664.8,
+        "system_access_fraction": 0.029581440000000004,
+        "patient_cost_share_fraction": 0.08,
+        "annual_patient_oop": null
+      },
+      "result": 892023.81985312,
+      "unit": "USD/patient-year",
+      "evidence_keys": [
+        "annual_comparator_drug_cost",
+        "annual_non_drug_cost_offsets",
+        "annual_payer_budget_limit",
+        "eligible_patients"
+      ],
+      "notes": [
+        "Income-mediated non-initiation is reported separately, not used to raise price."
+      ]
+    },
+    {
+      "step_id": "pricing:syn-indication-b:commercial_floor",
+      "label": "syn-indication-b: Commercial viability floor",
+      "formula": "annual manufacturer cost / (1 - required gross margin)",
+      "inputs": {
+        "annual_manufacturer_cost": 6900.0,
+        "required_gross_margin_fraction": 0.75
+      },
+      "result": 27600.0,
+      "unit": "USD/patient-year",
+      "evidence_keys": [
+        "annual_manufacturer_cost",
+        "required_gross_margin_fraction"
+      ],
+      "notes": [
+        "This is a manufacturer constraint, not payer willingness to pay."
+      ]
+    },
+    {
+      "step_id": "patent_clock",
+      "label": "Effective protected commercial window",
+      "formula": "max(0, max(filing year + 20 + capped extension, regulatory exclusivity end) - initial launch year)",
+      "inputs": {
+        "filing_year": 2024,
+        "base_term_years": 20,
+        "extension_years": 1.5,
+        "regulatory_exclusivity_end_year": null,
+        "effective_exclusivity_end_year": 2045.5,
+        "launch_year": 2031
+      },
+      "result": 14.5,
+      "unit": "years",
+      "evidence_keys": [],
+      "notes": [
+        "Label expansion uses the same clock and cannot reset it."
+      ]
+    },
+    {
+      "step_id": "patient_vintages",
+      "label": "Coverage-adjusted persistent patient-years",
+      "formula": "add each backlog/incident cohort once to the untreated pool; apply coverage, authorization, patient affordability, conditional initiation, provider capacity, and adoption; carry non-starters forward; then sum starts by vintage * persistence^age * dose intensity",
+      "inputs": {
+        "annual_rows": 25
+      },
+      "result": 4321.867905052364,
+      "unit": "patient-years",
+      "evidence_keys": [],
+      "notes": []
+    },
+    {
+      "step_id": "protected_net_revenue",
+      "label": "Protected manufacturer net revenue",
+      "formula": "time-weighted gross revenue - gross-to-net deductions before the effective exclusivity end, prorating fractional transition-year protection",
+      "inputs": {
+        "gross_revenue": 413668546.65970916,
+        "gross_to_net_deductions": 194402669.58021557
+      },
+      "result": 196190667.6721959,
+      "unit": "USD",
+      "evidence_keys": [],
+      "notes": []
+    },
+    {
+      "step_id": "risk_adjusted_npv",
+      "label": "Risk-adjusted manufacturer NPV",
+      "formula": "sum(expected annual free cash flow / (1 + discount rate)^year offset)",
+      "inputs": {
+        "discount_rate": 0.1,
+        "initial_approval_probability": 0.106597344,
+        "expansion_approval_probability": 0.029548783756799996
+      },
+      "result": -22890317.423568252,
+      "unit": "USD",
+      "evidence_keys": [],
+      "notes": []
+    },
+    {
+      "step_id": "peak_annual_net_revenue",
+      "label": "Peak annual manufacturer net revenue",
+      "formula": "max(annual cash-flow ledger net revenue)",
+      "inputs": {
+        "peak_year": 2044,
+        "annual_rows": 25
+      },
+      "result": 26219631.40965059,
+      "unit": "USD/year",
+      "evidence_keys": [],
+      "notes": [
+        "Derived from the same annual ledger used for NPV."
+      ]
+    },
+    {
+      "step_id": "launch_delay_cost",
+      "label": "Value lost for one year of commercial launch delay",
+      "formula": "base NPV - NPV with all launches delayed one year and patent clock unchanged",
+      "inputs": {
+        "patent_expiry_year": 2045.5
+      },
+      "result": 5062695.912050709,
+      "unit": "USD",
+      "evidence_keys": [],
+      "notes": []
+    }
+  ],
+  "value_decomposition": {
+    "gross_revenue": 413668546.65970916,
+    "gross_to_net_deductions": 194402669.58021557,
+    "protected_net_revenue": 196190667.6721959,
+    "post_loe_net_revenue": 23075209.407297656,
+    "cogs": 28678682.023135163,
+    "commercial_costs": 49362805.80216997,
+    "development_costs": 71232500.60832,
+    "taxes": 31419505.01557383,
+    "initial_indication_discounted_fcf": -25215095.669779718,
+    "expansion_increment_discounted_fcf": 2324778.2462114627
+  },
+  "warnings": [
+    {
+      "code": "UNSUPPORTED_CASHFLOW_INPUT",
+      "message": "Critical cash-flow evidence group 'cashflow.patent' is unsupported.",
+      "severity": "ERROR",
+      "field": "cashflow.patent"
+    },
+    {
+      "code": "UNSUPPORTED_CASHFLOW_INPUT",
+      "message": "Critical cash-flow evidence group 'cashflow.development' is unsupported.",
+      "severity": "ERROR",
+      "field": "cashflow.development"
+    },
+    {
+      "code": "UNSUPPORTED_CASHFLOW_INPUT",
+      "message": "Critical cash-flow evidence group 'cashflow.syn-indication-a.population' is unsupported.",
+      "severity": "ERROR",
+      "field": "cashflow.syn-indication-a.population"
+    },
+    {
+      "code": "UNSUPPORTED_CASHFLOW_INPUT",
+      "message": "Critical cash-flow evidence group 'cashflow.syn-indication-a.access' is unsupported.",
+      "severity": "ERROR",
+      "field": "cashflow.syn-indication-a.access"
+    },
+    {
+      "code": "UNSUPPORTED_CASHFLOW_INPUT",
+      "message": "Critical cash-flow evidence group 'cashflow.syn-indication-a.commercial' is unsupported.",
+      "severity": "ERROR",
+      "field": "cashflow.syn-indication-a.commercial"
+    },
+    {
+      "code": "UNSUPPORTED_CASHFLOW_INPUT",
+      "message": "Critical cash-flow evidence group 'cashflow.syn-indication-b.population' is unsupported.",
+      "severity": "ERROR",
+      "field": "cashflow.syn-indication-b.population"
+    },
+    {
+      "code": "UNSUPPORTED_CASHFLOW_INPUT",
+      "message": "Critical cash-flow evidence group 'cashflow.syn-indication-b.access' is unsupported.",
+      "severity": "ERROR",
+      "field": "cashflow.syn-indication-b.access"
+    },
+    {
+      "code": "UNSUPPORTED_CASHFLOW_INPUT",
+      "message": "Critical cash-flow evidence group 'cashflow.syn-indication-b.commercial' is unsupported.",
+      "severity": "ERROR",
+      "field": "cashflow.syn-indication-b.commercial"
+    },
+    {
+      "code": "UNSUPPORTED_CASHFLOW_INPUT",
+      "message": "Critical cash-flow evidence group 'cashflow.expansion.population_interaction' is unsupported.",
+      "severity": "ERROR",
+      "field": "cashflow.expansion.population_interaction"
+    },
+    {
+      "code": "PATIENT_OOP_NET_PRICE_PROXY",
+      "message": "Annual patient OOP was not supplied; the displayed fallback applies cost share to manufacturer net price and is not decision-grade.",
+      "severity": "ERROR",
+      "field": "annual_patient_oop"
+    },
+    {
+      "code": "PATIENT_OOP_NET_PRICE_PROXY",
+      "message": "Annual patient OOP was not supplied; the displayed fallback applies cost share to manufacturer net price and is not decision-grade.",
+      "severity": "ERROR",
+      "field": "annual_patient_oop"
+    },
+    {
+      "code": "PATIENT_OOP_NET_PRICE_PROXY",
+      "message": "Annual patient OOP was not supplied; the displayed fallback applies cost share to manufacturer net price and is not decision-grade.",
+      "severity": "ERROR",
+      "field": "annual_patient_oop"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'incremental_qalys' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "incremental_qalys"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'willingness_to_pay_per_qaly' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "willingness_to_pay_per_qaly"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'comparator_total_cost' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "comparator_total_cost"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'new_non_drug_total_cost' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "new_non_drug_total_cost"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'expected_treatment_years' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "expected_treatment_years"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'annual_comparator_drug_cost' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "annual_comparator_drug_cost"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'annual_non_drug_cost_offsets' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "annual_non_drug_cost_offsets"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'annual_payer_budget_limit' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "annual_payer_budget_limit"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'annual_manufacturer_cost' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "annual_manufacturer_cost"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'required_gross_margin_fraction' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "required_gross_margin_fraction"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'eligible_patients' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "eligible_patients"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'access.coverage_fraction' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "access.coverage_fraction"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'access.prior_authorization_pass_fraction' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "access.prior_authorization_pass_fraction"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'access.initiation_fraction' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "access.initiation_fraction"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'access.provider_capacity_fraction' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "access.provider_capacity_fraction"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'access.patient_cost_share_fraction' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "access.patient_cost_share_fraction"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'access.annual_patient_oop' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "access.annual_patient_oop"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'comparable:syn-comp-net-anchor:price' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "comparable:syn-comp-net-anchor:price"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'candidate_list_price' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "candidate_list_price"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'income_bands' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "income_bands"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'selected_net_comparable_anchor' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "selected_net_comparable_anchor"
+    },
+    {
+      "code": "PATIENT_OOP_NET_PRICE_PROXY",
+      "message": "Annual patient OOP was not supplied; the displayed fallback applies cost share to manufacturer net price and is not decision-grade.",
+      "severity": "ERROR",
+      "field": "annual_patient_oop"
+    },
+    {
+      "code": "MISSING_INCOME_BANDS",
+      "message": "Income-mediated access is unknown; no wealth default was applied.",
+      "severity": "WARNING",
+      "field": "income_bands"
+    },
+    {
+      "code": "PATIENT_OOP_NET_PRICE_PROXY",
+      "message": "Annual patient OOP was not supplied; the displayed fallback applies cost share to manufacturer net price and is not decision-grade.",
+      "severity": "ERROR",
+      "field": "annual_patient_oop"
+    },
+    {
+      "code": "MISSING_INCOME_BANDS",
+      "message": "Income-mediated access is unknown; no wealth default was applied.",
+      "severity": "WARNING",
+      "field": "income_bands"
+    },
+    {
+      "code": "PATIENT_OOP_NET_PRICE_PROXY",
+      "message": "Annual patient OOP was not supplied; the displayed fallback applies cost share to manufacturer net price and is not decision-grade.",
+      "severity": "ERROR",
+      "field": "annual_patient_oop"
+    },
+    {
+      "code": "MISSING_INCOME_BANDS",
+      "message": "Income-mediated access is unknown; no wealth default was applied.",
+      "severity": "WARNING",
+      "field": "income_bands"
+    },
+    {
+      "code": "PATIENT_OOP_NET_PRICE_PROXY",
+      "message": "Annual patient OOP was not supplied; the displayed fallback applies cost share to manufacturer net price and is not decision-grade.",
+      "severity": "ERROR",
+      "field": "annual_patient_oop"
+    },
+    {
+      "code": "MISSING_INCOME_BANDS",
+      "message": "Income-mediated access is unknown; no wealth default was applied.",
+      "severity": "WARNING",
+      "field": "income_bands"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'incremental_qalys' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "incremental_qalys"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'willingness_to_pay_per_qaly' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "willingness_to_pay_per_qaly"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'comparator_total_cost' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "comparator_total_cost"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'new_non_drug_total_cost' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "new_non_drug_total_cost"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'expected_treatment_years' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "expected_treatment_years"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'annual_comparator_drug_cost' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "annual_comparator_drug_cost"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'annual_non_drug_cost_offsets' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "annual_non_drug_cost_offsets"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'annual_payer_budget_limit' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "annual_payer_budget_limit"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'annual_manufacturer_cost' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "annual_manufacturer_cost"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'required_gross_margin_fraction' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "required_gross_margin_fraction"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'eligible_patients' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "eligible_patients"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'access.coverage_fraction' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "access.coverage_fraction"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'access.prior_authorization_pass_fraction' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "access.prior_authorization_pass_fraction"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'access.initiation_fraction' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "access.initiation_fraction"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'access.provider_capacity_fraction' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "access.provider_capacity_fraction"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'access.patient_cost_share_fraction' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "access.patient_cost_share_fraction"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'access.annual_patient_oop' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "access.annual_patient_oop"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'comparable:syn-comp-expansion-net:price' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "comparable:syn-comp-expansion-net:price"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'candidate_list_price' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "candidate_list_price"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'income_bands' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "income_bands"
+    },
+    {
+      "code": "UNSUPPORTED_CRITICAL_INPUT",
+      "message": "Critical input 'selected_net_comparable_anchor' lacks decision-supporting evidence.",
+      "severity": "ERROR",
+      "field": "selected_net_comparable_anchor"
+    },
+    {
+      "code": "CASHFLOW_WARNING",
+      "message": "Critical inputs are not fully evidence-supported; result is screening-only.",
+      "severity": "WARNING",
+      "field": null
+    }
+  ],
+  "critical_evidence_status": {
+    "cashflow.patent": false,
+    "cashflow.development": false,
+    "cashflow.development_path": true,
+    "cashflow.development_cost_path": true,
+    "cashflow.development_probability_reconciliation": true,
+    "cashflow.syn-indication-a.population": false,
+    "cashflow.syn-indication-a.access": false,
+    "cashflow.syn-indication-a.commercial": false,
+    "cashflow.syn-indication-b.population": false,
+    "cashflow.syn-indication-b.access": false,
+    "cashflow.syn-indication-b.commercial": false,
+    "cashflow.expansion.population_interaction": false,
+    "cashflow.expansion.development_path": true,
+    "pricing.syn-indication-a.incremental_qalys": false,
+    "pricing.syn-indication-a.willingness_to_pay_per_qaly": false,
+    "pricing.syn-indication-a.comparator_total_cost": false,
+    "pricing.syn-indication-a.new_non_drug_total_cost": false,
+    "pricing.syn-indication-a.expected_treatment_years": false,
+    "pricing.syn-indication-a.annual_comparator_drug_cost": false,
+    "pricing.syn-indication-a.annual_non_drug_cost_offsets": false,
+    "pricing.syn-indication-a.annual_payer_budget_limit": false,
+    "pricing.syn-indication-a.annual_manufacturer_cost": false,
+    "pricing.syn-indication-a.required_gross_margin_fraction": false,
+    "pricing.syn-indication-a.eligible_patients": false,
+    "pricing.syn-indication-a.access.coverage_fraction": false,
+    "pricing.syn-indication-a.access.prior_authorization_pass_fraction": false,
+    "pricing.syn-indication-a.access.initiation_fraction": false,
+    "pricing.syn-indication-a.access.provider_capacity_fraction": false,
+    "pricing.syn-indication-a.access.patient_cost_share_fraction": false,
+    "pricing.syn-indication-a.access.annual_patient_oop": false,
+    "pricing.syn-indication-a.selected_net_anchor_price_year": true,
+    "pricing.syn-indication-a.comparable:syn-comp-net-anchor:price": false,
+    "pricing.syn-indication-a.candidate_list_price": false,
+    "pricing.syn-indication-a.income_bands": false,
+    "pricing.syn-indication-a.selected_net_comparable_anchor": false,
+    "pricing.syn-indication-b.incremental_qalys": false,
+    "pricing.syn-indication-b.willingness_to_pay_per_qaly": false,
+    "pricing.syn-indication-b.comparator_total_cost": false,
+    "pricing.syn-indication-b.new_non_drug_total_cost": false,
+    "pricing.syn-indication-b.expected_treatment_years": false,
+    "pricing.syn-indication-b.annual_comparator_drug_cost": false,
+    "pricing.syn-indication-b.annual_non_drug_cost_offsets": false,
+    "pricing.syn-indication-b.annual_payer_budget_limit": false,
+    "pricing.syn-indication-b.annual_manufacturer_cost": false,
+    "pricing.syn-indication-b.required_gross_margin_fraction": false,
+    "pricing.syn-indication-b.eligible_patients": false,
+    "pricing.syn-indication-b.access.coverage_fraction": false,
+    "pricing.syn-indication-b.access.prior_authorization_pass_fraction": false,
+    "pricing.syn-indication-b.access.initiation_fraction": false,
+    "pricing.syn-indication-b.access.provider_capacity_fraction": false,
+    "pricing.syn-indication-b.access.patient_cost_share_fraction": false,
+    "pricing.syn-indication-b.access.annual_patient_oop": false,
+    "pricing.syn-indication-b.selected_net_anchor_price_year": true,
+    "pricing.syn-indication-b.comparable:syn-comp-expansion-net:price": false,
+    "pricing.syn-indication-b.candidate_list_price": false,
+    "pricing.syn-indication-b.income_bands": false,
+    "pricing.syn-indication-b.selected_net_comparable_anchor": false
+  },
+  "evidence_references": [
+    {
+      "field_path": "program.initial_indication.population.evidence.eligible_patients",
+      "source_id": "SYNTHETIC-DEMO-POP-A",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.initial_indication.access.evidence.access_curve",
+      "source_id": "SYNTHETIC-DEMO-ACCESS-A",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.initial_indication.access.evidence.coverage_fraction",
+      "source_id": "SYNTHETIC-DEMO-ACCESS-A",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.initial_indication.access.evidence.prior_authorization_pass_fraction",
+      "source_id": "SYNTHETIC-DEMO-ACCESS-A",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.initial_indication.access.evidence.initiation_fraction",
+      "source_id": "SYNTHETIC-DEMO-ACCESS-A",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.initial_indication.access.evidence.provider_capacity_fraction",
+      "source_id": "SYNTHETIC-DEMO-ACCESS-A",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.initial_indication.access.evidence.patient_cost_share_fraction",
+      "source_id": "SYNTHETIC-DEMO-ACCESS-A",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.initial_indication.income_bands[0].evidence",
+      "source_id": "SYNTHETIC-DEMO-INCOME-LOW",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.initial_indication.income_bands[1].evidence",
+      "source_id": "SYNTHETIC-DEMO-INCOME-MID",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.initial_indication.income_bands[2].evidence",
+      "source_id": "SYNTHETIC-DEMO-INCOME-HIGH",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.initial_indication.evidence.indication_definition",
+      "source_id": "SYNTHETIC-DEMO-INDICATION-A",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.initial_indication.evidence.incremental_qalys",
+      "source_id": "SYNTHETIC-DEMO-HEOR-A",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.initial_indication.evidence.willingness_to_pay_per_qaly",
+      "source_id": "SYNTHETIC-DEMO-HEOR-A",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.initial_indication.evidence.comparator_total_cost",
+      "source_id": "SYNTHETIC-DEMO-HEOR-A",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.initial_indication.evidence.new_non_drug_total_cost",
+      "source_id": "SYNTHETIC-DEMO-HEOR-A",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.initial_indication.evidence.expected_treatment_years",
+      "source_id": "SYNTHETIC-DEMO-HEOR-A",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.initial_indication.evidence.annual_comparator_drug_cost",
+      "source_id": "SYNTHETIC-DEMO-HEOR-A",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.initial_indication.evidence.annual_non_drug_cost_offsets",
+      "source_id": "SYNTHETIC-DEMO-HEOR-A",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.initial_indication.evidence.annual_payer_budget_limit",
+      "source_id": "SYNTHETIC-DEMO-HEOR-A",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.initial_indication.evidence.annual_manufacturer_cost",
+      "source_id": "SYNTHETIC-DEMO-HEOR-A",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.initial_indication.evidence.required_gross_margin_fraction",
+      "source_id": "SYNTHETIC-DEMO-HEOR-A",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.expansion_indications[0].population.evidence.eligible_patients",
+      "source_id": "SYNTHETIC-DEMO-POP-B",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.expansion_indications[0].access.evidence.access_curve",
+      "source_id": "SYNTHETIC-DEMO-ACCESS-B",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.expansion_indications[0].access.evidence.coverage_fraction",
+      "source_id": "SYNTHETIC-DEMO-ACCESS-B",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.expansion_indications[0].access.evidence.prior_authorization_pass_fraction",
+      "source_id": "SYNTHETIC-DEMO-ACCESS-B",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.expansion_indications[0].access.evidence.initiation_fraction",
+      "source_id": "SYNTHETIC-DEMO-ACCESS-B",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.expansion_indications[0].access.evidence.provider_capacity_fraction",
+      "source_id": "SYNTHETIC-DEMO-ACCESS-B",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.expansion_indications[0].access.evidence.patient_cost_share_fraction",
+      "source_id": "SYNTHETIC-DEMO-ACCESS-B",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.expansion_indications[0].evidence.indication_definition",
+      "source_id": "SYNTHETIC-DEMO-INDICATION-B",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.expansion_indications[0].evidence.incremental_qalys",
+      "source_id": "SYNTHETIC-DEMO-HEOR-B",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.expansion_indications[0].evidence.willingness_to_pay_per_qaly",
+      "source_id": "SYNTHETIC-DEMO-HEOR-B",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.expansion_indications[0].evidence.comparator_total_cost",
+      "source_id": "SYNTHETIC-DEMO-HEOR-B",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.expansion_indications[0].evidence.new_non_drug_total_cost",
+      "source_id": "SYNTHETIC-DEMO-HEOR-B",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.expansion_indications[0].evidence.expected_treatment_years",
+      "source_id": "SYNTHETIC-DEMO-HEOR-B",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.expansion_indications[0].evidence.annual_comparator_drug_cost",
+      "source_id": "SYNTHETIC-DEMO-HEOR-B",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.expansion_indications[0].evidence.annual_non_drug_cost_offsets",
+      "source_id": "SYNTHETIC-DEMO-HEOR-B",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.expansion_indications[0].evidence.annual_payer_budget_limit",
+      "source_id": "SYNTHETIC-DEMO-HEOR-B",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.expansion_indications[0].evidence.annual_manufacturer_cost",
+      "source_id": "SYNTHETIC-DEMO-HEOR-B",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.expansion_indications[0].evidence.required_gross_margin_fraction",
+      "source_id": "SYNTHETIC-DEMO-HEOR-B",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.expansion_indications[0].evidence.patient_affordability_rate",
+      "source_id": "SYNTHETIC-DEMO-AFFORDABILITY-B",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.patent.evidence.filing_year",
+      "source_id": "SYNTHETIC-DEMO-PATENT",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.development.evidence.development_inputs",
+      "source_id": "SYNTHETIC-DEMO-DEVELOPMENT",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "program.evidence.program",
+      "source_id": "SYNTHETIC-DEMO-PROGRAM",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "comparables.comparables[0].price.evidence",
+      "source_id": "SYNTHETIC-DEMO-COMP-A-PRICE",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "comparables.comparables[1].price.evidence",
+      "source_id": "SYNTHETIC-DEMO-COMP-A-NET-SCENARIO",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "comparables.comparables[2].price.evidence",
+      "source_id": "SYNTHETIC-DEMO-COMP-EXPANSION-NET",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "comparables.comparables[3].price.evidence",
+      "source_id": "SYNTHETIC-DEMO-COMP-B-PRICE",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "comparables.comparables[4].price.evidence",
+      "source_id": "SYNTHETIC-DEMO-COMP-C-PRICE",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    },
+    {
+      "field_path": "comparables.comparables[5].price.evidence",
+      "source_id": "SYNTHETIC-DEMO-COMP-D-PRICE",
+      "source_url": null,
+      "citation": null,
+      "evidence_type": "SYNTHETIC",
+      "grade": "SYNTHETIC",
+      "synthetic": true
+    }
+  ]
+}
