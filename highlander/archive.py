@@ -36,16 +36,29 @@ class Archive:
         return list(self.cells.values())
 
     def pareto_front(self) -> list[Genome]:
-        """Non-dominated cell champions across all four axes."""
-        el = self.elites()
-        return [g for g in el if not any(o.dominates(g) for o in el if o.gid != g.gid)]
+        """Non-dominated set over ALL fully-evaluated genomes in the ledger — NOT just cell
+        champions. Champion eviction is composite-scalarized, so the best-ROI genome in a cell can
+        lose its cell yet still belong on the frontier; computing the front over champions would
+        silently pre-filter it by the very scalarization the front exists to avoid. Identical
+        score vectors are deduped (first kept) so tie-heavy mocks don't balloon the front."""
+        pool, seen = [], set()
+        for g in self.ledger:
+            if g.dropped_at:                      # only fully-evaluated genomes compete
+                continue
+            key = tuple(sorted(g.scores.items()))
+            if key in seen:
+                continue
+            seen.add(key)
+            pool.append(g)
+        return [g for g in pool if not any(o.dominates(g) for o in pool if o.gid != g.gid)]
 
     def coverage(self) -> int:
         return len(self.cells)
 
     def best_on(self, axis: str):
-        el = [g for g in self.elites() if axis in g.scores]
-        return max(el, key=lambda g: g.scores[axis]) if el else None
+        """Best on one axis over the whole ledger (a champion evicted by composite still counts)."""
+        pool = [g for g in self.ledger if axis in g.scores and not g.dropped_at]
+        return max(pool, key=lambda g: g.scores[axis]) if pool else None
 
     def top(self, n: int = 5) -> list[Genome]:
         return sorted(self.elites(), key=lambda g: g.composite(self.weights), reverse=True)[:n]

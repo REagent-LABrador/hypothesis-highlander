@@ -42,6 +42,10 @@ def _molecule_for(modality: str) -> str:
 
 
 def _mk(biomarker, modality, boldness, gen, parents=None, hypothesis="", route=None):
+    # coerce LLM-provided fields defensively: a non-str hypothesis or whitespace biomarker from a
+    # parsed JSON reply must degrade to a template, never crash the run downstream (dedup_key/gid)
+    biomarker = str(biomarker or "?").strip() or "?"
+    hypothesis = str(hypothesis).strip() if hypothesis else ""
     route = route or ROUTES[modality][0]
     m = BIOMARKER_META.get(biomarker.upper(), {"uniprot": "", "direction": "inhibit", "prev": 0.5, "mech": "unknown"})
     return Genome(biomarker=biomarker, modality=modality, route=route, boldness=boldness,
@@ -62,6 +66,26 @@ def _anthropic_key() -> str:
     return k
 
 
+def _parent_pool(archive):
+    """H5: parents come from ALL cells, not the top-N composite. Every mock/real tier tends to
+    punish boldness monotonically, so a composite top-8 contains zero speculative/crazy parents
+    and ±1 boldness mutation can never reach 'crazy' — elitist selection would collapse exactly
+    the diversity the MAP-Elites archive exists to preserve."""
+    return archive.elites()
+
+
+def _stratified_elites(archive, per_bold=2):
+    """A boldness-stratified elite sample (best per niche level) for conditioning the LLM."""
+    by = {}
+    for g in archive.elites():
+        by.setdefault(g.boldness, []).append(g)
+    out = []
+    for bold in BOLDNESS:
+        ranked = sorted(by.get(bold, []), key=lambda g: g.composite(archive.weights), reverse=True)
+        out.extend(ranked[:per_bold])
+    return out
+
+
 def generate_claude(archive, failures, gen, k):
     """LLM proposals conditioned on elites + failures. Returns [] on any error (caller falls back)."""
     key = _anthropic_key()
@@ -70,7 +94,7 @@ def generate_claude(archive, failures, gen, k):
     try:
         import anthropic
         elites = "; ".join(f"{g.biomarker}/{g.modality}/{g.boldness} (roi={g.scores.get('roi',0):.2f})"
-                           for g in archive.top(6))
+                           for g in _stratified_elites(archive))
         fails = "; ".join(f"{f['biomarker']}/{f['modality']} died at {f['dropped_at']}" for f in failures[-8:])
         prompt = (
             f"You are the mutation operator in an evolutionary search for RA drug-program hypotheses. "
@@ -104,16 +128,16 @@ def generate_offline(archive, failures, gen, k, rng):
     out = []
     if gen == 0 or not archive.elites():
         combos = [(b, m, bold) for b in SEED_BIOMARKERS for m in MODALITIES for bold in BOLDNESS]
-        rng.shuffle(combos)
-        for b, m, bold in combos:
-            if (b, m) in dead:
-                continue
+        # if EVERY seed pair is dead, ignore the dead-set rather than proposing nothing
+        live = [c for c in combos if (c[0], c[1]) not in dead] or combos
+        rng.shuffle(live)
+        for b, m, bold in live[:k]:
             out.append(_mk(b, m, bold, gen))
-            if len(out) >= k:
-                break
         return out
-    elites = archive.top(8)
-    while len(out) < k:
+    elites = _parent_pool(archive)                 # all niches, not composite top-8 (H5)
+    for _ in range(50 * k):                        # bounded: an all-dead dead-set must not hang (H2)
+        if len(out) >= k:
+            break
         a, b = rng.choice(elites), rng.choice(elites)
         biomarker = a.biomarker
         modality = b.modality
@@ -126,6 +150,11 @@ def generate_offline(archive, failures, gen, k, rng):
         if (biomarker, modality) in dead:
             continue
         out.append(_mk(biomarker, modality, bold, gen, parents=[a.gid, b.gid]))
+    if not out:
+        # every crossover hit the dead-set — explore the raw seed space instead of stalling
+        combos = [(b, m, bold) for b in SEED_BIOMARKERS for m in MODALITIES for bold in BOLDNESS]
+        rng.shuffle(combos)
+        out = [_mk(b, m, bold, gen) for b, m, bold in combos[:k]]
     return out
 
 

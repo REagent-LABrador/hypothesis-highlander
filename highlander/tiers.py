@@ -129,7 +129,10 @@ DEFAULT_TIERS = [
     Tier("bio_reality", "bio_reality", 40.0, _bio_reality),
 ]
 
-DEFAULT_GATES = {"plausibility": 0.30, "roi": 0.35, "recruitability": 0.30, "bio_reality": 0.0}
+# Gates sit INSIDE the mock score spreads (plausibility 0.51-0.71, roi 0.53-0.82) so they actually
+# fire: weak hypotheses die cheap, the failure ledger fills, and the generator's failure
+# conditioning is exercised end-to-end. Gates below every attainable score = dead code.
+DEFAULT_GATES = {"plausibility": 0.55, "roi": 0.60, "recruitability": 0.30, "bio_reality": 0.0}
 
 
 def cascade(g, tiers=None, gates=None, budget=None):

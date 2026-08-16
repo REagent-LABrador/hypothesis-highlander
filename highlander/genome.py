@@ -53,7 +53,9 @@ class Genome:
 
     # ── MAP-Elites behavior descriptor (about the HYPOTHESIS, not the outcome — avoids reward hacking) ──
     def biomarker_class(self) -> str:
-        return self.biomarker.strip().upper().split()[0] if self.biomarker else "?"
+        # guard whitespace-only / non-str input (adversarial LLM output must not crash a paid run)
+        s = str(self.biomarker or "").strip().upper()
+        return s.split()[0] if s else "?"
 
     def cell(self) -> tuple:
         return (self.biomarker_class(), self.modality, self.boldness)

@@ -69,7 +69,9 @@ class IndicationThesis:
         return self
 
     def to_json(self) -> dict:
-        d = asdict(self)
+        # OMIT unset optionals rather than emitting null: zod's .optional() accepts a missing key
+        # (undefined) but REJECTS null — `tissue: null` is a hard parse failure at the TS boundary.
+        d = {k: v for k, v in asdict(self).items() if v is not None}
         d["evidence"] = [asdict(e) if isinstance(e, Evidence) else e for e in self.evidence]
         return d
 

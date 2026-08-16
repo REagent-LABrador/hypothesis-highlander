@@ -72,7 +72,10 @@ The two unowned adapters from `COORDINATION.md §5` live in `highlander/adapters
 
 ## Run
 ```bash
-# offline, no keys, no sibling nodes — the "it's learning" story
+# THE SEAM: machine-readable run for an orchestrator — result JSON + Pareto winners as
+# IndicationThesis (null-free for the Zod boundary). Config overrides gates/weights/budget.
+python -m highlander run --config config.json --generations 4 --seed 42 --out result.json
+# offline pretty-printed demo, no keys, no sibling nodes — the "it's learning" story
 python -m highlander.demo
 # Claude mutation operator (reads ANTHROPIC_API_KEY from the env; never committed)
 python -m highlander.demo --llm
@@ -80,6 +83,7 @@ python -m highlander.demo --llm
 streamlit run highlander/app.py
 # containerized
 docker build -t hypothesis-highlander . && docker run --rm hypothesis-highlander
+docker run --rm hypothesis-highlander python -m highlander run --out - > result.json
 ```
 
 ## Containerization / isolation guarantees
@@ -88,9 +92,17 @@ docker build -t hypothesis-highlander . && docker run --rm hypothesis-highlander
 - `.dockerignore` + `.gitignore` exclude any `.env`/secrets; a CI test asserts no hardcoded sibling/`rnpv_copilot` import.
 
 ## Honest status
-Real and running: the loop, MAP-Elites + Pareto, the cost-gated cascade, the archive/failure-ledger
-learning, the shared-thesis contract, the two adapters, the Claude generator, and the Streamlit page.
+Real and running: the loop, MAP-Elites + Pareto (computed over the full ledger, not just cell
+champions), the cost-gated cascade (gates sit inside the mock score spreads, so weak hypotheses
+really die and the failure ledger really fills), the shared-thesis contract, the two adapters, the
+Claude generator, the CLI seam (`python -m highlander run`), and the Streamlit page.
 **Mocked behind the tier interface** (pending wiring to the real nodes, and clearly labelled as such):
 the four evaluation bodies. Swapping in a real node is a one-function change per tier (`COMPOSE.md`).
 The ROI axis is intentionally *not* driven by Claude's local ROI tool — it consumes the
 `therapeutic-program-economics` node's output like every other tier.
+
+**Learning-signal honesty:** with the mocks in place, every score is a pure function of the
+behavior cell (biomarker-class × modality × boldness) — the free-text hypothesis never touches a
+tier. So the demo's learning curve demonstrates the *mechanics* (gating, illumination, frontier
+growth, failure-conditioning), **not** content-level learning. Real learning signal begins the
+moment the evidence mapper / economics / forecaster / tractability nodes replace the mocks.
