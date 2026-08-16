@@ -9,7 +9,7 @@
     },
     "hypothesis-generator": {
       "repository": "https://github.com/REagent-LABrador/Hypothesis_Generator",
-      "producerCodeVersion": "b3616d34d93cda240a61cf074d117475c2ae8241",
+      "producerCodeVersion": "02ea1441412c556fdaf80a1264bbe605d0133ceb",
       "nativeSchemaId": "https://labrador.dev/schemas/headless-output.schema.json",
       "nativeSchemaVersion": "unversioned"
     },
