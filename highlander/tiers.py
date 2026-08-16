@@ -1,18 +1,25 @@
-"""
-The cost-tiered fitness cascade — cheap → dear, each tier GATES the next, so you enumerate 10^4
-hypotheses but only fully-evaluate ~10^2. Every drop is logged (no silent truncation).
+"""Legacy/demo-only cost-tiered fitness cascade over local mock outputs.
+
+This file must not be wired to real LABrador producer modules or terminal
+orchestrator packets.  The production path is ``compare_packet_request``:
+producers run upstream, the orchestrator freezes their outputs, and Highlander
+compares those snapshots without calling a module or converting missing and
+categorical results into plausible scalar values.
+
+The historical cascade gates cheap-to-dear demo tiers so it can exercise the
+archive and failure ledger without sibling repositories.
 
 This node is SELF-CONTAINED (containerized): every tier here is a MOCK/lightweight stand-in behind
-a clean interface, so the container runs with no dependency on sibling LABrador nodes. In the
-COMPOSED pipeline each tier is replaced by the real node via its contract (see COMPOSE.md):
+a clean interface, so the container runs with no dependency on sibling LABrador nodes. The old
+tier-to-module analogy below is descriptive only and is not an integration instruction:
 
   plausibility  ← research-evidence-mapper      (Adapter A: graph findings → thesis Evidence[])
   roi           ← therapeutic-program-economics (replace _simple_rnpv with a `labrador analyze` call)
   recruitability← trial-recruitment-forecaster  (Adapter B: months → launch-delay)
   bio_reality   ← small-molecule-tractability-review (small-molecule only)
 
-To wire a real module: implement `evaluate(genome) -> (score in [0,1], rationale, detail)` and
-swap it into DEFAULT_TIERS. Keep cheap tiers cheap.
+Do not replace these bodies with real calls.  Use the immutable production
+packet consumer documented in COMPOSE.md.
 """
 from __future__ import annotations
 
@@ -82,7 +89,7 @@ def _simple_rnpv(g):
 
 def _roi(g):
     enpv, pos = _simple_rnpv(g)
-    score = roi_from_economics({"p50_rnpv": enpv})
+    score = roi_from_economics({"summary": {"p50_rnpv": enpv}})
     return score, (f"eNPV ${enpv/1e6:.0f}M, cumPoS {pos:.0%} "
                    "[SELF-CONTAINED PROXY; compose with therapeutic-program-economics — NOT_DECISION_GRADE]"), {"eNPV": enpv}
 

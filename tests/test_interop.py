@@ -17,7 +17,8 @@ def test_genome_emits_valid_thesis():
     assert isinstance(t, IndicationThesis)
     t.validate()                                   # matches thesis.ts contract (modality/direction/endpoint/prevalence)
     assert t.target["symbol"] == "TNF"
-    assert t.uniprotAccession == "P01375"
+    assert t.target["uniprotAccession"] == "P01375"
+    assert "uniprotAccession" not in t.to_json()
     assert t.mechanismHypothesis == "oligomer_destabilisation"
 
 
@@ -40,10 +41,10 @@ def test_adapter_A_maps_findings_to_evidence():
     for e in ev:
         e.validate()                                # produces contract-valid Evidence
     assert ev[0].direction == "supports" and ev[0].source == "10.1/rct"
-    # no_effect maps to contradicts WITH a note (convention), not a silent third value
-    assert ev[1].direction == "contradicts" and "[no_effect]" in ev[1].claim
+    # The locked thesis schema preserves no_effect as a distinct, neutral direction.
+    assert ev[1].direction == "no_effect"
     assert ev[1].strength < ev[0].strength          # no_effect / weaker study → lower strength
-    assert plausibility_from_evidence(ev) > 0.0
+    assert plausibility_from_evidence(ev) == plausibility_from_evidence(ev[:1])
 
 
 def test_adapter_B_months_to_launch_delay():

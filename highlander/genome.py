@@ -33,6 +33,7 @@ class Genome:
     uniprot_accession: str = ""          # Rafal's tractability join key
     mechanism_hypothesis: str = "unknown"  # orthosteric|allosteric|oligomer_destabilisation|unknown
     prevalence_in_disease: float = 0.4   # biomarkerPopulation.prevalenceInDisease (recruitment's key input)
+    assay_available: bool = True          # required by the locked IndicationThesis contract
     endpoint_name: str = "ACR20 response"
     endpoint_type: str = "binary"        # continuous|binary|time_to_event
     tissue: str = "synovium"
@@ -83,19 +84,22 @@ class Genome:
     def to_thesis(self):
         from .thesis import IndicationThesis
         _unc = {"supported": 0.2, "plausible": 0.45, "speculative": 0.7, "crazy": 0.9}
+        target = {"symbol": self.biomarker, "direction": self.target_direction}
+        if self.uniprot_accession:
+            target["uniprotAccession"] = self.uniprot_accession
         return IndicationThesis(
             id=self.gid,
             asset={"modality": self.modality, "name": self.molecule or f"{self.biomarker}-{self.modality}"},
-            target={"symbol": self.biomarker, "direction": self.target_direction},
+            target=target,
             disease={"name": self.indication},
             biomarkerPopulation={"marker": self.biomarker,
-                                 "prevalenceInDisease": self.prevalence_in_disease, "assayAvailable": True},
+                                 "prevalenceInDisease": self.prevalence_in_disease,
+                                 "assayAvailable": self.assay_available},
             endpoint={"name": self.endpoint_name, "type": self.endpoint_type},
             mechanism=self.hypothesis or f"Modulate {self.biomarker} for {self.indication}",
             evidence=list(self.evidence),
             tissue=self.tissue,
             uncertainty=_unc.get(self.boldness, 0.5),
-            uniprotAccession=self.uniprot_accession or None,
             mechanismHypothesis=self.mechanism_hypothesis,
         )
 
@@ -107,8 +111,10 @@ class Genome:
             indication=t.disease["name"], hypothesis=t.mechanism, boldness=boldness,
             molecule=molecule or (t.asset.get("name") or ""), current_phase=current_phase,
             target_direction=t.target["direction"],
-            uniprot_accession=t.uniprotAccession or "", mechanism_hypothesis=t.mechanismHypothesis,
+            uniprot_accession=t.target.get("uniprotAccession") or "",
+            mechanism_hypothesis=t.mechanismHypothesis,
             prevalence_in_disease=t.biomarkerPopulation.get("prevalenceInDisease", 0.4),
+            assay_available=t.biomarkerPopulation["assayAvailable"],
             endpoint_name=t.endpoint.get("name", ""), endpoint_type=t.endpoint.get("type", "binary"),
-            tissue=t.tissue, evidence=list(t.evidence), generation=generation,
+            tissue=t.tissue, evidence=list(t.evidence), generation=generation, gid=t.id,
         )

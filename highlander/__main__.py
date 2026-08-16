@@ -1,18 +1,7 @@
-"""
-The outbound invocation seam — how an orchestrator (COORDINATION.md §5) actually consumes
-Highlander without editing library source inside the image:
+"""Highlander command-line entry points.
 
-    python -m highlander run --config config.json --generations 4 --seed 42 --out result.json
-    docker run --rm hypothesis-highlander python -m highlander run --out - > result.json
-
-Writes the full run result PLUS `pareto_theses`: each Pareto-front genome serialized as the
-shared IndicationThesis contract (`to_thesis().to_json()`, null-free for the Zod boundary),
-so downstream nodes can consume the winners directly. stdlib-only (argparse + json), keeping
-the core dependency-light.
-
-config.json keys (all optional; CLI flags override): {"gates": {axis: float}, "weights":
-{axis: float}, "budget_units": float, "generations": int, "pop_size": int, "seed": int,
-"use_llm": bool, "log_path": str}
+``compare`` is the production packet consumer.  ``run`` is retained only as a
+standalone legacy/demo search over explicitly mocked tier outputs.
 """
 from __future__ import annotations
 
@@ -21,23 +10,21 @@ import json
 import sys
 
 from .controller import Highlander
+from .packet_consumer import MAX_REQUEST_BYTES, compare_packet_request, strict_json_loads
+from .packet_contracts import ContractError
 
 
-def main(argv=None) -> int:
-    p = argparse.ArgumentParser(prog="highlander",
-                                description="Quality-diversity meta-search over drug-program hypotheses")
-    sub = p.add_subparsers(dest="cmd", required=True)
-    r = sub.add_parser("run", help="run the search and write the result JSON")
-    r.add_argument("--config", help="JSON config file (gates/weights/budget/seed/…)")
-    r.add_argument("--generations", type=int)
-    r.add_argument("--pop-size", type=int)
-    r.add_argument("--seed", type=int)
-    r.add_argument("--budget", type=float, help="total eval budget in cost units")
-    r.add_argument("--llm", action="store_true", help="use the Claude mutation operator (default: offline)")
-    r.add_argument("--log", help="append-only JSONL run-log path")
-    r.add_argument("--out", default="-", help="result JSON path ('-' = stdout)")
-    args = p.parse_args(argv)
+def _write_json(value, destination: str) -> None:
+    payload = json.dumps(value, indent=2, ensure_ascii=False, default=str)
+    if destination == "-":
+        print(payload)
+        return
+    with open(destination, "w", encoding="utf-8") as fh:
+        fh.write(payload + "\n")
+    print(f"wrote {destination}", file=sys.stderr)
 
+
+def _run_legacy(args) -> int:
     cfg = {}
     if args.config:
         with open(args.config, encoding="utf-8") as fh:
@@ -48,25 +35,77 @@ def main(argv=None) -> int:
         gates=cfg.get("gates"),
         budget_units=args.budget if args.budget is not None else cfg.get("budget_units", 2600),
         seed=args.seed if args.seed is not None else cfg.get("seed", 42),
-        use_llm=bool(args.llm or cfg.get("use_llm", False)),   # offline by default: reproducible
+        use_llm=bool(args.llm or cfg.get("use_llm", False)),
         log_path=args.log or cfg.get("log_path"),
     )
-    res = hl.run(generations=args.generations or cfg.get("generations", 4),
-                 pop_size=args.pop_size or cfg.get("pop_size", 16))
+    res = hl.run(
+        generations=args.generations or cfg.get("generations", 4),
+        pop_size=args.pop_size or cfg.get("pop_size", 16),
+    )
 
-    # the machine-readable deliverable: Pareto winners as the shared IndicationThesis contract
-    res["pareto_theses"] = [g.to_thesis().to_json()
-                            for g in sorted(hl.archive.pareto_front(),
-                                            key=lambda x: -x.scores.get("roi", 0))]
-
-    payload = json.dumps(res, indent=2, default=str)
-    if args.out == "-":
-        print(payload)
-    else:
-        with open(args.out, "w", encoding="utf-8") as fh:
-            fh.write(payload + "\n")
-        print(f"wrote {args.out}", file=sys.stderr)
+    # Legacy/demo output only. Production comparisons never invoke this search.
+    res["pareto_theses"] = [
+        genome.to_thesis().to_json()
+        for genome in sorted(
+            hl.archive.pareto_front(), key=lambda item: -item.scores.get("roi", 0)
+        )
+    ]
+    _write_json(res, args.out)
     return 0
+
+
+def _compare(args) -> int:
+    try:
+        if args.request == "-":
+            raw_text = sys.stdin.read(MAX_REQUEST_BYTES + 1)
+            raw = raw_text.encode("utf-8")
+        else:
+            with open(args.request, "rb") as fh:
+                raw = fh.read(MAX_REQUEST_BYTES + 1)
+        if len(raw) > MAX_REQUEST_BYTES:
+            raise ContractError("request exceeds the configured byte limit")
+        request = strict_json_loads(raw, "comparison request")
+        result = compare_packet_request(request)
+    except (ContractError, ValueError, OSError, json.JSONDecodeError) as error:
+        print(f"highlander compare: {error}", file=sys.stderr)
+        return 2
+    _write_json(result.to_dict(), args.out)
+    return 0
+
+
+def main(argv=None) -> int:
+    p = argparse.ArgumentParser(
+        prog="highlander",
+        description="Immutable LABrador packet comparison and legacy demo search",
+    )
+    sub = p.add_subparsers(dest="cmd", required=True)
+    c = sub.add_parser(
+        "compare",
+        help="validate locked module packets and emit a versioned Pareto snapshot",
+    )
+    c.add_argument(
+        "--request",
+        default="-",
+        help="comparison-request JSON path ('-' = stdin)",
+    )
+    c.add_argument("--out", default="-", help="result JSON path ('-' = stdout)")
+
+    r = sub.add_parser(
+        "run",
+        help="run the legacy mock search (demo only; not production comparison)",
+    )
+    r.add_argument("--config", help="JSON config file (gates/weights/budget/seed/…)")
+    r.add_argument("--generations", type=int)
+    r.add_argument("--pop-size", type=int)
+    r.add_argument("--seed", type=int)
+    r.add_argument("--budget", type=float, help="total eval budget in cost units")
+    r.add_argument("--llm", action="store_true", help="use the Claude mutation operator (default: offline)")
+    r.add_argument("--log", help="append-only JSONL run-log path")
+    r.add_argument("--out", default="-", help="result JSON path ('-' = stdout)")
+    args = p.parse_args(argv)
+    if args.cmd == "compare":
+        return _compare(args)
+    return _run_legacy(args)
 
 
 if __name__ == "__main__":

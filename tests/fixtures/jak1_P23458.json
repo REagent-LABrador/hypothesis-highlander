@@ -1,0 +1,365 @@
+{
+  "_example": "JAK1 (P23458), measured end-to-end. The worked example for assemble-dossier, and the positive control for validate_dossier.py — it returns zero violations. The computed axis is now FILLED, on a named two-entry ensemble swept over two clustering values, because all 4 of 4 site pockets were selected by ligand_site_jaccard — the one basis that is same-site evidence. An earlier version of this file reported no pocket geometry at all: that run had relayed a maximum druggability of 0.735 and no minimum, and a maximum without a minimum is a point estimate, so nothing was reportable. That refusal was correct on the data it had. It has been superseded by measurement, not overruled — see tractability.caveat. Compare with tnf_P01375.json, where the same tool ran and the refusal SURVIVED, because there the site could not be identified across the ensemble.",
+  "_retrieved": "2026-08-15",
+  "input": {
+    "_note": "Verbatim echo of the request, never inferred and never back-filled. This run was invoked with the accession only; every other contract field was absent and is null here because it was not supplied, not because it could not be retrieved. `target.uniprot_accession` is the RESOLVED accession; this one is what the caller said.",
+    "uniprot_accession": "P23458",
+    "as_of_date": null,
+    "disease_context": null,
+    "interaction_to_disrupt": null,
+    "mechanism_hypothesis": null
+  },
+  "target": {
+    "uniprot_accession": "P23458",
+    "gene_symbol": "JAK1",
+    "protein_name": "Tyrosine-protein kinase JAK1",
+    "organism": "Homo sapiens",
+    "sequence_length": 1154,
+    "sources": [
+      "UniProt P23458 (uniprot_v.proteins)"
+    ]
+  },
+  "as_of_date": null,
+  "verdict": "small_molecule_tractable",
+  "verdict_basis": "retrieved_precedent",
+  "axis_conflict": null,
+  "target_precedent": {
+    "chembl_target_id": "CHEMBL2835",
+    "distinct_actives": 14472,
+    "assay_concentration": {
+      "top_assay_description": "JAK1 enzyme inhibition (characterised); no single assay dominates",
+      "top_assay_share_pct": 4.8,
+      "measures_a_different_target": false,
+      "assay_type_split": {
+        "binding_B": null,
+        "functional_F": null
+      }
+    },
+    "best_potency_nm": 0.01,
+    "best_potency_assay": "characterised JAK1 enzyme assay, pChEMBL 11.00 (CHEMBL2835)",
+    "best_potency_characterised": true,
+    "approved_small_molecules_count": 9,
+    "approved_small_molecules": [
+      {
+        "name": "ruxolitinib phosphate",
+        "year": 2011,
+        "modality": "small_molecule",
+        "source": "chembl_v.drugs_by_accession first_approval; molecule_type Small molecule"
+      },
+      {
+        "name": "tofacitinib citrate",
+        "year": 2012,
+        "modality": "small_molecule",
+        "source": "chembl_v.drugs_by_accession first_approval; molecule_type Small molecule"
+      },
+      {
+        "name": "baricitinib",
+        "year": 2017,
+        "modality": "small_molecule",
+        "source": "chembl_v.drugs_by_accession first_approval; molecule_type Small molecule"
+      },
+      {
+        "name": "peficitinib",
+        "year": 2019,
+        "modality": "small_molecule",
+        "source": "chembl_v.drugs_by_accession first_approval; molecule_type Small molecule"
+      },
+      {
+        "name": "upadacitinib hemihydrate",
+        "year": 2019,
+        "modality": "small_molecule",
+        "source": "chembl_v.drugs_by_accession first_approval; molecule_type Small molecule"
+      },
+      {
+        "name": "filgotinib maleate",
+        "year": 2020,
+        "modality": "small_molecule",
+        "source": "chembl_v.drugs_by_accession first_approval; molecule_type Small molecule"
+      },
+      {
+        "name": "abrocitinib",
+        "year": 2021,
+        "modality": "small_molecule",
+        "source": "fixtures/targets.json immunology.JAK1, JAK1-selective"
+      },
+      {
+        "name": "deuruxolitinib",
+        "year": 2024,
+        "modality": "small_molecule",
+        "source": "measured run 2026-08-15, latest of the 9 approvals"
+      }
+    ],
+    "clinical_stage_small_molecules": [],
+    "patents": {
+      "count": null,
+      "source": null
+    },
+    "terminated_programs": [],
+    "as_of_leakage": [],
+    "sources": [
+      "CHEMBL2835 (chembl_v.bioactivities_by_accession, compounds_by_accession, drugs_by_accession)",
+      "chembl.molecule_dictionary.molecule_type, read per drug",
+      "measured run 2026-08-15"
+    ]
+  },
+  "biologic_precedent": {
+    "approved_biologics": [],
+    "note": "Presence of an approved biologic is target validation, NOT small-molecule tractability."
+  },
+  "family_precedent": {
+    "pfam": null,
+    "family_actives": null,
+    "best_family_potency_nm": null,
+    "best_family_target": null,
+    "sources": []
+  },
+  "structural_neighbour_precedent": {
+    "_note": "Foldseek neighbours, NOT sequence family.",
+    "method": "foldseek-search (Proto, CPU, in-process)",
+    "query_structure": null,
+    "neighbours": [],
+    "sources": []
+  },
+  "pocket_neighbour_precedent": {
+    "_note": "Not run. With 42 holo structures on the target itself there is nothing to transfer — this axis exists for targets that lack their own evidence.",
+    "candidates": [],
+    "sources": []
+  },
+  "structure": {
+    "tier": "holo_experimental",
+    "pdb_id": "3EYG",
+    "resolution_a": null,
+    "biological_unit_used": "kinase domain monomer",
+    "bound_ligand": {
+      "comp_id": "MI1",
+      "heavy_atoms": 23,
+      "is_druglike": true,
+      "is_known_frequent_hitter": null
+    },
+    "total_pdb_structures": 52,
+    "holo_count": 42,
+    "apo_count": 10,
+    "ensemble_used": [
+      "3EYG",
+      "10PI"
+    ],
+    "predicted_plddt": null,
+    "cofold_control": {
+      "_note": "When BOTH a crystal structure and a cofold exist, score the cofold against the crystal. This measures whether cofolding can be trusted FOR THIS TARGET — same discipline as the affinity positive control.",
+      "reference_pdb_id": null,
+      "cofold_rmsd_a": null,
+      "reproduces_reference": null,
+      "trusted": null
+    },
+    "sources": [
+      "pdb_v.structures_by_accession + entry_ligands for P23458",
+      "3EYG (earliest JAK1 holo, released 2009-02-03) and 10PI (latest, povorcitinib, 2026-06-10) per fixtures/targets.json holo_range",
+      "measured run 2026-08-15: 42 holo / 10 apo",
+      "pocket-scan Modal run 2026-08-15 on 3EYG + 10PI: MI1 auto-derived as 3EYG's drug-like ligand (23 heavy atoms), A1C68 auto-derived for 10PI (36 heavy atoms)"
+    ]
+  },
+  "tractability": {
+    "_primary": "pocket_volume_a3.primary_d1_6_a3 is THE computed-axis number REPORTED, but it is a cavity measurement and carries no verdict: the AUC 1.000 separation over 15 targets is RETRACTED (rule 4a, 2026-08-15) because the calibration anchors did not measure the proteins they were attributed to - four of five hard anchors are compromised, and the bootstrap CI of [1.000, 1.000] was degenerate by construction since resampling a perfectly separated set cannot create an inversion. A co-crystal flag alone separates the same groups at AUC 0.900 with no structural measurement, so the label and the measurement share a cause. Do not compare this volume to 210 or 240 A^3. druggability is reported and load-bearing on nothing.",
+    "pocket_volume_a3": {
+      "min": 305.9,
+      "max": 913.8,
+      "spread_pct": 66.5,
+      "clustering_d": [
+        1.6,
+        2.4
+      ],
+      "primary_d1_6_a3": null,
+      "site_pocket_selected_by": "ligand_site_jaccard",
+      "_primary_note": "primary_d1_6_a3 is the site volume at D=1.6 ONLY, not the pooled min/max. D=1.6 specifically: at D=2.4 volumes exceed 1000 A^3 and sites merge with neighbouring cavities. THE 210/240 A^3 GUIDE IS RETRACTED, NOT MERELY UNCALIBRATED - see rule 4a, 2026-08-15. It previously read as a real separation (>=240 A^3 entirely druggable, <=210 A^3 entirely hard, a 17% margin fitted post hoc on n=15); that is WITHDRAWN, because four of the five hard anchors it was fitted on did not measure their target protein - MYC's pocket is 100% MAX (P61244), IL-11's is 100% IL-11 receptor alpha (Q14626), CD20's anchor ligand is a detergent and TL1A had no anchor at all - and the bootstrap CI of [1.000, 1.000] was degenerate by construction. A co-crystal flag alone separates the same groups at AUC 0.900 with no structural measurement. Report the volume; do not classify with it, do not compare it to 210 or 240 A^3, and do not revive the guide from the constants in validate_dossier.py."
+    },
+    "pocket_druggability": {
+      "min": 0.02,
+      "max": 0.437,
+      "fold_range": 21.8,
+      "site_pocket_selected_by": "ligand_site_jaccard",
+      "load_bearing": false,
+      "_provenance": "shipped fpocket: 3-descriptor logistic regression fitted on 21 positives. A weak prior, not a probability. mean_loc_hyd_dens_norm is min-max normalised across the OTHER pockets of the same structure, so this is a property of a pocket relative to its detected population, not of the pocket.",
+      "_false_negative_rate": "REPORTED, NEVER LOAD-BEARING. Measured over 15 targets / 67 structures / 134 measurements: on holo structures with a drug-like ligand bound and the pocket anchored to it, median 0.320 and a large fraction below 0.1 - EGFR 6LUD with osimertinib bound scores 0.013, JAK1's median is 0.009 across nine approved drugs. DENOMINATOR UNDER AUDIT (2026-08-15): the rate was reported as 25/37 below 0.5 and 15/37 (41%) below 0.1, but at least one of those 37 was not a certain positive - RORgt 6C1P contains no RORgt and was anchored on CHAPSO, a detergent - so the clean denominator is 36, and the other 36 have never been audited at residue level. The direction is not in doubt and the demotion does not turn on that case; the percentage is pending audit, so quote the named cases rather than the rate. Target-level AUC 0.720 (95% CI 0.44-0.94, includes chance) at D=1.6 and 0.520 at D=2.4. It may not carry a not_tractable or insufficient_evidence verdict on its own."
+    },
+    "site_pocket_rank": {
+      "_note": "PRANK rank is a SITE-FINDING aid reported beside fpocket rank, never a quality value. n=70 ligand-anchored: promotes 79%, demotes 1% (6OIM D=1.6, the one KRAS negative, kept visible). Median rank 5 -> 1, top-3 recall 37% -> 91%. As a druggability classifier its rank is INVERTED, AUC 0.25.",
+      "fpocket": null,
+      "prank": null,
+      "n_pockets": null
+    },
+    "ensemble_consensus_fraction": {
+      "_note": "Published criterion: ~70% of structures showing a strong hot spot, ~50% meeting all criteria. One good conformer out of five is a negative result.",
+      "n_structures": 2,
+      "n_measurements": 4,
+      "fraction_with_strong_pocket": null,
+      "meets_consensus_criterion": null,
+      "source": "pocket-scan Modal run 2026-08-15: ensemble.n_structures 2, site_pockets_pooled 4 (2 entries x D in {1.6, 2.4}). The tool emits no consensus fraction — see not_found."
+    },
+    "pocket_hydrophobic_density": null,
+    "pocket_residues": [],
+    "site_hypothesis_basis": "holo ligand site — 3EYG:MI1, auto-derived as that entry's drug-like ligand, and confirmed per structure: all 4 of 4 site pockets were selected by ligand_site_jaccard, with no fallback to a residue-number signature and no homo-oligomer ambiguity (neither entry is oligomeric, 1 polymer chain each)",
+    "mdpocket_site_definition_used": "site_from_ligand",
+    "site_centroid_to_ligand_distance_a": 1.86,
+    "site_centroid_to_ligand_note": "Volume above is fpocket's, and the mdpocket cross-check used site_from_ligand, which is the ligand site by construction and so carries no distance of its own. The 1.86 A recorded here is the rule 4b off-site check on the OTHER definition: mdpocket's site_from_density centroid — the largest cavity open in every structure, found without reference to any ligand — sits 1.86 A from the 3EYG MI1 centroid, well inside the proposed (not calibrated) 4 A threshold, and the tool raised no off_site_warning. The two independent site definitions therefore agree here, which is the check passing. It does not pass on TNF-alpha: see tnf_P01375.json, where the same field reads 29.57 A.",
+    "annotated_binding_site_overlap": null,
+    "ligand_site_jaccard": null,
+    "disorder_fraction": null,
+    "cryptic_pocket_risk": "low",
+    "cryptic_mechanism": "none",
+    "cryptic_evidence": {
+      "_note": "The apo census the cryptic call rests on. Vajda 2018: cryptic only if the site is absent in all, or nearly all, unbound structures.",
+      "is_cryptic": false,
+      "n_apo_examined": 10,
+      "n_apo_site_absent": null,
+      "site_present_in_apo_ensemble": null,
+      "basis": "the ATP site is pre-formed and occupied by a drug-like ligand in 42 of 52 deposited entries, and the 2026-08-15 pocket run recovered it in both ensemble entries at every clustering value, by ligand_site_jaccard, 15 years apart (3EYG 2009, 10PI 2026). No apo/holo superposition was run — the cryptic stage returned not_run because the ensemble is 2 holo and 0 apo, and that comparison is pairwise — so 'not cryptic' still rests on the holo census rather than on a displacement measurement.",
+      "definition": "Vajda et al. 2018 — cryptic only if the pocket is absent in all, or nearly all, unbound structures",
+      "source": "measured run 2026-08-15 (42 holo / 10 apo); pocket-scan Modal run 2026-08-15, cryptic stage not_run (0 apo in ensemble)"
+    },
+    "cryptic_potency_prior": {
+      "_note": "Mechanism is a prior on achievable potency. Loop-motion sites: 25 of 27 reached nanomolar. Side-chain sites: all measured ones were low-micromolar at best.",
+      "expected_ceiling": "nanomolar",
+      "basis": "not a cryptic site; nine approved drugs reach sub-nanomolar against this pocket"
+    },
+    "pocket_vs_interface": {
+      "_note": "Measured, not assumed. Requires a complex structure containing the partner.",
+      "classification": "no_partner_structure",
+      "interface_residues": [],
+      "pocket_interface_overlap": null,
+      "partner_pdb_id": null,
+      "matches_mechanism_hypothesis": null
+    },
+    "max_backbone_ca_displacement_a": null,
+    "clash_attribution": null,
+    "caveat": "No mechanism_hypothesis was supplied, so no pocket is asserted to be the relevant one; the values here describe the ATP site because that is where the holo ligands sit, not because a mechanism selected it. WHY THESE NUMBERS ARE POOLABLE AND THE TNF ONES ARE NOT: all 4 of 4 measurements were selected by ligand_site_jaccard, the strongest of the five bases, with per-measurement overlaps of 0.300 to 0.778 against the MI1 site; neither entry is a homo-oligomer, so the residue-number signature never had to be trusted (n_distinct_numbers 24 of 24 residues, collapsed_by 0); and the frame-independent same-site control, max_radius_difference_a, is 2.29 A at D=1.6 and 2.16 A at D=2.4 — against 16.61 A on the IL-17A case where pooling was invalid. WHAT SUPERSEDED WHAT: an earlier run relayed only a maximum druggability of 0.735, and this dossier reported no pocket geometry at all rather than publish a maximum without its minimum. That refusal was correct on the data it had. It is superseded by measurement, not overruled — and note that 0.735 does not appear in the new range at all, which is the point: the old figure was one end of an unknown interval on an unnamed ensemble. HOW MUCH TO TRUST THE RANGE: the 21.8-fold druggability spread is mostly the clustering sweep doing its job, and druggability remains a 3-descriptor logistic regression fitted on 21 positives — a weak prior. The volume spread of 66.5% is the number to read, and even that is not exact: fpocket estimates volume by Monte Carlo, so roughly a percentage point of any spread is the method's own noise, and the 913.8 A^3 upper end sits close enough to the ~1000 A^3 merge threshold to be worth watching (fpocket reported merge_suspected false on all four). The computed axis is now INFORMATIVE and it agrees with the retrieved axis. No consensus fraction is reported because the tool does not emit one. RULE 4.0 / 4a, ADDED AFTER THIS RUN: the druggability range above (0.020-0.437, max below the 0.5 band in which most ligand-anchored holo pockets were measured to fall) sits beside a volume that reaches 913.8 A^3, and the two disagree. The disagreement is REPORTED, not resolved: druggability is non-load-bearing here as everywhere, so nothing about this dossier's verdict turns on it, and the volume guide it would once have been resolved against (>=240 A^3 druggable, <=210 A^3 hard) is RETRACTED as of 2026-08-15 - not merely uncalibrated but withdrawn, because four of the five hard anchors it was fitted on did not measure their target protein at all. It classifies nothing and must not be revived. (The '25 of 37' band figure is also under audit: one of those 37 was not a certain positive and the other 36 are unaudited at residue level.) JAK1's verdict is carried by retrieved precedent — nine approved small molecules — and would be unchanged if the pocket run had never happened.",
+    "sources": [
+      "pocket-scan Modal function `pocket_scan`, measured run 2026-08-15 on 3EYG + 10PI, D in {1.6, 2.4}",
+      "fpocket 4.2.3 (conda-forge), P2Rank 2.5.1 rescore (rescore_2024), mdpocket",
+      "metapredict 3.0.2 (disorder stage)"
+    ],
+    "method": {
+      "tool": "fpocket",
+      "version": "4.2.3 (conda-forge; binary banner self-reports 4.0 — cosmetic upstream mismatch). Rescoring P2Rank 2.5.1 (rescore_2024); site fixed by construction with mdpocket. Prep: protein only, altloc A/blank, hydrogens stripped, mmCIF via gemmi — so ligands are stripped before scoring and the holo/apo scale question does not arise.",
+      "clustering_d_swept": [
+        1.6,
+        2.4
+      ],
+      "ensemble_pdb_ids": [
+        "3EYG",
+        "10PI"
+      ],
+      "chains_used": "chain A of assembly1 for both entries; neither is a homo-oligomer (1 polymer chain each), so no chain-selection ambiguity applies"
+    }
+  },
+  "affinity": {
+    "positive_control_ligand": null,
+    "positive_control_measured_nm": null,
+    "positive_control_predicted_nm": null,
+    "reliable": null,
+    "predictions": [],
+    "sources": []
+  },
+  "falsification": {
+    "checks_run": [
+      "single-assay dominance",
+      "best potency from a characterised assay",
+      "cross-accession check on the top assay",
+      "actives collapse to one series or one lab",
+      "holo ligand drug-likeness and frequent-hitter status",
+      "pocket present in more than one crystal form",
+      "accession mapping is real",
+      "terminated clinical programs and their stated reasons",
+      "look-alike drugs counted against the wrong entity"
+    ],
+    "findings": [
+      {
+        "check": "single-assay dominance",
+        "result": "clean — top contributing assay is 4.8% of all bioactivity, far below the ~30% threshold",
+        "source": "CHEMBL2835, measured run 2026-08-15"
+      },
+      {
+        "check": "best potency from a characterised assay",
+        "result": "clean — pChEMBL 11.00 (0.010 nM) comes from a characterised enzyme assay, not an 'inhibition assay using X' description",
+        "source": "CHEMBL2835, measured run 2026-08-15"
+      },
+      {
+        "check": "look-alike drugs counted against the wrong entity",
+        "result": "FOUND — the JAK inhibitors are pan-JAK to varying degrees, so the same molecule appears against JAK1, JAK2, JAK3 and TYK2. Four rows of one molecule are not four precedents. The nine here are distinct molecules, but their JAK1 selectivity varies and only upadacitinib and abrocitinib are annotated JAK1-selective.",
+        "source": "fixtures/rheumatoid_arthritis.json THE_TEST.known_confound"
+      },
+      {
+        "check": "terminated clinical programs",
+        "result": "none retrieved for JAK1 in this run. Absence of retrieved terminations is not evidence that none exist — the query was not run against a trials registry.",
+        "source": "measured run 2026-08-15"
+      }
+    ],
+    "survived": true
+  },
+  "next_experiment": {
+    "description": "Add at least one apo JAK1 entry to the ensemble — 10 exist in the PDB — and re-run with the UniProt accession supplied. The apo entry turns on the cryptic stage, which returned not_run on an all-holo ensemble and is the only reason max_backbone_ca_displacement_a is still null; the accession makes metapredict read the 1154-residue sequence instead of the 280-residue kinase domain the structure carries.",
+    "rationale": "The previous version of this experiment — 'run a named ensemble and report volume with its spread' — has now been done, and it worked: 4 of 4 measurements selected by ligand_site_jaccard, volume 305.9 to 913.8 A^3, druggability 0.020 to 0.437. On a target with nine approvals the computed axis is informative here and agrees with the retrieved one. That is one target, not a calibration: it settles nothing about the volume axis in general, and the separation that would have been the calibration is retracted (rule 4a, 2026-08-15). What is left is narrower. 'Not cryptic' here is still an inference from the holo census rather than a displacement measurement, and JAK1 is exactly where that measurement is cheap and interpretable, because we already know the answer and can check the method against it.",
+    "resolves": "Whether the cryptic call on a pre-formed, drug-occupied site can be confirmed geometrically rather than inferred from a census — which is what determines how much the same call is worth on a target where no census exists."
+  },
+  "not_found": [
+    {
+      "field": "target_precedent.approved_small_molecules (9th entry)",
+      "reason": "the measured run counted 9 approved small molecules after collapsing salt/parent molregno pairs; 8 are named above from ChEMBL first_approval and the fixtures. The 9th could not be named from the retrieved rows and is NOT guessed. The count field and the list therefore disagree by one, deliberately."
+    },
+    {
+      "field": "tractability.ensemble_consensus_fraction.fraction_with_strong_pocket and meets_consensus_criterion",
+      "reason": "pocket_scan does not emit a consensus fraction — neither payload from the 2026-08-15 run contains the string 'consensus' anywhere. Deriving one would require a 'strong hot spot' threshold that this pipeline does not define, and picking one here would be inventing the criterion the number is supposed to be measured against. The denominators ARE now known and reported (2 structures, 4 measurements), which is the part the earlier version of this file could not state. Note this replaces an earlier '2 of 4' figure: that came from a different run on an unnamed ensemble, and it is not transcribed onto this one."
+    },
+    {
+      "field": "tractability.pocket_hydrophobic_density",
+      "reason": "the run emits mean local hydrophobic density per pocket per clustering value — 17.0 and 32.6 for 3EYG, 16.0 and 39.9 for 10PI — but no single ensemble figure, and the template field is a scalar. Pooling four values that swing 2.5-fold with the clustering parameter into one number would misrepresent them, so the field is null and the four values are recorded here."
+    },
+    {
+      "field": "tractability.disorder_fraction",
+      "reason": "metapredict 3.0.2 DID run and returned 0.0, but over the wrong sequence: no UniProt accession was passed, so the predictor read the sequence off the deposited structure — 280 residues, being the kinase domain in 3EYG — against JAK1's full length of 1154. A 0.0 measured on 24% of the protein is not the protein's disorder fraction, and the app's own caveat calls the structure-derived number a LOWER BOUND. Reporting it would be a scoping error, so the field is null. This is a missing measurement, NOT a finding that JAK1 is ordered."
+    },
+    {
+      "field": "tractability.annotated_binding_site_overlap",
+      "reason": "UniProt binding-site features were not retrieved for P23458 in this run."
+    },
+    {
+      "field": "tractability.ligand_site_jaccard",
+      "reason": "the run returns this per structure per clustering value — 3EYG 0.560 at D=1.6 and 0.778 at D=2.4, 10PI 0.300 and 0.455 — and the template field is a scalar with no place to put four numbers. Picking one would be arbitrary and picking the best would be the 'one good conformer' error, so the field is null and all four are recorded here. They are also what licenses the pooled spread: every one of them is a real overlap with the MI1 site, which is why site_pocket_selected_by reads ligand_site_jaccard rather than a fallback."
+    },
+    {
+      "field": "tractability.max_backbone_ca_displacement_a",
+      "reason": "the cryptic stage returned not_run, verbatim: 'needs both an apo and a holo structure; got 1 holo reference and 0 apo. This comparison is a PAIRWISE measurement — there is nothing to superpose against with only one state.' Both ensemble entries are holo, so there was no apo frame to displace against. cryptic_pocket_risk 'low' therefore still rests on the holo census (42 of 52), which is weaker evidence than a displacement. This is the one gap the new run did not close, and it is what next_experiment asks for."
+    },
+    {
+      "field": "structure.resolution_a and structure.bound_ligand.is_known_frequent_hitter",
+      "reason": "resolution was not retrieved for 3EYG. The ligand IS now identified — MI1, 23 heavy atoms, drug-like — from the pocket run, which auto-derived it as the entry's drug-like ligand; but no frequent-hitter or PAINS screen was run against it, so that field stays null rather than being assumed clean. Compare TNF-alpha, where the equivalent check FOUND something."
+    },
+    {
+      "field": "target_precedent.assay_concentration.assay_type_split",
+      "reason": "the B/F split was not retrieved for CHEMBL2835. Note that this split would not have been a defence anyway — TNF-alpha's contaminating assay sits in the B bucket."
+    },
+    {
+      "field": "target_precedent.patents",
+      "reason": "no patent source was queried."
+    },
+    {
+      "field": "family_precedent",
+      "reason": "Pfam family activity was not retrieved. It would not change the verdict — direct target evidence outranks it and is abundant here — but reporting it as absent would be wrong."
+    },
+    {
+      "field": "affinity",
+      "reason": "no affinity predictor was run, so no positive control exists. Rule 12: a prediction without its control is not a measurement, so no predicted values are reported."
+    },
+    {
+      "field": "structural_neighbour_precedent and pocket_neighbour_precedent",
+      "reason": "not run. Both are transfer axes for targets lacking their own evidence; JAK1 has 42 holo structures and 9 approvals."
+    },
+    {
+      "field": "tractability.pocket_volume_a3.primary_d1_6_a3",
+      "reason": "NOT SEPARATED, and this is the rule 4a re-examination case rather than a retrieval failure. The 2026-08-15 run pooled four measurements — 3EYG and 10PI, each at D=1.6 and D=2.4 — into the 305.9-913.8 A^3 spread above, and the per-measurement values were not carried through, so the D=1.6 site volume cannot be recovered from what was recorded. Under the rule as it stood that was a complete answer; under rule 4a it is not, because D=1.6 and D=2.4 do not measure the same cavity and only the D=1.6 figure is the primary number. The 913.8 A^3 upper end is the shape a D=2.4 merge has (rule 4: above ~1000 A^3 sites have merged) and must not be read as the site. Re-run the ensemble and record the D=1.6 value separately. This is a MISSING PRIMARY MEASUREMENT, not a finding that the JAK1 ATP site is small."
+    },
+    {
+      "field": "tractability.site_pocket_rank",
+      "reason": "Not recorded. The run predates rule 4d and relayed neither fpocket's rank for the site pocket nor a PRANK rescore. Both are site-finding information only — PRANK promotes the true site in 79% of 70 ligand-anchored measurements but is INVERTED as a quality classifier at AUC 0.25 — so their absence removes no evidence about tractability and adds none. NOT a finding that the site ranked poorly."
+    }
+  ]
+}
