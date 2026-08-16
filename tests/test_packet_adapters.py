@@ -81,25 +81,50 @@ def headless_response(document: dict) -> dict:
     }
 
 
+def economics_output(analysis: dict, *, request_id: str) -> dict:
+    """Wrap an exact AnalysisResult fixture in the current CLI output envelope."""
+
+    return {
+        "contract_version": "1.0.0",
+        "module": "rnpv_roi_calculator",
+        "module_version": "0.4.0",
+        "engine_version": "0.4.0",
+        "engine_schema_version": "1.3.0",
+        "request_id": request_id,
+        "status": "ok",
+        "payload": analysis,
+        "interpretability": {},
+        "warnings": copy.deepcopy(analysis["warnings"]),
+        "provenance": [],
+        "artifacts": [],
+    }
+
+
 FIXTURES["hypothesis_generator"] = headless_response(
     hypothesis_document(HYPGEN_SLATE["hypotheses"][0])
 )
 FIXTURES["tractability"] = json.loads(
     (Path(__file__).parent / "fixtures" / "jak1_P23458.json").read_text()
 )
-FIXTURES["economics"] = json.loads(
-    (
-        Path(__file__).parent
-        / "fixtures"
-        / "economics-analysis-result-cashflow-inputs.json"
-    ).read_text()
+FIXTURES["economics"] = economics_output(
+    json.loads(
+        (
+            Path(__file__).parent
+            / "fixtures"
+            / "economics-analysis-result-cashflow-inputs.json"
+        ).read_text()
+    ),
+    request_id="roi-cashflow-fixture",
 )
-FIXTURES["economics_standard"] = json.loads(
-    (
-        Path(__file__).parent
-        / "fixtures"
-        / "economics-analysis-result-standard.json"
-    ).read_text()
+FIXTURES["economics_standard"] = economics_output(
+    json.loads(
+        (
+            Path(__file__).parent
+            / "fixtures"
+            / "economics-analysis-result-standard.json"
+        ).read_text()
+    ),
+    request_id="roi-standard-fixture",
 )
 
 SCHEMAS = {
@@ -654,7 +679,7 @@ def test_economics_reads_exact_cashflow_analysis_result_130_and_preserves_basis(
     assert len(result.objectives) == 1
     objective = result.objectives[0]
     assert objective.raw_value == -15253691.618176274
-    assert objective.source_path == "$.summary.p50_rnpv"
+    assert objective.source_path == "$.payload.summary.p50_rnpv"
     assert objective.unit == "USD"
     assert objective.uncertainty["p10Rnpv"] == -23236281.846467756
     assert objective.uncertainty["p90Rnpv"] == -7271101.3898847895
@@ -662,6 +687,8 @@ def test_economics_reads_exact_cashflow_analysis_result_130_and_preserves_basis(
     assert objective.basis["baseYear"] is None
     assert objective.basis["valuationYear"] == 2026
     assert objective.basis["engineVersion"] == "0.4.0"
+    assert objective.basis["analysisSchemaVersion"] == "1.3.0"
+    assert objective.basis["nativeSchemaVersion"] == "1.0.0"
     assert objective.basis["inputSnapshotMode"] == "cashflow_inputs"
     assert objective.basis["uncertaintyContract"]["drawOrderContractVersion"] == "1.0.0"
     assert objective.basis["simulationAssumptions"]["price_multiplier"] == {
@@ -674,6 +701,12 @@ def test_economics_reads_exact_cashflow_analysis_result_130_and_preserves_basis(
     assert result.details["nativeBasis"]["simulations"] == 2
     assert "DECISION_GRADE" in objective.qualifiers
     assert "HAS_WARNINGS" not in objective.qualifiers
+    assert objective.packet_sha256 == canonical_json_sha256(payload)
+    assert canonical_json_sha256(result.raw_payload) == canonical_json_sha256(payload)
+    assert result.attempt_record["outputRawSha256"] == raw_sha256(
+        canonical_json_bytes(payload)
+    )
+    assert result.details["moduleEnvelope"]["requestId"] == "roi-cashflow-fixture"
 
 
 def test_economics_reads_exact_standard_result_without_upgrading_decision_grade():
@@ -689,19 +722,51 @@ def test_economics_reads_exact_standard_result_without_upgrading_decision_grade(
     assert "NOT_DECISION_GRADE" in objective.qualifiers
     assert "HAS_WARNINGS" in objective.qualifiers
     assert result.details["nativeBasis"]["programId"] == "SYNTHETIC-LAB-001"
-    assert len(result.raw_payload["warnings"]) == 63
+    assert len(result.raw_payload["payload"]["warnings"]) == 63
+
+
+@pytest.mark.parametrize(
+    ("field", "value", "reason"),
+    (
+        ("module", "different_module", "module must be 'rnpv_roi_calculator'"),
+        ("module_version", "0.5.0", "module_version"),
+        ("contract_version", "2.0.0", "contract_version"),
+        ("engine_version", "0.5.0", "engine_version"),
+        ("engine_schema_version", "1.2.0", "engine_schema_version"),
+        ("status", "error", "status must be 'ok'"),
+    ),
+)
+def test_economics_malformed_current_envelope_fails_closed(field, value, reason):
+    payload = copy.deepcopy(FIXTURES["economics"])
+    payload[field] = value
+
+    result = adapt_economics(make_packet(ECONOMICS, payload))
+
+    assert result.objectives == ()
+    assert canonical_json_sha256(result.raw_payload) == canonical_json_sha256(payload)
+    assert reason in result.missing_reasons[0]
+
+
+def test_economics_inner_analysis_identity_must_match_current_outer_envelope():
+    payload = copy.deepcopy(FIXTURES["economics"])
+    payload["payload"]["schema_version"] = "1.2.0"
+
+    result = adapt_economics(make_packet(ECONOMICS, payload))
+
+    assert result.objectives == ()
+    assert "schema_version must match" in result.missing_reasons[0]
 
 
 def test_economics_top_level_or_malformed_rnpv_never_becomes_neutral():
     missing_nested = copy.deepcopy(FIXTURES["economics"])
-    del missing_nested["summary"]["p50_rnpv"]
-    missing_nested["p50_rnpv"] = 999.0
+    del missing_nested["payload"]["summary"]["p50_rnpv"]
+    missing_nested["payload"]["p50_rnpv"] = 999.0
     result = adapt_economics(make_packet(ECONOMICS, missing_nested))
     assert result.objectives == ()
     assert "payload.summary.p50_rnpv" in result.missing_reasons[0]
 
     inverted = copy.deepcopy(FIXTURES["economics"])
-    inverted["summary"]["p10_rnpv"] = 1.0
+    inverted["payload"]["summary"]["p10_rnpv"] = 1.0
     inverted_result = adapt_economics(make_packet(ECONOMICS, inverted))
     assert inverted_result.objectives == ()
     assert "p10 <= p50 <= p90" in inverted_result.missing_reasons[0]
@@ -709,15 +774,15 @@ def test_economics_top_level_or_malformed_rnpv_never_becomes_neutral():
 
 def test_economics_run_id_and_decision_grade_must_match_native_result_state():
     wrong_run = copy.deepcopy(FIXTURES["economics"])
-    wrong_run["run_id"] = "run_forged"
+    wrong_run["payload"]["run_id"] = "run_forged"
     result = adapt_economics(make_packet(ECONOMICS, wrong_run))
     assert result.objectives == ()
     assert "input_digest-derived run ID" in result.missing_reasons[0]
 
     impossible_grade = copy.deepcopy(FIXTURES["economics_standard"])
-    impossible_grade["decision_grade"] = "DECISION_GRADE"
-    impossible_grade["recommendation"] = "HOLD"
-    impossible_grade["summary"]["recommendation"] = "HOLD"
+    impossible_grade["payload"]["decision_grade"] = "DECISION_GRADE"
+    impossible_grade["payload"]["recommendation"] = "HOLD"
+    impossible_grade["payload"]["summary"]["recommendation"] = "HOLD"
     result = adapt_economics(make_packet(ECONOMICS, impossible_grade))
     assert result.objectives == ()
     assert "inconsistent with critical evidence" in result.missing_reasons[0]
@@ -757,6 +822,33 @@ def test_tractability_stays_categorical_and_preserves_both_axes():
     assert any(
         item["field"] == "tractability.disorder_fraction"
         for item in result.details["notFound"]
+    )
+
+
+def test_tractability_provenance_rule_excludes_only_interpretability_metadata():
+    payload = copy.deepcopy(FIXTURES["tractability"])
+    payload["interpretability"] = {
+        "trace": [{"order": 1}],
+        "metrics": [{"id": "metric-1", "value": 0.63}],
+        "extensions": {"axes": {"computed_tractability": {"fpocket_rank": 2}}},
+    }
+
+    result = adapt_tractability(
+        make_packet(TRACTABILITY, payload, subject=tractability_subject())
+    )
+
+    assert not result.quarantined
+    assert len(result.objectives) == 1
+
+    payload["unsupported_scientific_metric"] = 7
+    invalid = adapt_tractability(
+        make_packet(TRACTABILITY, payload, subject=tractability_subject())
+    )
+    assert invalid.quarantined
+    assert any(
+        violation["rule"] == "NUMBER_WITHOUT_PROVENANCE"
+        and violation["path"] == "unsupported_scientific_metric"
+        for violation in invalid.details["nativeValidationViolations"]
     )
 
 
@@ -915,13 +1007,13 @@ def test_unpinned_producer_or_adapter_version_is_quarantined(field, value, reaso
 
 def test_economics_rejects_invalid_decision_grade_or_recommendation_union():
     invalid_grade = copy.deepcopy(FIXTURES["economics"])
-    invalid_grade["decision_grade"] = "BANANA"
+    invalid_grade["payload"]["decision_grade"] = "BANANA"
     result = adapt_economics(make_packet(ECONOMICS, invalid_grade))
     assert result.objectives == ()
     assert "decision_grade" in result.missing_reasons[0]
 
     inconsistent = copy.deepcopy(FIXTURES["economics"])
-    inconsistent["recommendation"] = "HOLD"
+    inconsistent["payload"]["recommendation"] = "HOLD"
     result = adapt_economics(make_packet(ECONOMICS, inconsistent))
     assert result.objectives == ()
     assert "does not match" in result.missing_reasons[0]

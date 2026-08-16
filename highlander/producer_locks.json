@@ -22,8 +22,8 @@
     "therapeutic-program-economics": {
       "repository": "https://github.com/REagent-LABrador/rnpv-roi-calculator",
       "producerCodeVersion": "29bf59ea5f64e0f68a58a2e35595f471b0c73311",
-      "nativeSchemaId": "labrador_roi.engine.AnalysisResult",
-      "nativeSchemaVersion": "1.3.0"
+      "nativeSchemaId": "urn:reagent-labrador:rnpv_roi_calculator:output:1.0.0",
+      "nativeSchemaVersion": "1.0.0"
     },
     "small-molecule-tractability-review": {
       "repository": "https://github.com/REagent-LABrador/simulation",

@@ -55,7 +55,7 @@ parent lineage cannot be relabeled without changing the input digest.
 | Evidence Mapper | Evidence, coverage, and graph provenance | Preserves `yes`, `no`, and neutral `no_effect`; emits no hypothesis fitness value |
 | Hypothesis Generator | Candidate identity plus support, novelty, testability, and contradiction risk | Consumes the current headless response and its nested `HypothesisDocument` (`schema_version: 2.0`); a successful response must also carry cards and the complete ROI request; `contradiction_risk` is minimized; rejected or unverified candidates are excluded by default |
 | Trial Recruitment Forecaster | Recruitability objective and enrollment uncertainty | Consumes the current snake_case result (`simulated_months_to_enroll`, `simulated_months_range`, and related fields) and preserves the native record |
-| Therapeutic Program Economics | ROI objective and economic uncertainty | Reads `summary.p50_rnpv`; preserves P10/P50/P90, currency, valuation year, engine, warnings, and decision grade |
+| Therapeutic Program Economics | ROI objective and economic uncertainty | Validates the current module-output `1.0.0` envelope, reads its AnalysisResult `1.3.0` at `payload.summary.p50_rnpv`, and preserves P10/P50/P90, currency, valuation year, engine, warnings, and decision grade |
 | Small-Molecule Tractability Review | Categorical tractability posture and scientific context | Never fabricates a numeric biology score; validates target, mechanism, as-of date, and modality |
 
 Each adapter has its own schema ID/version and producer-commit lock in

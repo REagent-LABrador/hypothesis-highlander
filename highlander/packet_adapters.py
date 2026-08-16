@@ -64,6 +64,20 @@ _ECONOMICS_SIMULATION_RANGES = {
     "launch_delay_years",
     "loe_retention_multiplier",
 }
+_ECONOMICS_OUTPUT_FIELDS = {
+    "artifacts",
+    "contract_version",
+    "engine_schema_version",
+    "engine_version",
+    "interpretability",
+    "module",
+    "module_version",
+    "payload",
+    "provenance",
+    "request_id",
+    "status",
+    "warnings",
+}
 _ADAPTER_VERSION = "packet-adapters.v1"
 _SHA256_URI_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
 TRACTABILITY_VALIDATOR_SHA256 = (
@@ -941,17 +955,75 @@ def adapt_recruitment(packet: ModulePacket) -> AdaptedModuleResult:
         return _malformed(packet, error)
 
 
+def _current_economics_analysis(
+    value: Any,
+) -> tuple[Mapping[str, Any], Mapping[str, Any]]:
+    """Validate the current module-output envelope and return its analysis."""
+
+    envelope = _mapping(value, "payload")
+    _only_fields(envelope, _ECONOMICS_OUTPUT_FIELDS, "payload")
+    contract_version = _text(
+        envelope.get("contract_version"), "payload.contract_version"
+    )
+    if contract_version != "1.0.0":
+        raise ContractError("payload.contract_version must be '1.0.0'")
+    module = _text(envelope.get("module"), "payload.module")
+    if module != "rnpv_roi_calculator":
+        raise ContractError("payload.module must be 'rnpv_roi_calculator'")
+    module_version = _text(
+        envelope.get("module_version"), "payload.module_version"
+    )
+    if module_version != "0.4.0":
+        raise ContractError("payload.module_version must be '0.4.0'")
+    engine_schema_version = _text(
+        envelope.get("engine_schema_version"),
+        "payload.engine_schema_version",
+    )
+    if engine_schema_version != "1.3.0":
+        raise ContractError("payload.engine_schema_version must be '1.3.0'")
+    engine_version = _text(
+        envelope.get("engine_version"), "payload.engine_version"
+    )
+    if engine_version != "0.4.0":
+        raise ContractError("payload.engine_version must be '0.4.0'")
+    status = _text(envelope.get("status"), "payload.status")
+    if status != "ok":
+        raise ContractError("payload.status must be 'ok' for a successful ROI packet")
+    _text(envelope.get("request_id"), "payload.request_id")
+    _mapping(envelope.get("interpretability"), "payload.interpretability")
+    _sequence(envelope.get("warnings"), "payload.warnings")
+    _sequence(envelope.get("provenance"), "payload.provenance")
+    _sequence(envelope.get("artifacts", ()), "payload.artifacts")
+
+    analysis = _mapping(envelope.get("payload"), "payload.payload")
+    analysis_schema_version = _text(
+        analysis.get("schema_version"), "payload.payload.schema_version"
+    )
+    if analysis_schema_version != engine_schema_version:
+        raise ContractError(
+            "payload.payload.schema_version must match payload.engine_schema_version"
+        )
+    analysis_engine_version = _text(
+        analysis.get("engine_version"), "payload.payload.engine_version"
+    )
+    if analysis_engine_version != engine_version:
+        raise ContractError(
+            "payload.payload.engine_version must match payload.engine_version"
+        )
+    return envelope, analysis
+
+
 def adapt_economics(packet: ModulePacket) -> AdaptedModuleResult:
-    """Read AnalysisResult 1.3.0's nested summary without normalising rNPV."""
+    """Read the current output envelope and its exact AnalysisResult 1.3.0."""
 
     early = _preflight(packet, ECONOMICS)
     if early is not None:
         return early
     try:
-        out = _mapping(packet.payload, "payload")
-        schema_version = _text(out.get("schema_version"), "payload.schema_version")
-        if schema_version != "1.3.0" or packet.native_schema_version != "1.3.0":
-            raise ContractError("economics adapter accepts only locked AnalysisResult 1.3.0")
+        envelope, out = _current_economics_analysis(packet.payload)
+        schema_version = _text(
+            out.get("schema_version"), "payload.payload.schema_version"
+        )
         summary = _mapping(out.get("summary"), "payload.summary")
         p10 = _number(summary.get("p10_rnpv"), "payload.summary.p10_rnpv")
         p50 = _number(summary.get("p50_rnpv"), "payload.summary.p50_rnpv")
@@ -1199,6 +1271,7 @@ def adapt_economics(packet: ModulePacket) -> AdaptedModuleResult:
             "nativeSchemaId": packet.native_schema_id,
             "nativeSchemaVersion": packet.native_schema_version,
             "adapterVersion": packet.adapter_version,
+            "analysisSchemaVersion": schema_version,
             "engineVersion": engine_version,
             "currency": currency,
             "baseYear": base_year,
@@ -1209,6 +1282,9 @@ def adapt_economics(packet: ModulePacket) -> AdaptedModuleResult:
             "uncertaintyContract": uncertainty_contract,
         }
         native_basis = {
+            "requestId": envelope["request_id"],
+            "contractVersion": envelope["contract_version"],
+            "moduleVersion": envelope["module_version"],
             "programId": program_id,
             "currency": currency,
             "baseYear": base_year,
@@ -1236,7 +1312,7 @@ def adapt_economics(packet: ModulePacket) -> AdaptedModuleResult:
             unit=currency,
             uncertainty=uncertainty,
             basis=comparison_basis,
-            source_path="$.summary.p50_rnpv",
+            source_path="$.payload.summary.p50_rnpv",
             qualifiers=qualifiers,
         )
         return _result(
@@ -1247,6 +1323,19 @@ def adapt_economics(packet: ModulePacket) -> AdaptedModuleResult:
                 "uncertainty": uncertainty,
                 "comparisonBasis": comparison_basis,
                 "nativeBasis": native_basis,
+                "moduleEnvelope": {
+                    "contractVersion": envelope["contract_version"],
+                    "module": envelope["module"],
+                    "moduleVersion": envelope["module_version"],
+                    "engineSchemaVersion": envelope["engine_schema_version"],
+                    "engineVersion": envelope["engine_version"],
+                    "requestId": envelope["request_id"],
+                    "status": envelope["status"],
+                    "interpretability": envelope["interpretability"],
+                    "warnings": envelope["warnings"],
+                    "provenance": envelope["provenance"],
+                    "artifacts": envelope.get("artifacts", ()),
+                },
             },
             qualifiers=qualifiers,
         )
@@ -1274,7 +1363,18 @@ def adapt_tractability(packet: ModulePacket) -> AdaptedModuleResult:
         return early
     try:
         native_payload = json.loads(canonical_json_bytes(packet.payload))
-        violations = validate_dossier(native_payload)
+        # The shared interpretability contract is metadata over the dossier and
+        # repeats numeric values already provenance-checked in their native
+        # scientific fields. Keep the vendored validator byte-identical and run
+        # it over every top-level scientific field, excluding only that metadata
+        # document. Subject and verdict extraction below still use the full
+        # untouched producer payload.
+        scientific_payload = {
+            key: value
+            for key, value in native_payload.items()
+            if key != "interpretability"
+        }
+        violations = validate_dossier(scientific_payload)
         if violations:
             return _result(
                 packet,

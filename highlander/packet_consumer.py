@@ -380,7 +380,16 @@ def _validate_input_binding(packet: ModulePacket, input_raw: bytes) -> None:
             )
         # A valid native output must echo this program ID, but malformed output
         # stays candidate-local and is handled by ``adapt_economics`` below.
-        snapshot = packet.payload.get("input_snapshot") if packet.payload is not None else None
+        analysis = (
+            packet.payload.get("payload")
+            if isinstance(packet.payload, Mapping)
+            else None
+        )
+        snapshot = (
+            analysis.get("input_snapshot")
+            if isinstance(analysis, Mapping)
+            else None
+        )
         snapshot_program = (
             snapshot.get(native_mode) if isinstance(snapshot, Mapping) else None
         )

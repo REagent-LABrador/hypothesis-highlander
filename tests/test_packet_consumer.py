@@ -38,13 +38,6 @@ HYPGEN_SLATE = json.loads(
 FIXTURES["tractability"] = json.loads(
     (Path(__file__).parent / "fixtures" / "jak1_P23458.json").read_text()
 )
-FIXTURES["economics"] = json.loads(
-    (
-        Path(__file__).parent
-        / "fixtures"
-        / "economics-analysis-result-cashflow-inputs.json"
-    ).read_text()
-)
 STAMP = "2026-08-16T12:00:00Z"
 HEX = "0" * 64
 ARTIFACTS: dict[str, bytes] = {}
@@ -95,6 +88,34 @@ def headless_response(document: dict) -> dict:
     }
 
 
+def economics_output(analysis: dict) -> dict:
+    return {
+        "contract_version": "1.0.0",
+        "module": "rnpv_roi_calculator",
+        "module_version": "0.4.0",
+        "engine_version": "0.4.0",
+        "engine_schema_version": "1.3.0",
+        "request_id": "roi-consumer-fixture",
+        "status": "ok",
+        "payload": analysis,
+        "interpretability": {},
+        "warnings": copy.deepcopy(analysis["warnings"]),
+        "provenance": [],
+        "artifacts": [],
+    }
+
+
+FIXTURES["economics"] = economics_output(
+    json.loads(
+        (
+            Path(__file__).parent
+            / "fixtures"
+            / "economics-analysis-result-cashflow-inputs.json"
+        ).read_text()
+    )
+)
+
+
 FIXTURES["hypothesis_generator"] = headless_response(
     hypothesis_document(HYPGEN_SLATE["hypotheses"][0])
 )
@@ -128,7 +149,7 @@ def economics_native_input(payload: dict | None) -> tuple[dict, str | None]:
 
     if payload is None:
         return {"program": {"program_id": None}}, None
-    snapshot = payload["input_snapshot"]
+    snapshot = payload["payload"]["input_snapshot"]
     if "program" in snapshot:
         return {
             "program": copy.deepcopy(snapshot["program"]),
@@ -1129,7 +1150,7 @@ def test_malformed_native_output_is_candidate_local_not_request_wide():
     economics = next(
         item for item in bad["modulePackets"] if item["moduleId"] == ECONOMICS
     )
-    del economics["payload"]["input_snapshot"]
+    del economics["payload"]["payload"]["input_snapshot"]
     output_raw = canonical_json_bytes(economics["payload"])
     ARTIFACTS[economics["outputArtifactRef"]] = output_raw
     economics["outputRawSha256"] = raw_sha256(output_raw)
