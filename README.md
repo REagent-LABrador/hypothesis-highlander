@@ -148,6 +148,29 @@ They never fabricate a native payload or numeric objective. A failed axis only
 makes a candidate incomparable when that axis is required by the selected
 policy or when an unusable parent invalidates a dependent result.
 
+## Minimal RA demo compatibility
+
+The current RA demo can be exercised without changing the orchestrator or any
+scientific module. Pipe its existing snake-case `/snapshot` projection into the
+scoped Highlander command:
+
+```bash
+curl -fsS http://127.0.0.1:8787/api/runs/<run-id>/snapshot \
+  | python -m highlander ra-demo --snapshot - --out ra-demo-result.json
+```
+
+This mode requires exactly three biomarkers and nine unique hypothesis branches
+(the complete 3x3 cross-product). It preserves each composite branch ID, including
+ties, and compares the embedded native HypGen Card metrics `support`, `novelty`,
+and `testability`. Biomarker association is retained as a qualifier but is not
+converted into a score.
+
+The projected card rank and the shared RA recruitment, ROI, and tractability
+records do not enter dominance. The output is explicitly
+`highlander.ra-demo-result.v1`, carries `DEMO_ONLY`, and contains no winner. This
+is a narrow compatibility path; it does not weaken or replace the production
+packet consumer.
+
 ## Legacy demo is separate
 
 The original quality-diversity search remains available for demonstrations:
