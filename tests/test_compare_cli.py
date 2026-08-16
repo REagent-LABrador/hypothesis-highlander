@@ -29,6 +29,31 @@ def test_compare_cli_reads_stdin_and_emits_versioned_result(monkeypatch, capsys)
     assert captured.err == ""
 
 
+def test_compare_cli_reads_and_writes_explicit_files(tmp_path, capsys):
+    request_path = tmp_path / "request.json"
+    result_path = tmp_path / "result.json"
+    request_path.write_text(
+        json.dumps(request([hypgen_candidate("H-cli-file", 0.8, 0.1)]))
+    )
+
+    assert main(
+        [
+            "compare",
+            "--request",
+            str(request_path),
+            "--out",
+            str(result_path),
+        ]
+    ) == 0
+
+    payload = json.loads(result_path.read_text())
+    assert payload["schemaVersion"] == "highlander.portfolio-result.v1"
+    assert payload["frontier"] == ["H-cli-file"]
+    assert "nextEvidenceAction" in payload
+    assert "winner" not in payload
+    assert capsys.readouterr().out == ""
+
+
 def test_compare_cli_fails_closed_without_traceback(monkeypatch, capsys):
     candidate = hypgen_candidate("H-cli-tampered", 0.8, 0.1)
     candidate["packetHash"] = "f" * 64

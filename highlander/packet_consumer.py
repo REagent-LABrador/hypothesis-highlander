@@ -13,6 +13,7 @@ import hmac
 import json
 import math
 import re
+from dataclasses import replace
 from types import MappingProxyType
 from typing import Any, Callable, Mapping, Sequence
 
@@ -27,6 +28,7 @@ from .packet_adapters import (
     adapt_mapper,
     adapt_recruitment,
     adapt_tractability,
+    extract_hypothesis_candidates,
 )
 from .packet_contracts import (
     AdaptedModuleResult,
@@ -40,6 +42,7 @@ from .packet_portfolio import (
     candidate_from_adapted_results,
     compare_packets,
 )
+from .thesis import validate_indication_thesis_wire
 
 
 REQUEST_SCHEMA_VERSION = "highlander.packet-comparison-request.v1"
@@ -301,6 +304,12 @@ def _validate_input_binding(packet: ModulePacket, input_raw: bytes) -> None:
         if "thesis" in native_input:
             thesis = _mapping(native_input["thesis"], f"{thesis_path}.thesis")
             thesis_path += ".thesis"
+        try:
+            validate_indication_thesis_wire(dict(thesis))
+        except ValueError as error:
+            raise ContractError(
+                f"{packet.input_artifact_ref!r} recruitment thesis is not canonical: {error}"
+            ) from error
         if _text(
             thesis.get("id"), f"{thesis_path}.id"
         ) != packet.hypothesis_id:
@@ -432,13 +441,34 @@ def _verify_artifacts(packet: ModulePacket, resolver: ArtifactResolver) -> None:
             )
 
 
+def _has_canonical_partial_hypgen_output(packet: ModulePacket) -> bool:
+    if (
+        packet.module_id != HYPOTHESIS_GENERATOR
+        or packet.execution_status != "PARTIAL"
+        or packet.payload is None
+        or packet.output_canonical_sha256 is None
+    ):
+        return False
+    try:
+        candidates = extract_hypothesis_candidates(
+            packet.payload,
+            allow_partial=True,
+        )
+    except ContractError:
+        return False
+    return len(candidates) == 1 and candidates[0].source_id == packet.hypothesis_id
+
+
 def _validate_dependencies(packets: Sequence[ModulePacket], path: str) -> None:
     by_module = {packet.module_id: packet for packet in packets}
     allowed_parents = {
         MAPPER: frozenset(),
         HYPOTHESIS_GENERATOR: frozenset({MAPPER}),
         RECRUITMENT: frozenset({HYPOTHESIS_GENERATOR}),
-        TRACTABILITY: frozenset({HYPOTHESIS_GENERATOR}),
+        # Tractability can run directly from the branch focus/accession even if
+        # HypGen fails.  It may still declare exact mapper/HypGen lineage when
+        # those outputs were actually used, but neither parent is mandatory.
+        TRACTABILITY: frozenset({MAPPER, HYPOTHESIS_GENERATOR}),
         ECONOMICS: frozenset({HYPOTHESIS_GENERATOR, RECRUITMENT}),
     }
     for packet in packets:
@@ -475,7 +505,12 @@ def _validate_dependencies(packets: Sequence[ModulePacket], path: str) -> None:
                     f"envelope hash for {parent.module_id!r}"
                 )
 
-    def require_parent(child: str, parent: str) -> None:
+    def require_parent(
+        child: str,
+        parent: str,
+        *,
+        allow_partial_parent_output: bool = False,
+    ) -> None:
         child_packet = by_module.get(child)
         if child_packet is None:
             return
@@ -484,7 +519,15 @@ def _validate_dependencies(packets: Sequence[ModulePacket], path: str) -> None:
             raise ContractError(
                 f"{path} module {child!r} requires selected parent {parent!r}"
             )
-        if child_packet.succeeded and not parent_packet.succeeded:
+        parent_has_partial_output = (
+            allow_partial_parent_output
+            and _has_canonical_partial_hypgen_output(parent_packet)
+        )
+        if (
+            child_packet.succeeded
+            and not parent_packet.succeeded
+            and not parent_has_partial_output
+        ):
             raise ContractError(
                 f"{path} successful module {child!r} depends on non-successful "
                 f"parent {parent!r}"
@@ -506,14 +549,21 @@ def _validate_dependencies(packets: Sequence[ModulePacket], path: str) -> None:
 
     if MAPPER in by_module and HYPOTHESIS_GENERATOR in by_module:
         require_parent(HYPOTHESIS_GENERATOR, MAPPER)
-    require_parent(RECRUITMENT, HYPOTHESIS_GENERATOR)
-    require_parent(TRACTABILITY, HYPOTHESIS_GENERATOR)
+    # A PARTIAL HypGen attempt can still carry the complete canonical
+    # hypothesis/thesis needed by clinical while lacking its separate ROI
+    # request.  Preserve that exact partial artifact and allow clinical to use
+    # it; HypGen objectives remain missing, so a full scientific policy still
+    # makes the branch incomparable.
+    require_parent(
+        RECRUITMENT,
+        HYPOTHESIS_GENERATOR,
+        allow_partial_parent_output=True,
+    )
     require_parent(ECONOMICS, HYPOTHESIS_GENERATOR)
-    require_parent(ECONOMICS, RECRUITMENT)
 
 
 def _lineage_exclusion(results: Sequence[AdaptedModuleResult]) -> str | None:
-    """Return a stable exclusion when mapper and Slate graph lineage diverge."""
+    """Return a stable exclusion when mapper and HypothesisDocument lineage diverge."""
 
     by_module = {result.module_id: result for result in results}
     mapper = by_module.get(MAPPER)
@@ -543,20 +593,192 @@ def _dependency_result_exclusions(
     """Propagate unusable parent validation into dependent observations."""
 
     results_by_module = {result.module_id: result for result in results}
+    packets_by_module = {packet.module_id: packet for packet in packets}
     exclusions: list[str] = []
     for child in packets:
         for dependency in child.dependencies:
             parent_module = dependency["moduleId"]
             parent_result = results_by_module[parent_module]
+            parent_packet = packets_by_module[parent_module]
+            partial_hypgen_thesis_used_by_clinical = (
+                child.module_id == RECRUITMENT
+                and parent_module == HYPOTHESIS_GENERATOR
+                and _has_canonical_partial_hypgen_output(parent_packet)
+            )
             if parent_result.quarantined:
                 exclusions.append(
                     f"UNUSABLE_DEPENDENCY:{child.module_id}:{parent_module}:QUARANTINED"
                 )
-            elif parent_result.missing_reasons:
+            elif parent_result.missing_reasons and not partial_hypgen_thesis_used_by_clinical:
                 exclusions.append(
                     f"UNUSABLE_DEPENDENCY:{child.module_id}:{parent_module}:MISSING_RESULT"
                 )
     return tuple(exclusions)
+
+
+def _producer_next_actions(
+    packets: Sequence[ModulePacket],
+) -> tuple[dict[str, Any], ...]:
+    """Extract advisory actions only from exact producer-emitted fields."""
+
+    actions: list[dict[str, Any]] = []
+    for packet in packets:
+        if not packet.succeeded or not isinstance(packet.payload, Mapping):
+            continue
+        payload = packet.payload
+        if packet.module_id == HYPOTHESIS_GENERATOR:
+            document = payload.get("hypothesis")
+            asks = document.get("asks", ()) if isinstance(document, Mapping) else ()
+            if isinstance(asks, Sequence) and not isinstance(asks, (str, bytes)):
+                for index, value in enumerate(asks):
+                    if not isinstance(value, Mapping):
+                        continue
+                    action_type = value.get("ask")
+                    target = value.get("target")
+                    if action_type not in {
+                        "expand_node", "resolve_link", "test_gap", "new_question"
+                    } or not isinstance(target, str) or not target.strip():
+                        continue
+                    reason = value.get("reason")
+                    if not isinstance(reason, str) or not reason.strip():
+                        continue
+                    actions.append(
+                        {
+                            "priority": 0,
+                            "candidateId": packet.hypothesis_id,
+                            "actionType": action_type,
+                            "target": target,
+                            "description": reason,
+                            "producerModuleId": packet.module_id,
+                            "producerOutputSha256": packet.output_canonical_sha256,
+                            "sourceId": target,
+                            "sourcePath": f"$.hypothesis.asks[{index}]",
+                        }
+                    )
+            hypothesis = (
+                document.get("hypothesis")
+                if isinstance(document, Mapping)
+                else None
+            )
+            evidence = hypothesis.get("evidence") if isinstance(hypothesis, Mapping) else None
+            gap = evidence.get("gap") if isinstance(evidence, Mapping) else None
+            if isinstance(gap, Mapping):
+                gap_id = gap.get("id")
+                note = gap.get("note")
+                if isinstance(gap_id, str) and gap_id.strip() and isinstance(note, str) and note.strip():
+                    actions.append(
+                        {
+                            "priority": 2,
+                            "candidateId": packet.hypothesis_id,
+                            "actionType": "test_gap",
+                            "target": gap_id,
+                            "description": note,
+                            "producerModuleId": packet.module_id,
+                            "producerOutputSha256": packet.output_canonical_sha256,
+                            "sourceId": gap_id,
+                            "sourcePath": "$.hypothesis.hypothesis.evidence.gap",
+                        }
+                    )
+        elif packet.module_id == MAPPER:
+            gaps = payload.get("gaps", ())
+            if isinstance(gaps, Sequence) and not isinstance(gaps, (str, bytes)):
+                for index, value in enumerate(gaps):
+                    if not isinstance(value, Mapping):
+                        continue
+                    gap_id = value.get("id")
+                    description = value.get("note") or value.get("reason")
+                    if not isinstance(gap_id, str) or not gap_id.strip():
+                        continue
+                    if not isinstance(description, str) or not description.strip():
+                        continue
+                    actions.append(
+                        {
+                            "priority": 1,
+                            "candidateId": packet.hypothesis_id,
+                            "actionType": "test_gap",
+                            "target": gap_id,
+                            "description": description,
+                            "producerModuleId": packet.module_id,
+                            "producerOutputSha256": packet.output_canonical_sha256,
+                            "sourceId": gap_id,
+                            "sourcePath": f"$.gaps[{index}]",
+                        }
+                    )
+        elif packet.module_id == TRACTABILITY:
+            follow_up = payload.get("next_experiment")
+            if isinstance(follow_up, Mapping):
+                description = follow_up.get("description")
+                if isinstance(description, str) and description.strip():
+                    actions.append(
+                        {
+                            "priority": 3,
+                            "candidateId": packet.hypothesis_id,
+                            "actionType": "run_follow_up",
+                            "target": packet.subject.uniprot_accession or packet.hypothesis_id,
+                            "description": description,
+                            "producerModuleId": packet.module_id,
+                            "producerOutputSha256": packet.output_canonical_sha256,
+                            "sourceId": "next_experiment",
+                            "sourcePath": "$.next_experiment",
+                        }
+                    )
+    return tuple(actions)
+
+
+def _select_next_evidence_action(
+    actions: Sequence[Mapping[str, Any]],
+) -> dict[str, Any] | None:
+    """Prefer an action shared by most candidate branches, then stable source order."""
+
+    grouped: dict[str, dict[str, Any]] = {}
+    for action in actions:
+        identity = {
+            key: action[key]
+            for key in (
+                "actionType", "target", "description", "producerModuleId",
+                "sourceId", "sourcePath",
+            )
+        }
+        key = canonical_json_sha256(identity)
+        group = grouped.setdefault(
+            key,
+            {
+                **identity,
+                "producerOutputSha256": action["producerOutputSha256"],
+                "priority": action["priority"],
+                "candidateIds": set(),
+            },
+        )
+        group["candidateIds"].add(action["candidateId"])
+        # One semantic action can be emitted independently by several branches.
+        # Keep a deterministic exact producer artifact as the compact grounding;
+        # candidateIds records every branch that emitted the same action.
+        group["producerOutputSha256"] = min(
+            group["producerOutputSha256"], action["producerOutputSha256"]
+        )
+    if not grouped:
+        return None
+    selected_key, selected = min(
+        grouped.items(),
+        key=lambda item: (
+            -len(item[1]["candidateIds"]),
+            item[1]["priority"],
+            item[1]["producerModuleId"],
+            item[1]["actionType"],
+            item[1]["target"],
+            item[0],
+        ),
+    )
+    candidate_ids = sorted(selected.pop("candidateIds"))
+    selected.pop("priority")
+    action_id = "action-" + selected_key[:16]
+    return {
+        "actionId": action_id,
+        **selected,
+        "candidateIds": candidate_ids,
+        "candidateCount": len(candidate_ids),
+        "selectionBasis": "PRODUCER_EMITTED_MOST_BRANCHES_STABLE_TIEBREAK",
+    }
 
 
 def _consume_candidate(
@@ -655,12 +877,15 @@ def _consume_candidate(
     if lineage_exclusion is not None:
         exclusions.append(lineage_exclusion)
 
-    return candidate_from_adapted_results(
-        adapted,
-        packet_revision_id=packet_revision_id,
-        packet_hash=supplied_digest,
-        candidate_id=hypothesis_id,
-        exclusion_reasons=exclusions,
+    return (
+        candidate_from_adapted_results(
+            adapted,
+            packet_revision_id=packet_revision_id,
+            packet_hash=supplied_digest,
+            candidate_id=hypothesis_id,
+            exclusion_reasons=exclusions,
+        ),
+        _producer_next_actions(packets),
     )
 
 
@@ -721,13 +946,19 @@ def compare_packet_request(
             )
         artifact_resolver = _embedded_artifact_resolver(request["artifactPayloads"])
     artifact_resolver = _bounded_artifact_resolver(artifact_resolver)
-    candidates = tuple(
+    consumed = tuple(
         _consume_candidate(candidate, index, artifact_resolver)
         for index, candidate in enumerate(candidate_values)
     )
-    return compare_packets(
+    candidates = tuple(item[0] for item in consumed)
+    actions = tuple(action for item in consumed for action in item[1])
+    result = compare_packets(
         candidates,
         policy,
         snapshot_id=snapshot_id,
         created_at=created_at,
+    )
+    return replace(
+        result,
+        next_evidence_action=_select_next_evidence_action(actions),
     )

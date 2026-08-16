@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import math
 import re
+from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 from .packet_contracts import (
@@ -63,18 +64,20 @@ _ECONOMICS_SIMULATION_RANGES = {
     "launch_delay_years",
     "loe_retention_multiplier",
 }
-_LOCKED_PRODUCER_CODE_VERSION = "5131cd109bef1f9eebe0b109a04a0fcb98908454"
 _ADAPTER_VERSION = "packet-adapters.v1"
 _SHA256_URI_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
 TRACTABILITY_VALIDATOR_SHA256 = (
     "fc84771646932cc9d570ea82fda912686d05579da5d576c288b007e5430d7490"
 )
+_LOCK_DOCUMENT = json.loads(Path(__file__).with_name("producer_locks.json").read_text())
+PRODUCER_LOCKS = _LOCK_DOCUMENT["modules"]
 _LOCKED_SCHEMAS = {
-    MAPPER: ("EvidenceGraph", "1.1"),
-    HYPOTHESIS_GENERATOR: ("hyp_gen.schema.Slate", "locked-5131cd1"),
-    RECRUITMENT: ("RecruitabilityResult", "locked-5131cd1"),
-    ECONOMICS: ("labrador_roi.engine.AnalysisResult", "1.3.0"),
-    TRACTABILITY: ("small-molecule-tractability-dossier", "locked-5131cd1"),
+    module_id: (lock["nativeSchemaId"], lock["nativeSchemaVersion"])
+    for module_id, lock in PRODUCER_LOCKS.items()
+}
+_LOCKED_PRODUCER_CODE_VERSIONS = {
+    module_id: lock["producerCodeVersion"]
+    for module_id, lock in PRODUCER_LOCKS.items()
 }
 
 
@@ -238,10 +241,11 @@ def _preflight(packet: ModulePacket, expected_module: str) -> AdaptedModuleResul
             quarantine_reasons=tuple(schema_mismatches),
         )
     version_mismatches: list[str] = []
-    if packet.producer_code_version != _LOCKED_PRODUCER_CODE_VERSION:
+    expected_producer_version = _LOCKED_PRODUCER_CODE_VERSIONS[expected_module]
+    if packet.producer_code_version != expected_producer_version:
         version_mismatches.append(
             "producer_code_version_mismatch:"
-            f"expected={_LOCKED_PRODUCER_CODE_VERSION},"
+            f"expected={expected_producer_version},"
             f"actual={packet.producer_code_version}"
         )
     if packet.adapter_version != _ADAPTER_VERSION:
@@ -308,7 +312,7 @@ def adapt_mapper(packet: ModulePacket) -> AdaptedModuleResult:
 
     A mapper graph is run-scoped rather than hypothesis-scoped, so it never
     creates a candidate objective.  Hypothesis-specific scientific support is
-    consumed from the locked Hypothesis Generator Slate instead.
+    consumed from the pinned current HypothesisDocument instead.
     """
 
     early = _preflight(packet, MAPPER)
@@ -521,30 +525,105 @@ def _candidate_from_slate(
     )
 
 
-def extract_hypothesis_candidates(payload: Mapping[str, Any]) -> tuple[HypothesisCandidate, ...]:
-    """Validate a locked Slate and retain every exact producer candidate ID.
+def extract_hypothesis_candidates(
+    payload: Mapping[str, Any],
+    *,
+    allow_partial: bool = False,
+) -> tuple[HypothesisCandidate, ...]:
+    """Validate the current headless response and its one-hypothesis document.
 
-    This helper is intended for orchestrator fan-out.  Highlander ingestion
-    should still call :func:`adapt_hypothesis_generator` on a packet bound to
-    one exact ``hypothesisId``.
+    ``allow_partial`` is used only to verify a CANNOT_COMPLETE response whose
+    canonical hypothesis is consumed by clinical. It never turns that partial
+    HypGen attempt into scientific objectives.
     """
 
-    slate = _mapping(payload, "payload")
-    graph_id = _text(slate.get("graph_id"), "payload.graph_id")
-    graph_round = _integer(slate.get("round"), "payload.round", minimum=0)
-    hypotheses = _sequence(slate.get("hypotheses"), "payload.hypotheses")
-    candidates = tuple(
-        _candidate_from_slate(_mapping(item, f"payload.hypotheses[{index}]"), graph_id, graph_round)
-        for index, item in enumerate(hypotheses)
+    response = _mapping(payload, "payload")
+    _only_fields(
+        response,
+        {
+            "status",
+            "execution_mode",
+            "output_origin",
+            "hypothesis",
+            "cards",
+            "roi_request",
+            "error",
+        },
+        "payload",
     )
-    ids = [candidate.source_id for candidate in candidates]
-    if len(ids) != len(set(ids)):
-        raise ContractError("payload.hypotheses contains duplicate source ids")
-    return candidates
+    status = _text(response.get("status"), "payload.status")
+    if status not in {"COMPLETE", "CANNOT_COMPLETE"}:
+        raise ContractError("payload.status is outside the current union")
+    if status == "CANNOT_COMPLETE" and not allow_partial:
+        raise ContractError(
+            "payload.status must be COMPLETE for a successful module envelope"
+        )
+    execution_mode = _text(response.get("execution_mode"), "payload.execution_mode")
+    if execution_mode not in {"LIVE", "REPLAY"}:
+        raise ContractError("payload.execution_mode is outside the current union")
+    output_origin = _text(response.get("output_origin"), "payload.output_origin")
+    expected_origin = (
+        "LIVE_PROVIDER" if execution_mode == "LIVE" else "DETERMINISTIC_REPLAY"
+    )
+    if output_origin != expected_origin:
+        raise ContractError(
+            "payload.output_origin does not match payload.execution_mode"
+        )
+    if status == "COMPLETE":
+        if response.get("error") is not None:
+            raise ContractError(
+                "payload.error must be null when payload.status is COMPLETE"
+            )
+        _mapping(response.get("cards"), "payload.cards")
+        roi_request = _mapping(response.get("roi_request"), "payload.roi_request")
+        if roi_request.get("contract_version") != "1.0.0":
+            raise ContractError(
+                "payload.roi_request.contract_version must be '1.0.0'"
+            )
+        if roi_request.get("module") != "rnpv_roi_calculator":
+            raise ContractError(
+                "payload.roi_request.module must be 'rnpv_roi_calculator'"
+            )
+        for field in ("request_id", "program", "comparables", "execution"):
+            if field not in roi_request:
+                raise ContractError(f"payload.roi_request.{field} is required")
+        _text(roi_request["request_id"], "payload.roi_request.request_id")
+        _mapping(roi_request["program"], "payload.roi_request.program")
+        _sequence(roi_request["comparables"], "payload.roi_request.comparables")
+        _mapping(roi_request["execution"], "payload.roi_request.execution")
+    else:
+        error = _mapping(response.get("error"), "payload.error")
+        _text(error.get("reason_code"), "payload.error.reason_code")
+        _text(error.get("message"), "payload.error.message")
+        if response.get("roi_request") is not None:
+            raise ContractError(
+                "payload.roi_request must be null when payload.status is CANNOT_COMPLETE"
+            )
+        if response.get("cards") is not None:
+            _mapping(response["cards"], "payload.cards")
+
+    document = _mapping(response.get("hypothesis"), "payload.hypothesis")
+    if document.get("schema_version") != "2.0":
+        raise ContractError("payload.hypothesis.schema_version must be '2.0'")
+    provenance = _mapping(
+        document.get("provenance"), "payload.hypothesis.provenance"
+    )
+    graph_id = _text(
+        provenance.get("graph_id"), "payload.hypothesis.provenance.graph_id"
+    )
+    graph_round = _integer(
+        provenance.get("round"),
+        "payload.hypothesis.provenance.round",
+        minimum=0,
+    )
+    hypothesis = _mapping(
+        document.get("hypothesis"), "payload.hypothesis.hypothesis"
+    )
+    return (_candidate_from_slate(hypothesis, graph_id, graph_round),)
 
 
 def adapt_hypothesis_generator(packet: ModulePacket) -> AdaptedModuleResult:
-    """Bind one exact Slate candidate and expose only its native scientific scores."""
+    """Bind the current one-hypothesis document and expose its scientific scores."""
 
     early = _preflight(packet, HYPOTHESIS_GENERATOR)
     if early is not None:
@@ -552,8 +631,18 @@ def adapt_hypothesis_generator(packet: ModulePacket) -> AdaptedModuleResult:
     try:
         payload = _mapping(packet.payload, "payload")
         candidates = extract_hypothesis_candidates(payload)
-        graph_id = _text(payload.get("graph_id"), "payload.graph_id")
-        graph_round = _integer(payload.get("round"), "payload.round", minimum=0)
+        document = _mapping(payload.get("hypothesis"), "payload.hypothesis")
+        provenance = _mapping(
+            document.get("provenance"), "payload.hypothesis.provenance"
+        )
+        graph_id = _text(
+            provenance.get("graph_id"), "payload.hypothesis.provenance.graph_id"
+        )
+        graph_round = _integer(
+            provenance.get("round"),
+            "payload.hypothesis.provenance.round",
+            minimum=0,
+        )
         mismatch: list[str] = []
         if packet.subject.graph_id is not None and packet.subject.graph_id != graph_id:
             mismatch.append("graph_id_mismatch")
@@ -570,7 +659,7 @@ def adapt_hypothesis_generator(packet: ModulePacket) -> AdaptedModuleResult:
         matches = [candidate for candidate in candidates if candidate.source_id == packet.hypothesis_id]
         if len(matches) != 1:
             raise ContractError(
-                "packet hypothesisId must match exactly one locked Slate hypothesis id"
+                "packet hypothesisId must match the pinned HypothesisDocument id"
             )
         candidate = matches[0]
         missing_scores = [
@@ -596,7 +685,10 @@ def adapt_hypothesis_generator(packet: ModulePacket) -> AdaptedModuleResult:
                 maximum=1.0,
             )
 
-        coverage = _mapping(payload.get("coverage", {}), "payload.coverage")
+        coverage = _mapping(
+            provenance.get("coverage", {}),
+            "payload.hypothesis.provenance.coverage",
+        )
         qualifiers = list(_qualifiers(packet))
         if bool(coverage.get("truncated")):
             qualifiers.append("TRUNCATED")
@@ -637,7 +729,7 @@ def adapt_hypothesis_generator(packet: ModulePacket) -> AdaptedModuleResult:
                 unit="score_0_1",
                 uncertainty=uncertainty,
                 basis=comparison_basis,
-                source_path=f"$.hypotheses[id={candidate.source_id}].scores.{score_name}",
+                source_path=f"$.hypothesis.scores.{score_name}",
                 qualifiers=objective_qualifiers,
             )
             for objective_id, score_name, direction in _HYPOTHESIS_OBJECTIVES
@@ -649,10 +741,15 @@ def adapt_hypothesis_generator(packet: ModulePacket) -> AdaptedModuleResult:
             details={
                 "graphId": graph_id,
                 "graphRound": graph_round,
-                "question": payload.get("question"),
+                "question": provenance.get("question"),
                 "coverage": coverage,
-                "counts": payload.get("counts", {}),
-                "params": payload.get("params", {}),
+                "counts": provenance.get("counts", {}),
+                "params": provenance.get("params", {}),
+                "asks": document.get("asks", []),
+                "executionMode": payload.get("execution_mode"),
+                "outputOrigin": payload.get("output_origin"),
+                "cards": payload.get("cards"),
+                "roiRequest": payload.get("roi_request"),
                 "scientificContext": scientific_context,
             },
             qualifiers=objective_qualifiers,
@@ -671,27 +768,30 @@ def adapt_recruitment(packet: ModulePacket) -> AdaptedModuleResult:
         out = _mapping(packet.payload, "payload")
         score = _number(out.get("score"), "payload.score", minimum=0.0, maximum=1.0)
         months = _number(
-            out.get("simulatedMonthsToEnroll"),
-            "payload.simulatedMonthsToEnroll",
+            out.get("simulated_months_to_enroll"),
+            "payload.simulated_months_to_enroll",
             minimum=0.0,
         )
-        months_range = _sequence(out.get("simulatedMonthsRange"), "payload.simulatedMonthsRange")
+        months_range = _sequence(
+            out.get("simulated_months_range"), "payload.simulated_months_range"
+        )
         if len(months_range) != 2:
-            raise ContractError("payload.simulatedMonthsRange must contain exactly two values")
-        lower = _number(months_range[0], "payload.simulatedMonthsRange[0]", minimum=0.0)
-        upper = _number(months_range[1], "payload.simulatedMonthsRange[1]", minimum=0.0)
+            raise ContractError("payload.simulated_months_range must contain exactly two values")
+        lower = _number(months_range[0], "payload.simulated_months_range[0]", minimum=0.0)
+        upper = _number(months_range[1], "payload.simulated_months_range[1]", minimum=0.0)
         if lower > months or months > upper:
             raise ContractError(
-                "payload.simulatedMonthsRange must be ordered and contain simulatedMonthsToEnroll"
+                "payload.simulated_months_range must be ordered and contain "
+                "simulated_months_to_enroll"
             )
-        required_n = _integer(out.get("requiredN"), "payload.requiredN", minimum=1)
+        required_n = _integer(out.get("required_n"), "payload.required_n", minimum=1)
         sites = _integer(out.get("sites"), "payload.sites", minimum=1)
-        sites_basis = _text(out.get("sitesBasis"), "payload.sitesBasis")
+        sites_basis = _text(out.get("sites_basis"), "payload.sites_basis")
         if sites_basis not in {"input", "precedent", "default"}:
-            raise ContractError("payload.sitesBasis is outside the locked union")
+            raise ContractError("payload.sites_basis is outside the locked union")
 
         counterfactual = None
-        if "counterfactual" in out:
+        if out.get("counterfactual") is not None:
             counterfactual = _mapping(
                 out["counterfactual"], "payload.counterfactual"
             )
@@ -708,8 +808,8 @@ def adapt_recruitment(packet: ModulePacket) -> AdaptedModuleResult:
                 "payload.counterfactual.change",
             )
             _number(
-                counterfactual.get("simulatedMonthsAfter"),
-                "payload.counterfactual.simulatedMonthsAfter",
+                counterfactual.get("simulated_months_after"),
+                "payload.counterfactual.simulated_months_after",
                 minimum=0.0,
             )
 
@@ -721,58 +821,58 @@ def adapt_recruitment(packet: ModulePacket) -> AdaptedModuleResult:
             maximum=1.0,
         )
         _text_sequence(
-            eligibility.get("citedTrials"), "payload.eligibility.citedTrials"
+            eligibility.get("cited_trials"), "payload.eligibility.cited_trials"
         )
         _text_sequence(eligibility.get("drivers"), "payload.eligibility.drivers")
         _text(eligibility.get("reasoning"), "payload.eligibility.reasoning")
 
         evidence = _mapping(out.get("evidence"), "payload.evidence")
         _integer(
-            evidence.get("competingTrials"),
-            "payload.evidence.competingTrials",
+            evidence.get("competing_trials"),
+            "payload.evidence.competing_trials",
             minimum=0,
         )
         _text_sequence(
-            evidence.get("precedentTrials"), "payload.evidence.precedentTrials"
+            evidence.get("precedent_trials"), "payload.evidence.precedent_trials"
         )
 
         failed_precedents = _sequence(
-            out.get("failedPrecedents"), "payload.failedPrecedents"
+            out.get("failed_precedents"), "payload.failed_precedents"
         )
         for index, item in enumerate(failed_precedents):
-            failed = _mapping(item, f"payload.failedPrecedents[{index}]")
-            _text(failed.get("nctId"), f"payload.failedPrecedents[{index}].nctId")
+            failed = _mapping(item, f"payload.failed_precedents[{index}]")
+            _text(failed.get("nct_id"), f"payload.failed_precedents[{index}].nct_id")
             _text(
-                failed.get("whyStopped"),
-                f"payload.failedPrecedents[{index}].whyStopped",
+                failed.get("why_stopped"),
+                f"payload.failed_precedents[{index}].why_stopped",
             )
 
         phase3_median_n = None
-        if "phase3MedianN" in out:
+        if out.get("phase3_median_n") is not None:
             phase3_median_n = _number(
-                out["phase3MedianN"],
-                "payload.phase3MedianN",
+                out["phase3_median_n"],
+                "payload.phase3_median_n",
                 minimum=0.0,
             )
         precedent_median_n = None
-        if "precedentMedianN" in out:
+        if out.get("precedent_median_n") is not None:
             precedent_median_n = _number(
-                out["precedentMedianN"],
-                "payload.precedentMedianN",
+                out["precedent_median_n"],
+                "payload.precedent_median_n",
                 minimum=0.0,
             )
 
         _number(
-            out.get("screensPerEnrollee"),
-            "payload.screensPerEnrollee",
+            out.get("screens_per_enrollee"),
+            "payload.screens_per_enrollee",
             minimum=1.0,
         )
-        _number(out.get("waterfallDelta"), "payload.waterfallDelta")
-        _text(out.get("poweringBasis"), "payload.poweringBasis")
+        _number(out.get("waterfall_delta"), "payload.waterfall_delta")
+        _text(out.get("powering_basis"), "payload.powering_basis")
         _text(out.get("why"), "payload.why")
         payload_as_of = None
-        if "asOf" in out:
-            payload_as_of = _text(out["asOf"], "payload.asOf")
+        if out.get("as_of_date") is not None:
+            payload_as_of = _text(out["as_of_date"], "payload.as_of_date")
         if (
             packet.subject.as_of is not None
             and payload_as_of is not None
@@ -791,28 +891,28 @@ def adapt_recruitment(packet: ModulePacket) -> AdaptedModuleResult:
             qualifier_extras += ("HORIZON_UNSPECIFIED",)
         qualifiers = _qualifiers(packet, *qualifier_extras)
         uncertainty = {
-            "simulatedMonthsToEnroll": months,
-            "simulatedMonthsRange": (lower, upper),
+            "simulated_months_to_enroll": months,
+            "simulated_months_range": (lower, upper),
             "counterfactual": counterfactual,
         }
         comparison_basis = {
             "nativeSchemaId": packet.native_schema_id,
             "nativeSchemaVersion": packet.native_schema_version,
             "adapterVersion": packet.adapter_version,
-            "asOf": as_of or "UNSPECIFIED",
+            "as_of_date": as_of or "UNSPECIFIED",
         }
         native_basis = {
-            "requiredN": required_n,
-            "poweringBasis": out["poweringBasis"],
+            "required_n": required_n,
+            "powering_basis": out["powering_basis"],
             "sites": sites,
-            "sitesBasis": sites_basis,
-            "phase3MedianN": phase3_median_n,
-            "precedentMedianN": precedent_median_n,
-            "screensPerEnrollee": out["screensPerEnrollee"],
+            "sites_basis": sites_basis,
+            "phase3_median_n": phase3_median_n,
+            "precedent_median_n": precedent_median_n,
+            "screens_per_enrollee": out["screens_per_enrollee"],
             "eligibility": eligibility,
             "evidence": evidence,
-            "failedPrecedents": out["failedPrecedents"],
-            "waterfallDelta": out["waterfallDelta"],
+            "failed_precedents": out["failed_precedents"],
+            "waterfall_delta": out["waterfall_delta"],
             "why": out["why"],
         }
         observation = _observation(

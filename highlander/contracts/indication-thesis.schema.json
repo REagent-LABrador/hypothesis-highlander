@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.reagent-labrador.org/clinical/1.0.0/indication-thesis.schema.json",
+  "title": "LABrador IndicationThesis (snake_case v1.0.0)",
+  "description": "Canonical public request shared by hypothesis, orchestration, clinical, tractability, and comparison stations for one computable indication thesis. The wire format is snake_case. NOTHING is inferred to fill an absent field: an unsupplied uniprot_accession remains absent and a null/absent as_of_date means evidence as of today. Clinical invocation: `bun run simulate <request.json> --out <result.json>`. The cache key a consumer may rely on is (id, as_of_date).",
+  "type": "object",
+  "required": [
+    "id",
+    "asset",
+    "target",
+    "disease",
+    "biomarker_population",
+    "endpoint",
+    "mechanism"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "description": "Caller-chosen stable identifier for this thesis; used for caching and cross-referencing runs.",
+      "type": "string"
+    },
+    "asset": {
+      "type": "object",
+      "required": ["name", "modality"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "modality": {
+          "description": "Wide on purpose — upstream must never misdescribe an antibody as a small molecule to satisfy a downstream consumer.",
+          "enum": [
+            "antibody",
+            "small_molecule",
+            "peptide",
+            "oligonucleotide",
+            "cell_therapy",
+            "other"
+          ]
+        },
+        "sponsor": { "type": ["string", "null"] }
+      }
+    },
+    "target": {
+      "type": "object",
+      "required": ["symbol", "direction"],
+      "additionalProperties": false,
+      "properties": {
+        "symbol": {
+          "description": "Gene symbol. The tractability station keys on uniprot_accession instead — supply it when known.",
+          "type": "string"
+        },
+        "direction": {
+          "enum": ["inhibit", "activate", "degrade", "block", "modulate"]
+        },
+        "uniprot_accession": {
+          "description": "The cross-station join key (e.g. IRAK4 -> Q9NWZ3). Must be the RESOLVED accession when present — resolution is the upstream station's job, never this station's.",
+          "type": ["string", "null"],
+          "pattern": "^([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2})(-[0-9]+)?$"
+        }
+      }
+    },
+    "disease": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "The indication as a ClinicalTrials.gov-searchable condition name — this string drives every registry query.",
+          "type": "string"
+        },
+        "subtype": { "type": ["string", "null"] }
+      }
+    },
+    "biomarker_population": {
+      "description": "The population the trial would actually enrol. prevalence_in_disease is the single most consequential number this station consumes; prefer SOURCED values (see fixtures/epi/ for the cited-record pattern) over analyst assumptions, and keep the marker string consistent with the epi record's case definition — a sourced number under a mismatched definition is a silent error.",
+      "type": "object",
+      "required": ["marker", "prevalence_in_disease", "assay_available"],
+      "additionalProperties": false,
+      "properties": {
+        "marker": { "type": "string" },
+        "prevalence_in_disease": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "assay_available": { "type": "boolean" }
+      }
+    },
+    "endpoint": {
+      "type": "object",
+      "required": ["name", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "enum": ["continuous", "binary", "time_to_event"] },
+        "expected_effect_size": {
+          "description": "Standardised effect size (Cohen's d) the thesis predicts. When present it drives powering; the output reports the basis either way, and the indication's phase-3 precedent median floors the result.",
+          "type": ["number", "null"],
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "mechanism": {
+      "description": "Free-text causal story: target -> pathway -> cell type -> phenotype.",
+      "type": "string"
+    },
+    "mechanism_hypothesis": {
+      "description": "Structural mechanism class for the tractability station (its chain selection is load-bearing on this). British spelling, one underscore. Absent/null is equivalent to `unknown`. Never derived by this station.",
+      "type": ["string", "null"],
+      "enum": [
+        "orthosteric",
+        "allosteric",
+        "oligomer_destabilisation",
+        "unknown",
+        null
+      ]
+    },
+    "tissue": { "type": ["string", "null"] },
+    "evidence": {
+      "description": "Traceable claims. `source` must be a real identifier (NCT id, PMID, DOI, database accession) — unsourced claims are unrepresentable by design. `no_effect` is a null result, distinct from evidence-against; consumers weighing only supports/contradicts must treat it as neutral, never as contradicts.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["claim", "direction", "source", "source_type", "strength"],
+        "additionalProperties": false,
+        "properties": {
+          "claim": { "type": "string" },
+          "direction": { "enum": ["supports", "contradicts", "no_effect"] },
+          "source": { "type": "string" },
+          "source_type": {
+            "enum": ["trial", "publication", "database", "simulation"]
+          },
+          "strength": {
+            "description": "0 = anecdote, 1 = randomised human outcome data.",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      }
+    },
+    "uncertainty": {
+      "description": "0 = fully determined, 1 = pure speculation. Set by upstream stations.",
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "as_of_date": {
+      "description": "Temporal cutoff for retrieval, ISO 8601 date (YYYY-MM-DD). When set, every registry fact used must predate it, so a hindcast cannot see evidence that did not yet exist. Null means 'as of today'. The one documented open channel: the model-based eligibility read cannot have its knowledge sealed to the cutoff.",
+      "type": ["string", "null"],
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    }
+  }
+}

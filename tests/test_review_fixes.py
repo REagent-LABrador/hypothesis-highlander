@@ -92,7 +92,7 @@ def test_thesis_json_has_no_nulls():
     assert "uniprotAccession" not in j["target"]
     j2 = Genome(biomarker="TNF", uniprot_accession="P01375").to_thesis().to_json()
     assert "uniprotAccession" not in j2
-    assert j2["target"]["uniprotAccession"] == "P01375"
+    assert j2["target"]["uniprot_accession"] == "P01375"
 
 
 # ── H10: gates sit inside the score spread, so the cascade actually kills ──

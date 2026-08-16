@@ -103,7 +103,7 @@ def main(argv=None) -> int:
     sub = p.add_subparsers(dest="cmd", required=True)
     c = sub.add_parser(
         "compare",
-        help="validate locked module packets and emit a versioned Pareto snapshot",
+        help="validate pinned module packets and emit a versioned Pareto snapshot",
     )
     c.add_argument(
         "--request",

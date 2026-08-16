@@ -1,10 +1,10 @@
 {
   "sourceRepository": "https://github.com/Abhishekjani2509/LABrador",
   "sourceCommit": "5131cd109bef1f9eebe0b109a04a0fcb98908454",
-  "note": "Exact full native fixtures are copied for Hypothesis Generator, both economics input branches, and tractability; mapper and recruitment cases use consumer-owned runtime slices. Raw source files remain authoritative.",
+  "note": "Historical fixture provenance only. Current per-module runtime locks are authoritative in highlander/producer_locks.json. Exact full native fixtures are copied for the legacy Hypothesis Generator slate, both economics input branches, and tractability; mapper and current snake_case recruitment cases use consumer-owned runtime slices.",
   "lockedRuntimeSlices": {
     "path": "tests/fixtures/locked_module_slices.json",
-    "sha256": "b9039b1652010584611514e43d1281b4adca39fee1329a42a8310884b6cbfd6b"
+    "sha256": "692c2de027dd1e74edfcd5f0bf0abe1b239553322800b3a8765352811d0d79ee"
   },
   "sources": {
     "mapper": {

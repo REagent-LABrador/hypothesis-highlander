@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "highlander.producer-locks.v1",
+  "modules": {
+    "research-evidence-mapper": {
+      "repository": "https://github.com/REagent-LABrador/research-evidence-mapper",
+      "producerCodeVersion": "9faa0ffaa158c10495245e084ff2dce72dedf506",
+      "nativeSchemaId": "EvidenceGraph",
+      "nativeSchemaVersion": "1.1"
+    },
+    "hypothesis-generator": {
+      "repository": "https://github.com/REagent-LABrador/Hypothesis_Generator",
+      "producerCodeVersion": "b3616d34d93cda240a61cf074d117475c2ae8241",
+      "nativeSchemaId": "https://labrador.dev/schemas/headless-output.schema.json",
+      "nativeSchemaVersion": "unversioned"
+    },
+    "trial-recruitment-forecaster": {
+      "repository": "https://github.com/REagent-LABrador/clinical_simulation",
+      "producerCodeVersion": "13783c962d303a04ff63c7dbb59e49b4369038c1",
+      "nativeSchemaId": "https://github.com/REagent-LABrador/clinical_simulation/schemas/output.schema.json",
+      "nativeSchemaVersion": "1.0.0"
+    },
+    "therapeutic-program-economics": {
+      "repository": "https://github.com/REagent-LABrador/rnpv-roi-calculator",
+      "producerCodeVersion": "29bf59ea5f64e0f68a58a2e35595f471b0c73311",
+      "nativeSchemaId": "labrador_roi.engine.AnalysisResult",
+      "nativeSchemaVersion": "1.3.0"
+    },
+    "small-molecule-tractability-review": {
+      "repository": "https://github.com/REagent-LABrador/simulation",
+      "producerCodeVersion": "a0b3d1f56805d9c9e0550291123064e492a16e5b",
+      "nativeSchemaId": "https://github.com/REagent-LABrador/simulation/schema/output.schema.json",
+      "nativeSchemaVersion": "1.0.0"
+    }
+  }
+}

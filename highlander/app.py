@@ -37,7 +37,7 @@ run = st.sidebar.button("▶ Run search", type="primary")
 
 st.title("Hypothesis Highlander")
 st.caption("Quality-diversity evolutionary search over RA drug-program hypotheses — MAP-Elites "
-           "illumination + Pareto trade-off front + a cost-gated fitness cascade (ROI tier is the real rNPV engine).")
+           "illumination + Pareto trade-off front + a cost-gated fitness cascade (the legacy ROI tier is a NOT_DECISION_GRADE proxy).")
 
 if "res" not in st.session_state or run:
     with st.spinner("Evolving hypotheses…"):
@@ -123,5 +123,5 @@ st.dataframe([{"biomarker": g["biomarker"], "modality": g["modality"], "boldness
                "plaus": g["scores"].get("plausibility"), "roi": g["scores"].get("roi"),
                "recruit": g["scores"].get("recruitability"), "bio": g["scores"].get("bio_reality")}
               for g in res["top"]], use_container_width=True, hide_index=True)
-st.caption(f"Reproducible from seed={res['seed']}. ROI tier = the real rNPV engine; T1/T4 are labeled "
+st.caption(f"Reproducible from seed={res['seed']}. Legacy ROI tier = NOT_DECISION_GRADE proxy; T1/T4 are labeled "
            f"stubs behind a Tier interface (see highlander/README.md).")
