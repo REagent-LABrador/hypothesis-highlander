@@ -1,17 +1,17 @@
-"""
-IndicationThesis — the SHARED pipeline contract, mirrored from LABrador's thesis.ts (the Zod
-schema the whole team composes on). Highlander speaks this so a genome IS a candidate thesis the
-real nodes consume: the hypothesis node emits one, the evidence mapper + tractability review
-enrich it, the recruitment forecaster scores it, and the economics node values it.
+"""Canonical public snake_case IndicationThesis boundary.
 
-Field names are kept camelCase to match thesis.ts exactly, so `to_json()` round-trips to the
-JSON the TypeScript/Python nodes already accept. `uniprotAccession` is nested under `target`, and
-`no_effect` remains a distinct, neutral evidence direction, as required by the locked schema.
+The legacy search keeps its internal Python attribute names, but every serialized
+thesis is validated against the immutable platform contract consumed by the
+current clinical station.  CamelCase producer payloads are no longer accepted at
+this boundary.
 """
 from __future__ import annotations
 
 import json
-from dataclasses import asdict, dataclass, field, fields
+from dataclasses import dataclass, field
+from pathlib import Path
+
+from jsonschema import Draft202012Validator
 
 MODALITY = {"antibody", "small_molecule", "peptide", "oligonucleotide", "cell_therapy", "other"}
 DIRECTION = {"inhibit", "activate", "degrade", "block", "modulate"}
@@ -20,6 +20,20 @@ EVIDENCE_DIRECTION = {"supports", "contradicts", "no_effect"}
 SOURCE_TYPE = {"trial", "publication", "database", "simulation"}
 # ratification add (Rafal's tractability node uses this to choose which chains form the site)
 MECHANISM_HYPOTHESIS = {"orthosteric", "allosteric", "oligomer_destabilisation", "unknown"}
+
+_CONTRACT_PATH = Path(__file__).with_name("contracts") / "indication-thesis.schema.json"
+_WIRE_VALIDATOR = Draft202012Validator(json.loads(_CONTRACT_PATH.read_text()))
+
+
+def validate_indication_thesis_wire(value: dict) -> dict:
+    """Return ``value`` or raise a concise error for the canonical wire contract."""
+
+    errors = sorted(_WIRE_VALIDATOR.iter_errors(value), key=lambda item: list(item.absolute_path))
+    if errors:
+        first = errors[0]
+        path = ".".join(str(part) for part in first.absolute_path) or "<root>"
+        raise ValueError(f"IndicationThesis wire contract at {path}: {first.message}")
+    return value
 
 
 @dataclass
@@ -38,6 +52,25 @@ class Evidence:
         assert self.source, "evidence needs a real source id (won/lost inspectability here)"
         return self
 
+    def to_wire(self) -> dict:
+        return {
+            "claim": self.claim,
+            "direction": self.direction,
+            "source": self.source,
+            "source_type": self.sourceType,
+            "strength": self.strength,
+        }
+
+    @staticmethod
+    def from_wire(value: dict) -> "Evidence":
+        return Evidence(
+            claim=value["claim"],
+            direction=value["direction"],
+            source=value["source"],
+            sourceType=value["source_type"],
+            strength=value["strength"],
+        )
+
 
 @dataclass
 class IndicationThesis:
@@ -52,6 +85,7 @@ class IndicationThesis:
     tissue: str | None = None
     uncertainty: float | None = None                       # 0 determined … 1 pure speculation
     mechanismHypothesis: str = "unknown"                   # drives chain selection in tractability
+    asOfDate: str | None = None
 
     @property
     def uniprotAccession(self) -> str | None:
@@ -73,27 +107,78 @@ class IndicationThesis:
         return self
 
     def to_json(self) -> dict:
-        # OMIT unset optionals rather than emitting null: zod's .optional() accepts a missing key
-        # (undefined) but REJECTS null — `tissue: null` is a hard parse failure at the TS boundary.
-        d = {k: v for k, v in asdict(self).items() if v is not None}
-        d["evidence"] = [asdict(e) if isinstance(e, Evidence) else e for e in self.evidence]
-        return d
+        self.validate()
+        target = {
+            "symbol": self.target["symbol"],
+            "direction": self.target["direction"],
+        }
+        accession = self.target.get("uniprotAccession")
+        if accession is not None:
+            target["uniprot_accession"] = accession
+        biomarker = {
+            "marker": self.biomarkerPopulation["marker"],
+            "prevalence_in_disease": self.biomarkerPopulation["prevalenceInDisease"],
+            "assay_available": self.biomarkerPopulation["assayAvailable"],
+        }
+        endpoint = {
+            "name": self.endpoint["name"],
+            "type": self.endpoint["type"],
+        }
+        if self.endpoint.get("expectedEffectSize") is not None:
+            endpoint["expected_effect_size"] = self.endpoint["expectedEffectSize"]
+        evidence = [
+            item.to_wire() if isinstance(item, Evidence) else Evidence(**item).to_wire()
+            for item in self.evidence
+        ]
+        wire = {
+            "id": self.id,
+            "asset": self.asset,
+            "target": target,
+            "disease": self.disease,
+            "biomarker_population": biomarker,
+            "endpoint": endpoint,
+            "mechanism": self.mechanism,
+            "mechanism_hypothesis": self.mechanismHypothesis,
+            "evidence": evidence,
+        }
+        if self.tissue is not None:
+            wire["tissue"] = self.tissue
+        if self.uncertainty is not None:
+            wire["uncertainty"] = self.uncertainty
+        if self.asOfDate is not None:
+            wire["as_of_date"] = self.asOfDate
+        return validate_indication_thesis_wire(wire)
 
     def to_json_str(self) -> str:
         return json.dumps(self.to_json(), indent=2)
 
     @staticmethod
     def from_json(d: dict) -> "IndicationThesis":
-        d = dict(d)
-        # Accept the old Highlander top-level spelling, but never let it overwrite the locked
-        # canonical target field when both are present.
-        legacy_accession = d.pop("uniprotAccession", None)
-        if "target" in d:
-            d["target"] = dict(d["target"])
-            if legacy_accession is not None:
-                d["target"].setdefault("uniprotAccession", legacy_accession)
-        d["evidence"] = [Evidence(**e) if isinstance(e, dict) else e for e in d.get("evidence", [])]
-        # Zod strips additive object keys by default. Mirror that forward-compatible behavior
-        # rather than rejecting an otherwise valid locked-schema thesis.
-        known_fields = {f.name for f in fields(IndicationThesis)}
-        return IndicationThesis(**{k: v for k, v in d.items() if k in known_fields})
+        wire = validate_indication_thesis_wire(dict(d))
+        target = dict(wire["target"])
+        accession = target.pop("uniprot_accession", None)
+        if accession is not None:
+            target["uniprotAccession"] = accession
+        biomarker = wire["biomarker_population"]
+        endpoint_wire = wire["endpoint"]
+        endpoint = {"name": endpoint_wire["name"], "type": endpoint_wire["type"]}
+        if "expected_effect_size" in endpoint_wire:
+            endpoint["expectedEffectSize"] = endpoint_wire["expected_effect_size"]
+        return IndicationThesis(
+            id=wire["id"],
+            asset=dict(wire["asset"]),
+            target=target,
+            disease=dict(wire["disease"]),
+            biomarkerPopulation={
+                "marker": biomarker["marker"],
+                "prevalenceInDisease": biomarker["prevalence_in_disease"],
+                "assayAvailable": biomarker["assay_available"],
+            },
+            endpoint=endpoint,
+            mechanism=wire["mechanism"],
+            evidence=[Evidence.from_wire(item) for item in wire.get("evidence", [])],
+            tissue=wire.get("tissue"),
+            uncertainty=wire.get("uncertainty"),
+            mechanismHypothesis=wire.get("mechanism_hypothesis") or "unknown",
+            asOfDate=wire.get("as_of_date"),
+        )

@@ -155,14 +155,14 @@
     "asks": []
   },
   "recruitment": {
-    "asOf": "2026-08-15",
+    "as_of_date": "2026-08-15",
     "counterfactual": {
       "achieves": "none",
       "change": "No biomarker relaxation reaches feasibility.",
-      "simulatedMonthsAfter": 282
+      "simulated_months_after": 282
     },
     "eligibility": {
-      "citedTrials": [
+      "cited_trials": [
         "NCT01061736",
         "NCT00810836"
       ],
@@ -174,32 +174,32 @@
       "reasoning": "Recurring filters reduce the eligible population."
     },
     "evidence": {
-      "competingTrials": 189,
-      "precedentTrials": [
+      "competing_trials": 189,
+      "precedent_trials": [
         "NCT01061736",
         "NCT00810836"
       ]
     },
-    "failedPrecedents": [
+    "failed_precedents": [
       {
-        "nctId": "NCT02390700",
-        "whyStopped": "Business decision based on lack of enrollment"
+        "nct_id": "NCT02390700",
+        "why_stopped": "Business decision based on lack of enrollment"
       }
     ],
-    "phase3MedianN": 269,
-    "poweringBasis": "effect size d=0.35",
-    "precedentMedianN": 98.5,
-    "requiredN": 340,
+    "phase3_median_n": 269,
+    "powering_basis": "effect size d=0.35",
+    "precedent_median_n": 98.5,
+    "required_n": 340,
     "sites": 85,
-    "sitesBasis": "precedent",
+    "sites_basis": "precedent",
     "score": 0.0,
-    "screensPerEnrollee": 5.0,
-    "simulatedMonthsToEnroll": 470.0,
-    "simulatedMonthsRange": [
+    "screens_per_enrollee": 5.0,
+    "simulated_months_to_enroll": 470.0,
+    "simulated_months_range": [
       96.0,
       1211.0
     ],
-    "waterfallDelta": -12.0,
+    "waterfall_delta": -12.0,
     "why": "340 patients at 85 sites under the cited simulated assumptions."
   },
   "tractability": {

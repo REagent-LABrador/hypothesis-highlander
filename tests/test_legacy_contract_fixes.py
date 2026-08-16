@@ -19,25 +19,24 @@ def _locked_thesis(**updates):
         "target": {
             "symbol": "IRAK4",
             "direction": "inhibit",
-            "uniprotAccession": "Q9NWZ3",
+            "uniprot_accession": "Q9NWZ3",
         },
         "disease": {"name": "rheumatoid arthritis"},
-        "biomarkerPopulation": {
+        "biomarker_population": {
             "marker": "IRAK4-high",
-            "prevalenceInDisease": 0.22,
-            "assayAvailable": False,
+            "prevalence_in_disease": 0.22,
+            "assay_available": False,
         },
         "endpoint": {"name": "ACR50", "type": "binary"},
         "mechanism": "Inhibit IRAK4 signaling in biomarker-positive disease",
-        "mechanismHypothesis": "orthosteric",
+        "mechanism_hypothesis": "orthosteric",
         "evidence": [{
             "claim": "No measurable change in the stated endpoint",
             "direction": "no_effect",
             "source": "PMID:33557356",
-            "sourceType": "publication",
+            "source_type": "publication",
             "strength": 0.6,
         }],
-        "producerAddedField": {"schema": "future-addition"},
     }
     payload.update(updates)
     return payload
@@ -53,17 +52,18 @@ def test_locked_thesis_roundtrip_preserves_id_nested_accession_and_false_assay()
     assert genome.uniprot_accession == "Q9NWZ3"
     assert genome.assay_available is False
     assert roundtrip["id"] == "hyp-irak4-ra-001"
-    assert roundtrip["target"]["uniprotAccession"] == "Q9NWZ3"
-    assert roundtrip["biomarkerPopulation"]["assayAvailable"] is False
+    assert roundtrip["target"]["uniprot_accession"] == "Q9NWZ3"
+    assert roundtrip["biomarker_population"]["assay_available"] is False
     assert roundtrip["evidence"][0]["direction"] == "no_effect"
     assert "uniprotAccession" not in roundtrip
-    assert "producerAddedField" not in roundtrip
+    assert "biomarkerPopulation" not in roundtrip
 
 
-def test_canonical_nested_accession_wins_over_legacy_additive_spelling():
-    payload = _locked_thesis(uniprotAccession="WRONG-LEGACY-VALUE")
-    thesis = IndicationThesis.from_json(payload)
-    assert thesis.target["uniprotAccession"] == "Q9NWZ3"
+def test_legacy_camel_case_thesis_is_rejected_at_current_public_boundary():
+    payload = _locked_thesis()
+    payload["biomarkerPopulation"] = payload.pop("biomarker_population")
+    with pytest.raises(ValueError, match="biomarker_population"):
+        IndicationThesis.from_json(payload)
 
 
 def test_mapper_adapter_uses_only_doi_or_pmid_and_keeps_no_effect_neutral():

@@ -10,6 +10,7 @@ requires-python = ">=3.11"
 # rfc8785 provides cross-language JCS hashing. The remaining packages support
 # the optional legacy visualization/demo; anthropic is an optional demo generator.
 dependencies = [
+    "jsonschema>=4.20",
     "numpy>=1.24",
     "plotly>=5.0",
     "rfc8785==0.1.4",
@@ -22,6 +23,9 @@ dev = ["pytest>=8.0"]
 
 [tool.setuptools.packages.find]
 include = ["highlander*"]
+
+[tool.setuptools.package-data]
+highlander = ["producer_locks.json", "contracts/*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

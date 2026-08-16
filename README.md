@@ -4,12 +4,12 @@ Hypothesis Highlander is the read-only portfolio layer above the LABrador
 modules. Its production path consumes immutable, terminal output packets from
 the orchestrator, validates their integrity and lineage, and returns a
 versioned Pareto snapshot. It does not call producer modules, change their
-locked schemas, impute missing scores, or choose a global winner.
+schemas, impute missing scores, or choose a global winner.
 
 ## Production flow
 
 ```text
-locked module outputs
+current pinned module outputs
         |
         v
 hash + artifact + identity + dependency validation
@@ -29,6 +29,8 @@ Run the production consumer with a self-contained request:
 ```bash
 python -m highlander compare --request packet-request.json --out result.json
 ```
+
+The caller owns the wall-clock limit; the demo orchestrator uses four minutes.
 
 Or call it in-process from the output orchestrator:
 
@@ -51,13 +53,16 @@ parent lineage cannot be relabeled without changing the input digest.
 | Producer | Highlander use | Important behavior |
 |---|---|---|
 | Evidence Mapper | Evidence, coverage, and graph provenance | Preserves `yes`, `no`, and neutral `no_effect`; emits no hypothesis fitness value |
-| Hypothesis Generator | Candidate identity plus support, novelty, testability, and contradiction risk | Uses exact Slate IDs; `contradiction_risk` is minimized; rejected or unverified candidates are excluded by default |
-| Trial Recruitment Forecaster | Recruitability objective and enrollment uncertainty | Uses the native `score`; preserves months, range, eligibility, evidence, and counterfactuals |
-| Therapeutic Program Economics | ROI objective and economic uncertainty | Reads `summary.p50_rnpv`; preserves P10/P50/P90, currency, valuation year, engine, warnings, and decision grade |
+| Hypothesis Generator | Candidate identity plus support, novelty, testability, and contradiction risk | Consumes the current headless response and its nested `HypothesisDocument` (`schema_version: 2.0`); a successful response must also carry cards and the complete ROI request; `contradiction_risk` is minimized; rejected or unverified candidates are excluded by default |
+| Trial Recruitment Forecaster | Recruitability objective and enrollment uncertainty | Consumes the current snake_case result (`simulated_months_to_enroll`, `simulated_months_range`, and related fields) and preserves the native record |
+| Therapeutic Program Economics | ROI objective and economic uncertainty | Validates the current module-output `1.0.0` envelope, reads its AnalysisResult `1.3.0` at `payload.summary.p50_rnpv`, and preserves P10/P50/P90, currency, valuation year, engine, warnings, and decision grade |
 | Small-Molecule Tractability Review | Categorical tractability posture and scientific context | Never fabricates a numeric biology score; validates target, mechanism, as-of date, and modality |
 
-Every adapter is pinned to the locked schema ID/version, producer commit, and
-adapter version. A mismatch is quarantined rather than interpreted.
+Each adapter has its own schema ID/version and producer-commit lock in
+`highlander/producer_locks.json`; the obsolete monorepo-wide lock is not used.
+The canonical public snake_case thesis is vendored from `platform-contracts`
+with its source commit and SHA-256 in `highlander/contracts/contract.lock.json`.
+A mismatch is quarantined rather than interpreted.
 
 ## Request and integrity contract
 
@@ -92,11 +97,17 @@ Each module envelope carries:
   hash and its candidate-specific envelope hash;
 - the scientific subject and untouched native payload.
 
-The consumer checks that downstream packets bind the exact selected parent
-outputs. Recruitment and tractability depend on the selected hypothesis;
-economics depends on both the hypothesis and recruitment outputs. A successful
-child cannot depend on a failed, cancelled, partial, malformed, or quarantined
-parent.
+The consumer checks that downstream packets bind every parent they actually
+used. Recruitment depends on the selected hypothesis. Economics always depends
+on HypGen's complete ROI request and binds recruitment only when that output was
+actually incorporated into its native input. Tractability may run independently
+from the branch accession when HypGen fails; if it declares mapper or HypGen
+lineage, those exact selected outputs are still verified. A successful child
+cannot depend on a failed, cancelled, partial, malformed, or quarantined parent.
+Clinical has one narrow exception: it may bind a `PARTIAL` HypGen attempt with
+a complete canonical hypothesis output when only the separate ROI request is
+missing. The exact partial status/reason remains visible, and HypGen objectives
+are not emitted from that attempt.
 
 The input-binding wrapper also checks the hypothesis carried by recruitment,
 the hypothesis/program/recruitment binding used by economics, and the target
@@ -134,7 +145,10 @@ The production comparator is deliberately conservative:
 The result includes the exact input packet revision/hash, every raw objective,
 a structured module-attempt ledger, comparison groups, frontier, dominated and
 incomparable IDs, dominance relationships, equivalence groups, exclusions,
-and qualifiers.
+and qualifiers. It also includes `nextEvidenceAction`, either `null` or one
+deterministically selected action grounded in current producer asks, gaps, or
+follow-up fields. This advisory field never changes Pareto membership and never
+creates a winner.
 
 The seam is bounded to 500 candidates, 10 selected envelope entries per
 candidate (including exact idempotent repeats), 32 objectives, 5,000 embedded
@@ -194,8 +208,8 @@ python -m pip install -e '.[dev]'
 python -m pytest -q
 ```
 
-The repository is standalone and imports no sibling LABrador runtime. Locked
-producer fixtures used by contract tests live under `tests/fixtures/` with
-their source commit and hashes recorded in the fixture manifest.
+The repository is standalone and imports no sibling LABrador runtime. Producer
+fixtures used by contract tests live under `tests/fixtures/`; historical
+fixture provenance is separate from the current per-module runtime locks.
 Highlander adds a consumer-owned envelope and input-binding seam; it does not
 change any locked upstream producer input or output schema.

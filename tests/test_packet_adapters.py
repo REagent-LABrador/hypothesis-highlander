@@ -15,6 +15,7 @@ from highlander.packet_adapters import (
     MAPPER,
     RECRUITMENT,
     TRACTABILITY,
+    PRODUCER_LOCKS,
     adapt_economics,
     adapt_hypothesis_generator,
     adapt_mapper,
@@ -42,33 +43,93 @@ from highlander.packet_portfolio import (
 FIXTURES = json.loads(
     (Path(__file__).parent / "fixtures" / "locked_module_slices.json").read_text()
 )
-FIXTURES["hypothesis_generator"] = json.loads(
+HYPGEN_SLATE = json.loads(
     (Path(__file__).parent / "fixtures" / "hypgen-irak4-ra.slate.json").read_text()
+)
+
+
+def hypothesis_document(hypothesis: dict) -> dict:
+    return {
+        "schema_version": "2.0",
+        "provenance": {
+            key: copy.deepcopy(HYPGEN_SLATE[key])
+            for key in (
+                "graph_id", "round", "question", "generated_at", "params", "coverage", "counts"
+            )
+        },
+        "hypothesis": copy.deepcopy(hypothesis),
+        "asks": copy.deepcopy(hypothesis.get("asks", HYPGEN_SLATE.get("asks", []))),
+    }
+
+
+def headless_response(document: dict) -> dict:
+    return {
+        "status": "COMPLETE",
+        "execution_mode": "LIVE",
+        "output_origin": "LIVE_PROVIDER",
+        "hypothesis": copy.deepcopy(document),
+        "cards": {},
+        "roi_request": {
+            "contract_version": "1.0.0",
+            "module": "rnpv_roi_calculator",
+            "request_id": "roi-test",
+            "program": {},
+            "comparables": [],
+            "execution": {"simulations": 2, "seed": 42},
+        },
+        "error": None,
+    }
+
+
+def economics_output(analysis: dict, *, request_id: str) -> dict:
+    """Wrap an exact AnalysisResult fixture in the current CLI output envelope."""
+
+    return {
+        "contract_version": "1.0.0",
+        "module": "rnpv_roi_calculator",
+        "module_version": "0.4.0",
+        "engine_version": "0.4.0",
+        "engine_schema_version": "1.3.0",
+        "request_id": request_id,
+        "status": "ok",
+        "payload": analysis,
+        "interpretability": {},
+        "warnings": copy.deepcopy(analysis["warnings"]),
+        "provenance": [],
+        "artifacts": [],
+    }
+
+
+FIXTURES["hypothesis_generator"] = headless_response(
+    hypothesis_document(HYPGEN_SLATE["hypotheses"][0])
 )
 FIXTURES["tractability"] = json.loads(
     (Path(__file__).parent / "fixtures" / "jak1_P23458.json").read_text()
 )
-FIXTURES["economics"] = json.loads(
-    (
-        Path(__file__).parent
-        / "fixtures"
-        / "economics-analysis-result-cashflow-inputs.json"
-    ).read_text()
+FIXTURES["economics"] = economics_output(
+    json.loads(
+        (
+            Path(__file__).parent
+            / "fixtures"
+            / "economics-analysis-result-cashflow-inputs.json"
+        ).read_text()
+    ),
+    request_id="roi-cashflow-fixture",
 )
-FIXTURES["economics_standard"] = json.loads(
-    (
-        Path(__file__).parent
-        / "fixtures"
-        / "economics-analysis-result-standard.json"
-    ).read_text()
+FIXTURES["economics_standard"] = economics_output(
+    json.loads(
+        (
+            Path(__file__).parent
+            / "fixtures"
+            / "economics-analysis-result-standard.json"
+        ).read_text()
+    ),
+    request_id="roi-standard-fixture",
 )
 
 SCHEMAS = {
-    MAPPER: ("EvidenceGraph", "1.1"),
-    HYPOTHESIS_GENERATOR: ("hyp_gen.schema.Slate", "locked-5131cd1"),
-    RECRUITMENT: ("RecruitabilityResult", "locked-5131cd1"),
-    ECONOMICS: ("labrador_roi.engine.AnalysisResult", "1.3.0"),
-    TRACTABILITY: ("small-molecule-tractability-dossier", "locked-5131cd1"),
+    module_id: (lock["nativeSchemaId"], lock["nativeSchemaVersion"])
+    for module_id, lock in PRODUCER_LOCKS.items()
 }
 
 
@@ -91,7 +152,7 @@ def make_packet(
         attempt_id=f"attempt-{module_id}",
         native_schema_id=schema_id,
         native_schema_version=schema_version,
-        producer_code_version="5131cd109bef1f9eebe0b109a04a0fcb98908454",
+        producer_code_version=PRODUCER_LOCKS[module_id]["producerCodeVersion"],
         adapter_version="packet-adapters.v1",
         execution_status=status,
         execution_reason=None if status in {"SUCCEEDED", "COMPLETED", "COMPLETE"} else "test status",
@@ -246,13 +307,7 @@ def test_mapper_lineage_mismatch_is_quarantined():
 def test_hypgen_retains_stable_source_id_and_all_scientific_scores():
     payload = copy.deepcopy(FIXTURES["hypothesis_generator"])
     candidates = extract_hypothesis_candidates(payload)
-    assert [candidate.source_id for candidate in candidates] == [
-        "H-g2",
-        "H-g1",
-        "H-g4",
-        "H-chain-t1-t4-2",
-        "H-analog-t4-t2-via-t1",
-    ]
+    assert [candidate.source_id for candidate in candidates] == ["H-g2"]
     assert candidates[0].scientific_scores["structure"] == 0.436
     assert candidates[0].scientific_scores["absence_reliability"] == 0.48
 
@@ -281,7 +336,7 @@ def test_hypgen_retains_stable_source_id_and_all_scientific_scores():
 
 def test_hypgen_missing_required_score_yields_no_objective_not_a_neutral_value():
     payload = copy.deepcopy(FIXTURES["hypothesis_generator"])
-    del payload["hypotheses"][0]["scores"]["support"]
+    del payload["hypothesis"]["hypothesis"]["scores"]["support"]
     result = adapt_hypothesis_generator(
         make_packet(
             HYPOTHESIS_GENERATOR,
@@ -312,7 +367,7 @@ def test_hypgen_missing_required_score_yields_no_objective_not_a_neutral_value()
 )
 def test_hypgen_malformed_verification_or_issues_emit_no_objectives(probe):
     payload = copy.deepcopy(FIXTURES["hypothesis_generator"])
-    hypothesis = payload["hypotheses"][0]
+    hypothesis = payload["hypothesis"]["hypothesis"]
     verification = hypothesis["verification"]
 
     if probe == "gates_not_array":
@@ -362,7 +417,7 @@ def test_hypgen_error_severity_is_blocking_even_if_gate_issue_is_not_mirrored(
     issue_location,
 ):
     payload = copy.deepcopy(FIXTURES["hypothesis_generator"])
-    hypothesis = payload["hypotheses"][0]
+    hypothesis = payload["hypothesis"]["hypothesis"]
     issue = {"code": "blocking_probe", "detail": "cannot proceed", "severity": "error"}
     if issue_location == "hypothesis":
         hypothesis["issues"].append(issue)
@@ -384,7 +439,7 @@ def test_hypgen_error_severity_is_blocking_even_if_gate_issue_is_not_mirrored(
 
 def test_hypgen_issue_omitting_defaulted_severity_remains_a_warning():
     payload = copy.deepcopy(FIXTURES["hypothesis_generator"])
-    payload["hypotheses"][0]["issues"] = [
+    payload["hypothesis"]["hypothesis"]["issues"] = [
         {"code": "warning_by_default", "detail": "locked Pydantic default"}
     ]
 
@@ -408,13 +463,15 @@ def test_recruitment_uses_required_native_score_and_preserves_uncertainty():
     assert objective.objective_id == "recruitability"
     assert objective.raw_value == 0.0
     assert objective.direction == "MAX"
-    assert objective.uncertainty["simulatedMonthsRange"] == (96.0, 1211.0)
+    assert objective.uncertainty["simulated_months_range"] == (96.0, 1211.0)
     assert objective.uncertainty["counterfactual"]["achieves"] == "none"
     assert objective.evidence_basis == "MODELED"
-    assert objective.basis["nativeSchemaId"] == "RecruitabilityResult"
-    assert result.details["nativeBasis"]["evidence"]["competingTrials"] == 189
+    assert objective.basis["nativeSchemaId"] == (
+        "https://github.com/REagent-LABrador/clinical_simulation/schemas/output.schema.json"
+    )
+    assert result.details["nativeBasis"]["evidence"]["competing_trials"] == 189
     assert "SIMULATED" in objective.qualifiers
-    assert result.raw_payload["failedPrecedents"][0]["nctId"] == "NCT02390700"
+    assert result.raw_payload["failed_precedents"][0]["nct_id"] == "NCT02390700"
 
 
 def test_recruitment_missing_score_or_invalid_range_yields_no_objective():
@@ -425,16 +482,28 @@ def test_recruitment_missing_score_or_invalid_range_yields_no_objective():
     assert "payload.score" in missing_result.missing_reasons[0]
 
     invalid = copy.deepcopy(FIXTURES["recruitment"])
-    invalid["simulatedMonthsRange"] = [500, 100]
+    invalid["simulated_months_range"] = [500, 100]
     invalid_result = adapt_recruitment(make_packet(RECRUITMENT, invalid))
     assert invalid_result.objectives == ()
-    assert "simulatedMonthsRange" in invalid_result.missing_reasons[0]
+    assert "simulated_months_range" in invalid_result.missing_reasons[0]
+
+
+def test_current_recruitment_lock_rejects_legacy_camel_case_output_names():
+    legacy = copy.deepcopy(FIXTURES["recruitment"])
+    legacy["simulatedMonthsToEnroll"] = legacy.pop(
+        "simulated_months_to_enroll"
+    )
+    legacy["simulatedMonthsRange"] = legacy.pop("simulated_months_range")
+
+    result = adapt_recruitment(make_packet(RECRUITMENT, legacy))
+
+    assert result.objectives == ()
+    assert "payload.simulated_months_to_enroll" in result.missing_reasons[0]
 
 
 @pytest.mark.parametrize(
     ("path", "value", "expected_error"),
     (
-        (("counterfactual",), None, "payload.counterfactual must be an object"),
         (
             ("counterfactual", "achieves"),
             "excellent",
@@ -446,9 +515,9 @@ def test_recruitment_missing_score_or_invalid_range_yields_no_objective():
             "payload.counterfactual.change must be a non-empty string",
         ),
         (
-            ("counterfactual", "simulatedMonthsAfter"),
+            ("counterfactual", "simulated_months_after"),
             -1,
-            "payload.counterfactual.simulatedMonthsAfter must be at least 0.0",
+            "payload.counterfactual.simulated_months_after must be at least 0.0",
         ),
         (
             ("eligibility", "multiplier"),
@@ -456,9 +525,9 @@ def test_recruitment_missing_score_or_invalid_range_yields_no_objective():
             "payload.eligibility.multiplier must be at most 1.0",
         ),
         (
-            ("eligibility", "citedTrials"),
+            ("eligibility", "cited_trials"),
             ["NCT01061736", 123],
-            "payload.eligibility.citedTrials[1] must be a string",
+            "payload.eligibility.cited_trials[1] must be a string",
         ),
         (
             ("eligibility", "drivers"),
@@ -471,36 +540,30 @@ def test_recruitment_missing_score_or_invalid_range_yields_no_objective():
             "payload.eligibility.reasoning must be a string",
         ),
         (
-            ("evidence", "competingTrials"),
+            ("evidence", "competing_trials"),
             1.5,
-            "payload.evidence.competingTrials must be an integer",
+            "payload.evidence.competing_trials must be an integer",
         ),
         (
-            ("evidence", "precedentTrials"),
+            ("evidence", "precedent_trials"),
             ["NCT01061736", False],
-            "payload.evidence.precedentTrials[1] must be a string",
+            "payload.evidence.precedent_trials[1] must be a string",
         ),
         (
-            ("phase3MedianN",),
+            ("phase3_median_n",),
             -1,
-            "payload.phase3MedianN must be at least 0.0",
+            "payload.phase3_median_n must be at least 0.0",
         ),
         (
-            ("phase3MedianN",),
-            None,
-            "payload.phase3MedianN must be a number",
-        ),
-        (
-            ("precedentMedianN",),
+            ("precedent_median_n",),
             "98.5",
-            "payload.precedentMedianN must be a number",
+            "payload.precedent_median_n must be a number",
         ),
         (
-            ("screensPerEnrollee",),
+            ("screens_per_enrollee",),
             0,
-            "payload.screensPerEnrollee must be at least 1.0",
+            "payload.screens_per_enrollee must be at least 1.0",
         ),
-        (("asOf",), None, "payload.asOf must be a string"),
     ),
 )
 def test_recruitment_rejects_malformed_locked_nested_fields(
@@ -523,15 +586,15 @@ def test_recruitment_rejects_malformed_locked_nested_fields(
     (
         (
             ["NCT02390700"],
-            "payload.failedPrecedents[0] must be an object",
+            "payload.failed_precedents[0] must be an object",
         ),
         (
-            [{"nctId": "", "whyStopped": "Enrollment"}],
-            "payload.failedPrecedents[0].nctId must be a non-empty string",
+            [{"nct_id": "", "why_stopped": "Enrollment"}],
+            "payload.failed_precedents[0].nct_id must be a non-empty string",
         ),
         (
-            [{"nctId": "NCT02390700"}],
-            "payload.failedPrecedents[0].whyStopped must be a string",
+            [{"nct_id": "NCT02390700"}],
+            "payload.failed_precedents[0].why_stopped must be a string",
         ),
     ),
 )
@@ -539,7 +602,7 @@ def test_recruitment_rejects_malformed_failed_precedents(
     failed_precedents: list[object], expected_error: str
 ):
     payload = copy.deepcopy(FIXTURES["recruitment"])
-    payload["failedPrecedents"] = failed_precedents
+    payload["failed_precedents"] = failed_precedents
 
     result = adapt_recruitment(make_packet(RECRUITMENT, payload))
 
@@ -550,21 +613,21 @@ def test_recruitment_rejects_malformed_failed_precedents(
 def test_recruitment_accepts_absent_optional_counterfactual_and_medians_losslessly():
     payload = copy.deepcopy(FIXTURES["recruitment"])
     del payload["counterfactual"]
-    del payload["phase3MedianN"]
-    del payload["precedentMedianN"]
+    del payload["phase3_median_n"]
+    del payload["precedent_median_n"]
 
     result = adapt_recruitment(make_packet(RECRUITMENT, payload))
 
     assert len(result.objectives) == 1
     assert result.objectives[0].uncertainty["counterfactual"] is None
-    assert result.details["nativeBasis"]["phase3MedianN"] is None
-    assert result.details["nativeBasis"]["precedentMedianN"] is None
+    assert result.details["nativeBasis"]["phase3_median_n"] is None
+    assert result.details["nativeBasis"]["precedent_median_n"] is None
     assert canonical_json_bytes(result.raw_payload) == canonical_json_bytes(payload)
 
 
 def test_recruitment_uses_subject_horizon_when_optional_output_as_of_is_absent():
     payload = copy.deepcopy(FIXTURES["recruitment"])
-    del payload["asOf"]
+    del payload["as_of_date"]
 
     result = adapt_recruitment(
         make_packet(
@@ -575,19 +638,19 @@ def test_recruitment_uses_subject_horizon_when_optional_output_as_of_is_absent()
     )
 
     assert len(result.objectives) == 1
-    assert result.objectives[0].basis["asOf"] == "2026-08-15"
+    assert result.objectives[0].basis["as_of_date"] == "2026-08-15"
     assert "HORIZON_UNSPECIFIED" not in result.objectives[0].qualifiers
-    assert "asOf" not in result.raw_payload
+    assert "as_of_date" not in result.raw_payload
 
 
 def test_recruitment_marks_comparison_horizon_unspecified_when_no_as_of_exists():
     payload = copy.deepcopy(FIXTURES["recruitment"])
-    del payload["asOf"]
+    del payload["as_of_date"]
 
     result = adapt_recruitment(make_packet(RECRUITMENT, payload))
 
     assert len(result.objectives) == 1
-    assert result.objectives[0].basis["asOf"] == "UNSPECIFIED"
+    assert result.objectives[0].basis["as_of_date"] == "UNSPECIFIED"
     assert "HORIZON_UNSPECIFIED" in result.objectives[0].qualifiers
     assert "HORIZON_UNSPECIFIED" in result.qualifiers
 
@@ -616,7 +679,7 @@ def test_economics_reads_exact_cashflow_analysis_result_130_and_preserves_basis(
     assert len(result.objectives) == 1
     objective = result.objectives[0]
     assert objective.raw_value == -15253691.618176274
-    assert objective.source_path == "$.summary.p50_rnpv"
+    assert objective.source_path == "$.payload.summary.p50_rnpv"
     assert objective.unit == "USD"
     assert objective.uncertainty["p10Rnpv"] == -23236281.846467756
     assert objective.uncertainty["p90Rnpv"] == -7271101.3898847895
@@ -624,6 +687,8 @@ def test_economics_reads_exact_cashflow_analysis_result_130_and_preserves_basis(
     assert objective.basis["baseYear"] is None
     assert objective.basis["valuationYear"] == 2026
     assert objective.basis["engineVersion"] == "0.4.0"
+    assert objective.basis["analysisSchemaVersion"] == "1.3.0"
+    assert objective.basis["nativeSchemaVersion"] == "1.0.0"
     assert objective.basis["inputSnapshotMode"] == "cashflow_inputs"
     assert objective.basis["uncertaintyContract"]["drawOrderContractVersion"] == "1.0.0"
     assert objective.basis["simulationAssumptions"]["price_multiplier"] == {
@@ -636,6 +701,12 @@ def test_economics_reads_exact_cashflow_analysis_result_130_and_preserves_basis(
     assert result.details["nativeBasis"]["simulations"] == 2
     assert "DECISION_GRADE" in objective.qualifiers
     assert "HAS_WARNINGS" not in objective.qualifiers
+    assert objective.packet_sha256 == canonical_json_sha256(payload)
+    assert canonical_json_sha256(result.raw_payload) == canonical_json_sha256(payload)
+    assert result.attempt_record["outputRawSha256"] == raw_sha256(
+        canonical_json_bytes(payload)
+    )
+    assert result.details["moduleEnvelope"]["requestId"] == "roi-cashflow-fixture"
 
 
 def test_economics_reads_exact_standard_result_without_upgrading_decision_grade():
@@ -651,19 +722,51 @@ def test_economics_reads_exact_standard_result_without_upgrading_decision_grade(
     assert "NOT_DECISION_GRADE" in objective.qualifiers
     assert "HAS_WARNINGS" in objective.qualifiers
     assert result.details["nativeBasis"]["programId"] == "SYNTHETIC-LAB-001"
-    assert len(result.raw_payload["warnings"]) == 63
+    assert len(result.raw_payload["payload"]["warnings"]) == 63
+
+
+@pytest.mark.parametrize(
+    ("field", "value", "reason"),
+    (
+        ("module", "different_module", "module must be 'rnpv_roi_calculator'"),
+        ("module_version", "0.5.0", "module_version"),
+        ("contract_version", "2.0.0", "contract_version"),
+        ("engine_version", "0.5.0", "engine_version"),
+        ("engine_schema_version", "1.2.0", "engine_schema_version"),
+        ("status", "error", "status must be 'ok'"),
+    ),
+)
+def test_economics_malformed_current_envelope_fails_closed(field, value, reason):
+    payload = copy.deepcopy(FIXTURES["economics"])
+    payload[field] = value
+
+    result = adapt_economics(make_packet(ECONOMICS, payload))
+
+    assert result.objectives == ()
+    assert canonical_json_sha256(result.raw_payload) == canonical_json_sha256(payload)
+    assert reason in result.missing_reasons[0]
+
+
+def test_economics_inner_analysis_identity_must_match_current_outer_envelope():
+    payload = copy.deepcopy(FIXTURES["economics"])
+    payload["payload"]["schema_version"] = "1.2.0"
+
+    result = adapt_economics(make_packet(ECONOMICS, payload))
+
+    assert result.objectives == ()
+    assert "schema_version must match" in result.missing_reasons[0]
 
 
 def test_economics_top_level_or_malformed_rnpv_never_becomes_neutral():
     missing_nested = copy.deepcopy(FIXTURES["economics"])
-    del missing_nested["summary"]["p50_rnpv"]
-    missing_nested["p50_rnpv"] = 999.0
+    del missing_nested["payload"]["summary"]["p50_rnpv"]
+    missing_nested["payload"]["p50_rnpv"] = 999.0
     result = adapt_economics(make_packet(ECONOMICS, missing_nested))
     assert result.objectives == ()
     assert "payload.summary.p50_rnpv" in result.missing_reasons[0]
 
     inverted = copy.deepcopy(FIXTURES["economics"])
-    inverted["summary"]["p10_rnpv"] = 1.0
+    inverted["payload"]["summary"]["p10_rnpv"] = 1.0
     inverted_result = adapt_economics(make_packet(ECONOMICS, inverted))
     assert inverted_result.objectives == ()
     assert "p10 <= p50 <= p90" in inverted_result.missing_reasons[0]
@@ -671,15 +774,15 @@ def test_economics_top_level_or_malformed_rnpv_never_becomes_neutral():
 
 def test_economics_run_id_and_decision_grade_must_match_native_result_state():
     wrong_run = copy.deepcopy(FIXTURES["economics"])
-    wrong_run["run_id"] = "run_forged"
+    wrong_run["payload"]["run_id"] = "run_forged"
     result = adapt_economics(make_packet(ECONOMICS, wrong_run))
     assert result.objectives == ()
     assert "input_digest-derived run ID" in result.missing_reasons[0]
 
     impossible_grade = copy.deepcopy(FIXTURES["economics_standard"])
-    impossible_grade["decision_grade"] = "DECISION_GRADE"
-    impossible_grade["recommendation"] = "HOLD"
-    impossible_grade["summary"]["recommendation"] = "HOLD"
+    impossible_grade["payload"]["decision_grade"] = "DECISION_GRADE"
+    impossible_grade["payload"]["recommendation"] = "HOLD"
+    impossible_grade["payload"]["summary"]["recommendation"] = "HOLD"
     result = adapt_economics(make_packet(ECONOMICS, impossible_grade))
     assert result.objectives == ()
     assert "inconsistent with critical evidence" in result.missing_reasons[0]
@@ -719,6 +822,33 @@ def test_tractability_stays_categorical_and_preserves_both_axes():
     assert any(
         item["field"] == "tractability.disorder_fraction"
         for item in result.details["notFound"]
+    )
+
+
+def test_tractability_provenance_rule_excludes_only_interpretability_metadata():
+    payload = copy.deepcopy(FIXTURES["tractability"])
+    payload["interpretability"] = {
+        "trace": [{"order": 1}],
+        "metrics": [{"id": "metric-1", "value": 0.63}],
+        "extensions": {"axes": {"computed_tractability": {"fpocket_rank": 2}}},
+    }
+
+    result = adapt_tractability(
+        make_packet(TRACTABILITY, payload, subject=tractability_subject())
+    )
+
+    assert not result.quarantined
+    assert len(result.objectives) == 1
+
+    payload["unsupported_scientific_metric"] = 7
+    invalid = adapt_tractability(
+        make_packet(TRACTABILITY, payload, subject=tractability_subject())
+    )
+    assert invalid.quarantined
+    assert any(
+        violation["rule"] == "NUMBER_WITHOUT_PROVENANCE"
+        and violation["path"] == "unsupported_scientific_metric"
+        for violation in invalid.details["nativeValidationViolations"]
     )
 
 
@@ -877,28 +1007,32 @@ def test_unpinned_producer_or_adapter_version_is_quarantined(field, value, reaso
 
 def test_economics_rejects_invalid_decision_grade_or_recommendation_union():
     invalid_grade = copy.deepcopy(FIXTURES["economics"])
-    invalid_grade["decision_grade"] = "BANANA"
+    invalid_grade["payload"]["decision_grade"] = "BANANA"
     result = adapt_economics(make_packet(ECONOMICS, invalid_grade))
     assert result.objectives == ()
     assert "decision_grade" in result.missing_reasons[0]
 
     inconsistent = copy.deepcopy(FIXTURES["economics"])
-    inconsistent["recommendation"] = "HOLD"
+    inconsistent["payload"]["recommendation"] = "HOLD"
     result = adapt_economics(make_packet(ECONOMICS, inconsistent))
     assert result.objectives == ()
     assert "does not match" in result.missing_reasons[0]
 
 
 def test_real_adapter_observations_compare_without_candidate_specific_provenance_splitting():
-    slate = copy.deepcopy(FIXTURES["hypothesis_generator"])
-    stronger = slate["hypotheses"][0]
+    stronger = copy.deepcopy(
+        FIXTURES["hypothesis_generator"]["hypothesis"]["hypothesis"]
+    )
     stronger["scores"]["support"] = 0.8
     stronger["scores"]["contradiction_risk"] = 0.1
     weaker = copy.deepcopy(stronger)
     weaker["id"] = "H-g3"
     weaker["scores"]["support"] = 0.6
     weaker["scores"]["contradiction_risk"] = 0.3
-    slate["hypotheses"].append(weaker)
+    documents = {
+        "H-g2": headless_response(hypothesis_document(stronger)),
+        "H-g3": headless_response(hypothesis_document(weaker)),
+    }
     subject = Subject(graph_id="g_1a4f", graph_round=2)
 
     adapted_by_id = {}
@@ -906,7 +1040,7 @@ def test_real_adapter_observations_compare_without_candidate_specific_provenance
         hypgen = adapt_hypothesis_generator(
             make_packet(
                 HYPOTHESIS_GENERATOR,
-                slate,
+                documents[hypothesis_id],
                 hypothesis_id=hypothesis_id,
                 subject=subject,
             )

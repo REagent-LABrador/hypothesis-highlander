@@ -61,9 +61,9 @@ token, or storage credential in a request.
   "hypothesisId": "H-g2",
   "moduleId": "trial-recruitment-forecaster",
   "attemptId": "recruitment-H-g2-attempt-1",
-  "nativeSchemaId": "RecruitabilityResult",
-  "nativeSchemaVersion": "locked-5131cd1",
-  "producerCodeVersion": "5131cd109bef1f9eebe0b109a04a0fcb98908454",
+  "nativeSchemaId": "https://github.com/REagent-LABrador/clinical_simulation/schemas/output.schema.json",
+  "nativeSchemaVersion": "1.0.0",
+  "producerCodeVersion": "13783c962d303a04ff63c7dbb59e49b4369038c1",
   "adapterVersion": "packet-adapters.v1",
   "executionStatus": "SUCCEEDED",
   "executionReason": null,
@@ -79,8 +79,8 @@ token, or storage credential in a request.
   "dependsOn": [
     {
       "moduleId": "hypothesis-generator",
-      "outputCanonicalSha256": "<selected Slate output hash>",
-      "envelopeCanonicalSha256": "<selected candidate-specific Slate envelope hash>"
+      "outputCanonicalSha256": "<selected headless HypGen response hash>",
+      "envelopeCanonicalSha256": "<selected candidate-specific headless-response envelope hash>"
     }
   ],
   "subject": {
@@ -143,15 +143,15 @@ lineage while leaving `nativeInput` unchanged:
   "dependsOn": [
     {
       "moduleId": "hypothesis-generator",
-      "outputCanonicalSha256": "<selected Slate output hash>",
-      "envelopeCanonicalSha256": "<selected candidate-specific Slate envelope hash>"
+      "outputCanonicalSha256": "<selected headless HypGen response hash>",
+      "envelopeCanonicalSha256": "<selected candidate-specific headless-response envelope hash>"
     }
   ],
   "inputIdentity": {
     "hypothesisId": "H-g2",
     "thesisId": "H-g2"
   },
-  "nativeInput": {"id": "H-g2", "<rest of locked IndicationThesis>": "<unchanged>"}
+  "nativeInput": {"id": "H-g2", "<rest of canonical snake_case IndicationThesis>": "<unchanged>"}
 }
 ```
 
@@ -166,8 +166,8 @@ consumer-owned `inputIdentity` object:
 
 - every attempt repeats `hypothesisId`;
 - recruitment adds `thesisId`, which must match the native thesis `id`;
-- economics adds `programId` and `recruitmentOutputCanonicalSha256`, while its
-  native invocation retains the unchanged program input;
+- economics adds `programId`; it adds `recruitmentOutputCanonicalSha256` only
+  when the native invocation actually incorporated that recruitment output;
 - tractability adds `uniprotAccession`, which must match both the native input
   and the envelope subject.
 
@@ -183,17 +183,21 @@ The selected terminal packet is a typed DAG:
 graph LR
     mapper["Evidence Mapper"] --> hypgen["Hypothesis Generator"]
     hypgen --> recruitment["Recruitment Forecaster"]
-    hypgen --> tractability["Tractability Review"]
+    mapper -. optional focus lineage .-> tractability["Tractability Review"]
+    hypgen -. optional thesis lineage .-> tractability
     hypgen --> economics["Program Economics"]
-    recruitment --> economics
+    recruitment -. only if incorporated .-> economics
 ```
 
 - If mapper and hypothesis generator are both selected, the generator must
   reference the exact mapper output.
-- Recruitment and tractability require the exact selected hypothesis-generator
-  output.
-- Economics requires the exact selected hypothesis-generator and recruitment
-  outputs. This binds ROI to the recruitment-adjusted program revision.
+- Recruitment requires the exact selected hypothesis-generator output.
+- Tractability can run independently from a branch accession even when HypGen
+  fails. It may optionally bind the mapper and/or HypGen output if either was
+  actually used; an undeclared parent is never inferred.
+- Economics requires the exact selected hypothesis-generator output because its
+  native request is HypGen's complete ROI request. Recruitment is an optional
+  parent and must be declared only if its output was actually incorporated.
 - Every dependency reference names the parent module, its canonical output
   hash, and its candidate-specific canonical envelope hash. Binding both is
   necessary because two candidates can legitimately contain byte-identical
@@ -201,10 +205,14 @@ graph LR
 - `outputCanonicalSha256` is `null` when the selected parent is an honest
   output-less terminal attempt. The parent envelope hash remains mandatory and
   binds that exact failed, blocked, or skipped record.
-- A successful child cannot depend on a non-successful, malformed,
-  schema-mismatched, or quarantined parent.
+- A successful child cannot normally depend on a non-successful, malformed,
+  schema-mismatched, or quarantined parent. One narrow exception allows
+  clinical to bind a `PARTIAL` HypGen attempt that still carries a canonical
+  hypothesis/thesis output but could not emit its separate complete ROI request.
+  The partial HypGen attempt remains visible and supplies no HypGen objectives.
 
-The consumer also checks mapper and Slate `graph_id`/round consistency, terminal
+The consumer also checks mapper and the nested HypothesisDocument
+`graph_id`/round consistency, terminal
 run/hypothesis identity, one selected attempt per module, the module-envelope
 digest, the input-binding wrapper, and exact raw artifact hashes.
 
@@ -263,7 +271,8 @@ are limited to 16 MiB each and 128 MiB total; embedded values are decoded only
 when referenced. The CLI caps raw request JSON at 192 MiB and rejects duplicate
 keys, non-I-JSON numbers, or nesting beyond 64 levels. A network service should
 apply its own transport, authentication, rate, and concurrency limits before
-calling the library.
+calling the library. The demo orchestrator owns a four-minute wall-clock limit
+for the `python -m highlander compare` process.
 
 ## Native outputs and objectives
 
@@ -284,6 +293,17 @@ specific objective when that objective is selected. Other failed or partial
 attempts remain visible without a fabricated value; a required missing axis or
 an unusable dependency makes the affected candidate incomparable. The output
 policy records these eligibility rules.
+
+## Producer-grounded next action
+
+The result keeps no-winner Pareto semantics and adds one advisory
+`nextEvidenceAction`. It is `null` when no current producer emitted a usable
+ask, gap, or follow-up. Otherwise it contains the producer module and output
+hash, exact source path, action type, target, description, candidate IDs, and a
+stable action ID. The selector prefers the same producer-emitted action across
+the most branches, then uses a deterministic source-order tie break. It never
+uses Highlander scores to invent an experiment and never changes frontier,
+dominated, or incomparable membership.
 
 ## Legacy demo
 

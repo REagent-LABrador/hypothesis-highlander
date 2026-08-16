@@ -417,6 +417,7 @@ class PortfolioResult:
     dominance_relationships: tuple[dict[str, Any], ...]
     equivalence_groups: tuple[dict[str, Any], ...]
     qualifiers: tuple[str, ...]
+    next_evidence_action: Mapping[str, Any] | None = None
 
     def __post_init__(self) -> None:
         for name in (
@@ -437,6 +438,12 @@ class PortfolioResult:
         )
         for name in ("frontier", "dominated", "qualifiers"):
             object.__setattr__(self, name, tuple(getattr(self, name)))
+        if self.next_evidence_action is not None:
+            object.__setattr__(
+                self,
+                "next_evidence_action",
+                _deep_freeze_json(self.next_evidence_action),
+            )
 
     def to_dict(self) -> dict[str, Any]:
         return _json_copy(
@@ -456,6 +463,7 @@ class PortfolioResult:
                 "dominanceRelationships": list(self.dominance_relationships),
                 "equivalenceGroups": list(self.equivalence_groups),
                 "qualifiers": list(self.qualifiers),
+                "nextEvidenceAction": self.next_evidence_action,
             }
         )
 

@@ -2,11 +2,26 @@
 Interoperability tests: the shared IndicationThesis contract + the two LABrador adapters.
 These guard that Highlander speaks the pipeline's language and that the unowned adapters behave.
 """
+import hashlib
+import json
+from pathlib import Path
+
 from highlander.genome import Genome
 from highlander.thesis import IndicationThesis, Evidence
 from highlander.adapters import (adapter_A_graph_to_evidence, adapter_B_months_to_launch_delay,
                                  plausibility_from_evidence)
 from highlander.controller import Highlander
+
+
+def test_vendored_thesis_contract_matches_platform_lock():
+    contract_dir = Path(__file__).parents[1] / "highlander" / "contracts"
+    lock = json.loads((contract_dir / "contract.lock.json").read_text())
+    contract = contract_dir / "indication-thesis.schema.json"
+
+    assert lock["sourceCommit"] == "755499b42ab65d3b01f959b11624dd4e61bdd561"
+    assert hashlib.sha256(contract.read_bytes()).hexdigest() == (
+        lock["contracts"][contract.name]["sha256"]
+    )
 
 
 def test_genome_emits_valid_thesis():

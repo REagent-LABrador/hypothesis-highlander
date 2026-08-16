@@ -642,7 +642,7 @@ class ObjectiveObservation:
 
 @dataclass(frozen=True, slots=True)
 class HypothesisCandidate:
-    """Lossless Highlander candidate extracted from one locked Slate hypothesis."""
+    """Lossless Highlander candidate extracted from one pinned HypothesisDocument."""
 
     source_id: str
     graph_id: str

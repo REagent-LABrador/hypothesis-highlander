@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "labrador.contract-lock.v1",
+  "sourceRepository": "https://github.com/REagent-LABrador/platform-contracts",
+  "sourceCommit": "755499b42ab65d3b01f959b11624dd4e61bdd561",
+  "contracts": {
+    "indication-thesis.schema.json": {
+      "sourcePath": "schemas/indication-thesis.schema.json",
+      "sha256": "ea580e9a17eb5e25818a8f089a9f0b1fa38ffc7959e2966a2c2328d124ff7b7c"
+    }
+  }
+}
