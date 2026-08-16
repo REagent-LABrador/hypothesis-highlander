@@ -1,7 +1,9 @@
 """Highlander command-line entry points.
 
-``compare`` is the production packet consumer.  ``run`` is retained only as a
-standalone legacy/demo search over explicitly mocked tier outputs.
+``compare`` is the production packet consumer. ``ra-demo`` is a deliberately
+minimal compatibility surface for the current 3-biomarker/9-hypothesis demo
+snapshot. ``run`` is retained only as a standalone legacy/demo search over
+explicitly mocked tier outputs.
 """
 from __future__ import annotations
 
@@ -12,6 +14,7 @@ import sys
 from .controller import Highlander
 from .packet_consumer import MAX_REQUEST_BYTES, compare_packet_request, strict_json_loads
 from .packet_contracts import ContractError
+from .ra_demo import compare_ra_demo_snapshot
 
 
 def _write_json(value, destination: str) -> None:
@@ -73,6 +76,25 @@ def _compare(args) -> int:
     return 0
 
 
+def _ra_demo(args) -> int:
+    try:
+        if args.snapshot == "-":
+            raw_text = sys.stdin.read(MAX_REQUEST_BYTES + 1)
+            raw = raw_text.encode("utf-8")
+        else:
+            with open(args.snapshot, "rb") as fh:
+                raw = fh.read(MAX_REQUEST_BYTES + 1)
+        if len(raw) > MAX_REQUEST_BYTES:
+            raise ContractError("snapshot exceeds the configured byte limit")
+        snapshot = strict_json_loads(raw, "RA demo snapshot")
+        result = compare_ra_demo_snapshot(snapshot)
+    except (ContractError, ValueError, OSError, json.JSONDecodeError) as error:
+        print(f"highlander ra-demo: {error}", file=sys.stderr)
+        return 2
+    _write_json(result, args.out)
+    return 0
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(
         prog="highlander",
@@ -90,6 +112,17 @@ def main(argv=None) -> int:
     )
     c.add_argument("--out", default="-", help="result JSON path ('-' = stdout)")
 
+    d = sub.add_parser(
+        "ra-demo",
+        help="compare the current 3-biomarker/9-hypothesis RA demo snapshot",
+    )
+    d.add_argument(
+        "--snapshot",
+        default="-",
+        help="orchestrator /snapshot JSON path ('-' = stdin)",
+    )
+    d.add_argument("--out", default="-", help="result JSON path ('-' = stdout)")
+
     r = sub.add_parser(
         "run",
         help="run the legacy mock search (demo only; not production comparison)",
@@ -105,6 +138,8 @@ def main(argv=None) -> int:
     args = p.parse_args(argv)
     if args.cmd == "compare":
         return _compare(args)
+    if args.cmd == "ra-demo":
+        return _ra_demo(args)
     return _run_legacy(args)
 
 

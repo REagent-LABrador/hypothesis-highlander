@@ -15,6 +15,11 @@ from .packet_consumer import (
 )
 from .packet_contracts import ContractError, ModulePacket, packet_from_dict
 from .packet_portfolio import ComparisonPolicy, ObjectiveRule, PortfolioResult
+from .ra_demo import (
+    RA_DEMO_POLICY_ID,
+    RA_DEMO_RESULT_SCHEMA_VERSION,
+    compare_ra_demo_snapshot,
+)
 from . import tiers, generator, adapters, thesis, viz
 
 __all__ = [
@@ -31,9 +36,12 @@ __all__ = [
     "ModulePacket",
     "ObjectiveRule",
     "PortfolioResult",
+    "RA_DEMO_POLICY_ID",
+    "RA_DEMO_RESULT_SCHEMA_VERSION",
     "REQUEST_SCHEMA_VERSION",
     "adapters",
     "compare_packet_request",
+    "compare_ra_demo_snapshot",
     "generator",
     "packet_from_dict",
     "thesis",
