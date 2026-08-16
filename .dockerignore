@@ -1,0 +1,13 @@
+# never bake secrets or local cruft into the image
+.env
+.env.*
+*.key
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.git/
+.DS_Store
+runs/
+*.jsonl
