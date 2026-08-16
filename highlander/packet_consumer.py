@@ -304,12 +304,18 @@ def _validate_input_binding(packet: ModulePacket, input_raw: bytes) -> None:
         if "thesis" in native_input:
             thesis = _mapping(native_input["thesis"], f"{thesis_path}.thesis")
             thesis_path += ".thesis"
-        try:
-            validate_indication_thesis_wire(dict(thesis))
-        except ValueError as error:
-            raise ContractError(
-                f"{packet.input_artifact_ref!r} recruitment thesis is not canonical: {error}"
-            ) from error
+        outputless_unsuccessful = (
+            packet.payload is None
+            and not packet.succeeded
+            and packet.execution_status != "PARTIAL"
+        )
+        if not outputless_unsuccessful:
+            try:
+                validate_indication_thesis_wire(dict(thesis))
+            except ValueError as error:
+                raise ContractError(
+                    f"{packet.input_artifact_ref!r} recruitment thesis is not canonical: {error}"
+                ) from error
         if _text(
             thesis.get("id"), f"{thesis_path}.id"
         ) != packet.hypothesis_id:

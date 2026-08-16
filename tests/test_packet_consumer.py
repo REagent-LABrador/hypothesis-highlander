@@ -964,6 +964,7 @@ def test_outputless_failure_chain_is_a_valid_terminal_ledger_not_fake_output():
         hypothesis_id="H-failure",
         execution_status="BLOCKED",
         depends_on=[dependency_for(hypgen)],
+        native_input={"id": "H-failure"},
     )
     economics = module_packet(
         ECONOMICS,
@@ -993,6 +994,25 @@ def test_outputless_failure_chain_is_a_valid_terminal_ledger_not_fake_output():
     assert all(item["outputArtifactRef"] is None for item in attempts)
     assert all(item["outputCanonicalSha256"] is None for item in attempts)
     assert all(item["executionArtifactRef"].startswith("artifact://") for item in attempts)
+
+
+def test_output_bearing_clinical_attempt_still_requires_full_canonical_thesis():
+    hypgen_candidate_packet = hypgen_candidate("H-strict-thesis", 0.8, 0.1)
+    hypgen = hypgen_candidate_packet["modulePackets"][0]
+    recruitment = module_packet(
+        RECRUITMENT,
+        copy.deepcopy(FIXTURES["recruitment"]),
+        run_id=hypgen_candidate_packet["runId"],
+        hypothesis_id=hypgen_candidate_packet["hypothesisId"],
+        execution_status="PARTIAL",
+        depends_on=[dependency_for(hypgen)],
+        native_input={"id": "H-strict-thesis"},
+    )
+    hypgen_candidate_packet["modulePackets"].append(recruitment)
+    rehash_candidate(hypgen_candidate_packet)
+
+    with pytest.raises(ContractError, match="recruitment thesis is not canonical"):
+        compare_packet_request(request([hypgen_candidate_packet]))
 
 
 def test_parent_envelope_identity_and_native_hypothesis_input_are_both_bound():
